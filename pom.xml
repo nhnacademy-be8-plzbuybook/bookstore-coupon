@@ -9,10 +9,10 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.nhnacademy</groupId>
-    <artifactId>boostore-nginx</artifactId>
+    <artifactId>boostore-coupon</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>boostore-nginx</name>
-    <description>boostore-nginx</description>
+    <name>bookstore-coupon</name>
+    <description>bookstore-coupon</description>
     <url/>
     <licenses>
         <license/>
