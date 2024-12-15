@@ -5,14 +5,14 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.4.0</version>
+        <version>3.3.6</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.nhnacademy</groupId>
-    <artifactId>boostore-nginx</artifactId>
+    <artifactId>boostore-coupon</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>boostore-nginx</name>
-    <description>boostore-nginx</description>
+    <name>bookstore-coupon</name>
+    <description>bookstore-coupon</description>
     <url/>
     <licenses>
         <license/>
@@ -28,55 +28,119 @@
     </scm>
     <properties>
         <java.version>21</java.version>
+        <spring-cloud.version>2023.0.4</spring-cloud.version> <!-- Spring Cloud 버전 추가 -->
     </properties>
     <dependencies>
+
+        <!-- spring-boot-thymeleaf -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-thymeleaf</artifactId>
         </dependency>
+
+        <!-- spring-boot-web -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
 
+        <!-- spring-boot-jpa -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
+        </dependency>
+
+        <!-- lombok -->
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <optional>true</optional>
+            <version>1.18.36</version>
+            <scope>provided</scope>
         </dependency>
+
+        <!-- spring-boot-test -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
+
+        <!-- mysql -->
+        <dependency>
+            <groupId>com.mysql</groupId>
+            <artifactId>mysql-connector-j</artifactId>
+            <version>9.1.0</version>
+        </dependency>
+
+        <!-- h2 -->
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+        </dependency>
+
     </dependencies>
+
+    <dependencyManagement>
+        <dependencies>
+            <!-- Spring Cloud 의존성 관리 추가 -->
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>${spring-cloud.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <build>
         <plugins>
             <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.11.0</version>
                 <configuration>
                     <annotationProcessorPaths>
                         <path>
                             <groupId>org.projectlombok</groupId>
                             <artifactId>lombok</artifactId>
+                            <version>1.18.36</version>
                         </path>
                     </annotationProcessorPaths>
                 </configuration>
             </plugin>
+            <!-- jacoco plugin 추가 -->
             <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-                <configuration>
-                    <excludes>
-                        <exclude>
-                            <groupId>org.projectlombok</groupId>
-                            <artifactId>lombok</artifactId>
-                        </exclude>
-                    </excludes>
-                </configuration>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.8.12</version>
+                <executions>
+                    <execution>
+                        <id>jacoco-initialize</id>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>jacoco-site</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
+
         </plugins>
     </build>
 

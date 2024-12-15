@@ -1,0 +1,70 @@
+server:
+  port: 8083
+
+spring:
+  config:
+    activate:
+      on-profile: dev
+  application:
+    name: bookstore-nginx-coupon-dev
+  datasource:
+    url: jdbc:h2:mem:bookstore-db-prod;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE  # prod DB 설정
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:  # 비밀번호를 빈 문자열로 두었음
+
+  jpa:
+    hibernate:
+      ddl-auto: update  # 애플리케이션 실행 시 DB 스키마 자동 업데이트
+    show-sql: true  # 실행되는 SQL을 콘솔에 출력
+
+  h2:
+    console:
+      enabled: true  # H2 콘솔 활성화
+      path: /h2-console  # H2 콘솔 접근 경로
+
+logging:
+  level:
+    root: DEBUG
+
+
+eureka:
+  client:
+    register-with-eureka: true  # Eureka에 서비스 등록
+    fetch-registry: true  # Eureka에서 서비스 목록 가져오기
+    service-url:
+      defaultZone: http://localhost:8761/eureka  # Eureka 서버 URL
+
+---
+server:
+  port: 8083
+spring:
+  config:
+    activate:
+      on-profile: prod
+  application:
+    name: bookstore-nginx-coupon-prod
+#  datasource:
+#    url: jdbc:mysql://localhost:3306/plzbuybook_coupon_db
+#    username: root
+#    password: 21045
+#    driver-class-name: com.mysql.cj.jdbc.Driver
+#  jpa:
+#    hibernate:
+#      ddl-auto: create-drop
+#    properties:
+#      hibernate:
+#        dialect: org.hibernate.dialect.MySQLDialect
+
+
+logging:
+  level:
+    root: INFO
+
+
+eureka:
+  client:
+    register-with-eureka: true  # Eureka에 서비스 등록
+    fetch-registry: true  # Eureka에서 서비스 목록 가져오기
+    service-url:
+      defaultZone: http://localhost:8761/eureka  # Eureka 서버 URL
