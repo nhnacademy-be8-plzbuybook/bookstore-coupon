@@ -38,37 +38,16 @@ eureka:
 ---
 server:
   port: 8083
-spring:
-  config:
-    activate:
-      on-profile: prod
-  application:
-    name: bookstore-nginx-coupon-prod
+#spring:
+#  application:
+#    name: boostore-nginx
 #  datasource:
 #    url: jdbc:mysql://localhost:3306/plzbuybook_coupon_db
-#    username: root
-#    password: 21045
+#    username: test #root
+#    password: 1234 #21045
 #    driver-class-name: com.mysql.cj.jdbc.Driver
 #  jpa:
 #    hibernate:
-#      ddl-auto: create-drop
-#    properties:
-#      hibernate:
-#        dialect: org.hibernate.dialect.MySQLDialect
-
-
-logging:
-  level:
-    root: INFO
-
-
-eureka:
-  client:
-    register-with-eureka: true  # Eureka에 서비스 등록
-    fetch-registry: true  # Eureka에서 서비스 목록 가져오기
-    service-url:
-      defaultZone: http://localhost:8761/eureka  # Eureka 서버 URL
-
 #      ddl-auto: create-drop # 엔티티로 등록도니 클래스와 매핑된 테이블 자동생성 (애플리케이션 종료시 테이블 삭제) **주의** 운영 설정은 update 로 변경할 것
 #    properties:
 #      hibernate:

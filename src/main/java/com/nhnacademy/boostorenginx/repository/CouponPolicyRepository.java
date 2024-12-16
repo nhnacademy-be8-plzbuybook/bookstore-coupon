@@ -11,11 +11,9 @@ import java.util.List;
 import java.util.Optional;
 
 public interface CouponPolicyRepository extends JpaRepository<CouponPolicy, Long> {
-    List<CouponPolicy> findByCouponActive(boolean couponActive);
+    List<CouponPolicy> findByCouponActive(boolean couponActive); // 쿠폰정책활성화여부 로 쿠폰정책 리스트 조회 -> 왜 필요할까??
 
     Optional<CouponPolicy> findByName(String name); // 쿠폰정책 이름으로 조회
-
-    List<CouponPolicy> findBySaleType(SaleType saleType); // 할인타입(금액할인, 비율할인) 으로 조회
 
     List<CouponPolicy> findByMinimumAmountLessThanEqual(BigDecimal amount); // 최소금액조건 조회
 
