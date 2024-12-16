@@ -2,7 +2,6 @@ package com.nhnacademy.boostorenginx.repository;
 
 import com.nhnacademy.boostorenginx.entity.CouponPolicy;
 import com.nhnacademy.boostorenginx.enums.SaleType;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -23,7 +22,7 @@ import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @SpringBootTest
-class CouponPolicyTest {
+class CouponPolicyRepositoryTest {
 
     @Mock
     CouponPolicyRepository couponPolicyRepository;

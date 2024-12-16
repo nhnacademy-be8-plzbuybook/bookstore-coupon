@@ -22,7 +22,7 @@ import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @SpringBootTest
-class CouponTargetTest {
+class CouponTargetRepositoryTest {
 
     @Mock
     CouponTargetRepository couponTargetRepository;

@@ -50,7 +50,7 @@ public class Coupon {
         this.couponPolicy = couponPolicy;
     }
 
-    // 쿠폰 객에서 CouponHistory 객체 생성 -> coupon 생성자를 바로 넘길 수 있음 -> 불변객체 유지 가능
+    // 쿠폰에서 CouponHistory 객체 생성 -> coupon 생성자를 바로 넘길 수 있음 -> 불변객체 유지 가능
     public void addHistory(Status status, LocalDateTime changeDate, String reason) {
         CouponHistory history = CouponHistory.builder()
                 .coupon(this)
