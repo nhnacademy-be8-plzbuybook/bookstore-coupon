@@ -18,7 +18,7 @@ public interface CouponRepository extends JpaRepository<Coupon, Long> {
 
     List<Coupon> findByExpiredAtBefore(LocalDateTime currentDateTime); // 만료된 쿠폰들 조회(현재시각기준)
 
-    @Query("SELECT coupon FROM Coupon coupon WHERE :cureentDateTime BETWEEN coupon.issuedAt AND coupon.expiredAt")
+    @Query("SELECT coupon FROM Coupon coupon WHERE :currentDateTime BETWEEN coupon.issuedAt AND coupon.expiredAt")
     List<Coupon> findActiveCoupons(@Param("currentDateTime") LocalDateTime currentDateTime); // 발급일자 ~ 만료일자 사이인 모든 쿠폰들 조회
 
     List<Coupon> findByCouponPolicy(CouponPolicy couponPolicy); // 쿠폰정책으로 쿠폰들 조회
