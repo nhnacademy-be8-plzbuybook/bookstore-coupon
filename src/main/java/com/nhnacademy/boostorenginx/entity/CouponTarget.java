@@ -27,5 +27,4 @@ public class CouponTarget {
     public CouponTarget(Long targetId) {
         this.targetId = targetId;
     }
-
 }
