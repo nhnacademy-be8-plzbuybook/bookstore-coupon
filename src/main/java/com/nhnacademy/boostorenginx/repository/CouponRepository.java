@@ -16,8 +16,6 @@ import java.util.Optional;
 public interface CouponRepository extends JpaRepository<Coupon, Long> {
     Optional<Coupon> findByCode(String code); // 쿠폰코드로 쿠폰 객체 조회
 
-    List<Coupon> findByStatus(Status status); // 쿠폰상태로 쿠폰들 조회
-
     List<Coupon> findByExpiredAtBefore(LocalDateTime currentDateTime); // 만료된 쿠폰들 조회(현재시각기준)
 
     @Query("SELECT coupon FROM Coupon coupon WHERE :cureentDateTime BETWEEN coupon.issuedAt AND coupon.expiredAt")
