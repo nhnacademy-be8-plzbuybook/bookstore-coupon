@@ -21,10 +21,10 @@ public class CouponPolicy {
     @Column(name = "coupon_policy_id")
     private Long id; // 쿠폰정책 ID
 
-    @NotBlank
+    @Column(nullable = false)
     private String name; // 쿠폰이름
 
-    @NotBlank
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private SaleType saleType; // 할인타입
 
@@ -40,13 +40,13 @@ public class CouponPolicy {
 
     private boolean isStackable; // 중복사용여부
 
-    @NotBlank
+    @Column(nullable = false)
     private String couponScope; // 쿠폰적용범위
 
-    @NotNull
+    @Column(nullable = false)
     private LocalDateTime startDate; // 쿠폰사용시작일
 
-    @NotNull
+    @Column(nullable = false)
     private LocalDateTime endDate; // 쿠폰사용종료일
 
     private boolean couponActive; // 쿠폰정책활성화 여부
