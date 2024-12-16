@@ -1,9 +1,9 @@
 package com.nhnacademy.boostorenginx.entity;
 
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @NoArgsConstructor
 @Getter
@@ -14,15 +14,15 @@ public class CouponTarget {
     @Column(name = "coupon_target_id")
     private Long id; // 쿠폰대상 ID
 
-    @Setter
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "coupon_policy_id")
-    private CouponPolicy couponPolicy; // 쿠폰정책 ID
+    private CouponPolicy couponPolicy; // 쿠폰정책 (외래키)
 
-    @Column(name = "ct_target_id")
-     private Long targetId; // 적용범위대상 ID
+    @Column(name = "ct_target_id", unique = true)
+    private Long targetId; // 쿠폰대상 -> 다른 테이블의 엔티티의 식별키 참조
 
-    public CouponTarget(Long targetId) {
+    public CouponTarget(CouponPolicy couponPolicy, Long targetId) {
+        this.couponPolicy = couponPolicy;
         this.targetId = targetId;
     }
 }

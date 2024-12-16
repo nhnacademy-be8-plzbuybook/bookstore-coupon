@@ -16,15 +16,15 @@ public class CouponPolicyService {
     private final CouponPolicyRepository couponPolicyRepository;
     private final CouponTargetRepository couponTargetRepository;
 
-    public long createCouponPolicy(CouponPolicySaveRequestDto saveRequest) {
-        CouponPolicy couponPolicy = couponPolicyRepository.save(saveRequest.toEntity());
-        List<Long> targetIdList = saveRequest.targetIdList();
-
-        for (Long targetId: targetIdList) {
-            CouponTarget couponTarget = new CouponTarget(targetId);
-            couponTarget.setCouponPolicy(couponPolicy);
-            couponTargetRepository.save(couponTarget);
-        }
+//    public long createCouponPolicy(CouponPolicySaveRequestDto saveRequest) {
+//        CouponPolicy couponPolicy = couponPolicyRepository.save(saveRequest.toEntity());
+//        List<Long> targetIdList = saveRequest.targetIdList();
+//
+//        for (Long targetId: targetIdList) {
+//            CouponTarget couponTarget = new CouponTarget(targetId);
+//            couponTarget.setCouponPolicy(couponPolicy);
+//            couponTargetRepository.save(couponTarget);
+//        }
 
 //        JPA에서는 연관 관계의 주인만이 데이터베이스에 변경 사항을 반영합니다.
 //        for (Long targetId: targetIdList) {
@@ -32,6 +32,6 @@ public class CouponPolicyService {
 //            couponPolicy.addCouponTarget(couponTarget);
 //        }
 
-        return couponPolicy.getId();
-    }
+//        return couponPolicy.getId();
+//    }
 }
