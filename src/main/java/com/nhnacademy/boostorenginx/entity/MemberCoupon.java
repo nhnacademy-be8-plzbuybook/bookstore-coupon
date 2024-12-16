@@ -1,7 +1,5 @@
 package com.nhnacademy.boostorenginx.entity;
 
-import com.nhnacademy.boostorenginx.enums.Status;
-import com.nhnacademy.boostorenginx.error.NotFoundMemberCouponException;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -23,5 +21,4 @@ public class MemberCoupon {
         this.mcMemberId = mcMemberId;
         this.coupon = coupon;
     }
-
 }
