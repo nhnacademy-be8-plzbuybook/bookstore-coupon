@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface CouponPolicyRepository extends JpaRepository<CouponPolicy, Long> {
-    List<CouponPolicy> findByCouponActiveTrue (boolean couponActive); // 활성화된 쿠폰 정책 조회
+    List<CouponPolicy> findByCouponActive(boolean couponActive);
 
     Optional<CouponPolicy> findByName(String name); // 쿠폰정책 이름으로 조회
 
