@@ -10,8 +10,6 @@ import java.util.List;
 import java.util.Optional;
 
 public interface CouponTargetRepository extends JpaRepository<CouponTarget, Long> {
-    List<CouponTarget> findByCouponPolicy(CouponPolicy couponPolicy); // 쿠폰정책으로 쿠폰대상들 조회
-
     List<CouponTarget> findByCouponPolicy_Id(Long couponPolicyId); // 쿠폰정책 ID 로 쿠폰대상들 조회
 
     Optional<CouponTarget> findByTargetId(Long targetId); // 쿠폰대상 ID 로 쿠폰대상 객체 조회
