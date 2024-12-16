@@ -2,7 +2,6 @@ package com.nhnacademy.boostorenginx.entity;
 
 import com.nhnacademy.boostorenginx.enums.Status;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
