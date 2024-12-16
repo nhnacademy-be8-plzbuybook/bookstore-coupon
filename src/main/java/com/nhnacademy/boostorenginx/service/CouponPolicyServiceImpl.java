@@ -3,6 +3,7 @@ package com.nhnacademy.boostorenginx.service;
 import com.nhnacademy.boostorenginx.dto.CouponPolicySaveRequestDto;
 import com.nhnacademy.boostorenginx.entity.CouponPolicy;
 import com.nhnacademy.boostorenginx.entity.CouponTarget;
+import com.nhnacademy.boostorenginx.error.NotFoundCouponPolicyException;
 import com.nhnacademy.boostorenginx.repository.CouponPolicyRepository;
 import com.nhnacademy.boostorenginx.repository.CouponTargetRepository;
 import lombok.RequiredArgsConstructor;
@@ -28,5 +29,12 @@ public class CouponPolicyServiceImpl implements CouponPolicyService {
             couponTargetRepository.saveAll(targetList);
         }
         return couponPolicy.getId();
+    }
+
+    @Override
+    public CouponPolicy findByName(String name) {
+        return couponPolicyRepository.findByName(name).orElseThrow(
+                () -> new NotFoundCouponPolicyException("not found couponPolicy: "+name)
+        );
     }
 }
