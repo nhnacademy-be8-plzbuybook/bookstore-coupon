@@ -20,8 +20,8 @@ import java.util.List;
 @RequiredArgsConstructor
 @Service
 public class CouponServiceImpl implements CouponService {
-    private CouponRepository couponRepository;
-    private CouponHistoryRepository couponHistoryRepository;
+    private final CouponRepository couponRepository;
+    private final CouponHistoryRepository couponHistoryRepository;
 
     @Override
     public Coupon getCouponByCode(String code) {
