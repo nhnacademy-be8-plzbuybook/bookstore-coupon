@@ -1,7 +1,6 @@
 package com.nhnacademy.boostorenginx.config;
 
 
-import com.nhnacademy.boostorenginx.entity.CouponHistory;
 import com.nhnacademy.boostorenginx.error.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
