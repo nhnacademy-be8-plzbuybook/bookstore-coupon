@@ -9,6 +9,7 @@ import jakarta.validation.constraints.NotNull;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 // Dto -> 외부처리객체 -> 비즈니스 로직에 전달하기 전에 유효성점검함
 public record CouponPolicySaveRequestDto(

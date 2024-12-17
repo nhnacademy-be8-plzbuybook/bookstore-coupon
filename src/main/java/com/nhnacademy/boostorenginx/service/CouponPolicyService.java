@@ -6,7 +6,9 @@ import com.nhnacademy.boostorenginx.entity.CouponPolicy;
 import java.util.List;
 
 public interface CouponPolicyService {
-    Long createCouponPolicy(CouponPolicySaveRequestDto requestDto, List<Long> targetIdList);
+    Long createCouponPolicy(CouponPolicySaveRequestDto requestDto);
+
+    void addCouponTargetList(Long couponPolicyId, List<Long> targetIdList);
 
     CouponPolicy findByName(String name);
 }
