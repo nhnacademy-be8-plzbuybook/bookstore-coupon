@@ -1,6 +1,6 @@
 package com.nhnacademy.boostorenginx.dto;
 
-public class BirthdayCouponRequestDto {
+public class BookCouponRequestDto {
     private Long policyId;
-    private Long memberId;
+    private Long bookId;
 }
