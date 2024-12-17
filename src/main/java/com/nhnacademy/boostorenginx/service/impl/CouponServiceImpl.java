@@ -25,9 +25,6 @@ public class CouponServiceImpl implements CouponService {
 
     @Override
     public Coupon getCouponByCode(String code) {
-        if (code == null) {
-            throw new IllegalArgumentException("입력받은 code 가 null 입니다");
-        }
         return couponRepository.findByCode(code).orElseThrow(() -> new NotFoundCouponException("코드에 해당하는 쿠폰을 찾을 수 없습니다: " + code));
     }
 
