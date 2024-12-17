@@ -1,18 +1,14 @@
 package com.nhnacademy.boostorenginx.dto;
 
-import com.nhnacademy.boostorenginx.enums.Status;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
 
-@RequiredArgsConstructor
-@NoArgsConstructor
+
 @Getter
 @Setter
-public class CouponRegisterDto {
+public class CouponCreateDto {
     private Long couponPolicyId; // 쿠폰정책 ID
     private LocalDateTime expiredAt; // 만료기간
 }

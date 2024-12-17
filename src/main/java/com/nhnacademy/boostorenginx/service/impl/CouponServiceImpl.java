@@ -1,6 +1,6 @@
 package com.nhnacademy.boostorenginx.service.impl;
 
-import com.nhnacademy.boostorenginx.dto.CouponRegisterDto;
+import com.nhnacademy.boostorenginx.dto.CouponCreateDto;
 import com.nhnacademy.boostorenginx.entity.Coupon;
 import com.nhnacademy.boostorenginx.entity.CouponHistory;
 import com.nhnacademy.boostorenginx.entity.CouponPolicy;
@@ -27,7 +27,7 @@ public class CouponServiceImpl implements CouponService {
     private final CouponHistoryRepository couponHistoryRepository;
 
     @Override
-    public Long registerCoupon(CouponRegisterDto dto) {
+    public Long registerCoupon(CouponCreateDto dto) {
         CouponPolicy couponPolicy = couponPolicyService.findById(dto.getCouponPolicyId());
         Coupon coupon = new Coupon(
                 Status.UNUSED, // 쿠폰 발급할때 상태는 무조건 UNUSED

@@ -1,6 +1,6 @@
 package com.nhnacademy.boostorenginx.service;
 
-import com.nhnacademy.boostorenginx.dto.CouponRegisterDto;
+import com.nhnacademy.boostorenginx.dto.CouponCreateDto;
 import com.nhnacademy.boostorenginx.entity.Coupon;
 import com.nhnacademy.boostorenginx.entity.CouponPolicy;
 import com.nhnacademy.boostorenginx.enums.Status;
@@ -12,7 +12,7 @@ import java.util.List;
 
 // 생일쿠폰, 회원가입 쿠폰 등은 별개의 서비스로 제작
 public interface CouponService {
-    Long registerCoupon(CouponRegisterDto dto); // 쿠폰 등록
+    Long registerCoupon(CouponCreateDto dto); // 쿠폰 등록
 
     Coupon getCouponByCode(String code); // 쿠폰 코드로 조회
 

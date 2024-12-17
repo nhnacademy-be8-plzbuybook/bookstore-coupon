@@ -39,5 +39,4 @@ public class CouponHistory {
         this.changeDate = changeDate;
         this.reason = reason;
     }
-
 }
