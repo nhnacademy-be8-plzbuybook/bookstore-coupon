@@ -4,6 +4,7 @@ import com.nhnacademy.boostorenginx.enums.Status;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -23,6 +24,7 @@ public class Coupon {
     @Column(unique = true, nullable = false)
     private String code;
 
+    @Setter
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Status status;
@@ -48,7 +50,7 @@ public class Coupon {
         this.couponPolicy = couponPolicy;
     }
 
-    // 쿠폰에서 CouponHistory 객체 생성 -> coupon 생성자를 바로 넘길 수 있음 -> 불변객체 유지 가능
+
     public void addHistory(Status status, LocalDateTime changeDate, String reason) {
         CouponHistory history = CouponHistory.builder()
                 .coupon(this)
