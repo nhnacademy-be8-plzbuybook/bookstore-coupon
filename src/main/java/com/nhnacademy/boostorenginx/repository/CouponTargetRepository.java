@@ -10,9 +10,9 @@ import java.util.List;
 import java.util.Optional;
 
 public interface CouponTargetRepository extends JpaRepository<CouponTarget, Long> {
-    List<CouponTarget> findByCouponPolicy_Id(Long couponPolicyId); // 쿠폰정책 ID 로 쿠폰대상들 조회
+    Optional<CouponTarget> findByTargetId(Long targetId); // 쿠폰대상 조회
 
-    Optional<CouponTarget> findByTargetId(Long targetId); // 쿠폰대상 ID 로 쿠폰대상 객체 조회
+    List<CouponTarget> findByCouponPolicy_Id(Long couponPolicyId); // 특정 쿠폰정책에 속하는 쿠폰대상 조회
 
-    Page<CouponTarget> findByCouponPolicy(CouponPolicy couponPolicy, Pageable pageable); // 쿠폰대상 페이지블
+    Page<CouponTarget> findByCouponPolicy(CouponPolicy couponPolicy, Pageable pageable); // 페이징 처리된 특정 쿠폰 정책 대상 조회
 }

@@ -24,7 +24,8 @@ public class CouponTarget {
     private Long targetId; // 쿠폰대상 -> 다른 테이블의 엔티티의 식별키 참조
 
     @Builder
-    public CouponTarget(Long targetId) {
+    public CouponTarget(CouponPolicy couponPolicy, Long targetId) {
+        this.couponPolicy = couponPolicy;
         this.targetId = targetId;
     }
 }
