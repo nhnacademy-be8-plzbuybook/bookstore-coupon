@@ -1,5 +1,6 @@
 package com.nhnacademy.boostorenginx.service.impl;
 
+import com.nhnacademy.boostorenginx.dto.CouponRegisterDto;
 import com.nhnacademy.boostorenginx.entity.Coupon;
 import com.nhnacademy.boostorenginx.entity.CouponHistory;
 import com.nhnacademy.boostorenginx.entity.CouponPolicy;
@@ -8,6 +9,7 @@ import com.nhnacademy.boostorenginx.error.NotFoundCouponException;
 import com.nhnacademy.boostorenginx.error.NotFoundCouponPolicyException;
 import com.nhnacademy.boostorenginx.repository.CouponHistoryRepository;
 import com.nhnacademy.boostorenginx.repository.CouponRepository;
+import com.nhnacademy.boostorenginx.service.CouponPolicyService;
 import com.nhnacademy.boostorenginx.service.CouponService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -21,7 +23,20 @@ import java.util.List;
 @Service
 public class CouponServiceImpl implements CouponService {
     private final CouponRepository couponRepository;
+    private final CouponPolicyService couponPolicyService;
     private final CouponHistoryRepository couponHistoryRepository;
+
+    @Override
+    public Long registerCoupon(CouponRegisterDto dto) {
+        CouponPolicy couponPolicy = couponPolicyService.findById(dto.getCouponPolicyId());
+        Coupon coupon = new Coupon(
+                Status.UNUSED, // 쿠폰 발급할때 상태는 무조건 UNUSED
+                LocalDateTime.now(), // 발급시간는 서버시간기준
+                dto.getExpiredAt(), // 만료시간은 요청 기준
+                couponPolicy
+        );
+        return couponRepository.save(coupon).getId();
+    }
 
     @Override
     public Coupon getCouponByCode(String code) {

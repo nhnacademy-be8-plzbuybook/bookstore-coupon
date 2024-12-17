@@ -11,4 +11,6 @@ public interface CouponPolicyService {
     void addCouponTargetList(Long couponPolicyId, List<Long> targetIdList);
 
     CouponPolicy findByName(String name);
+
+    CouponPolicy findById(Long couponPolicyId);
 }

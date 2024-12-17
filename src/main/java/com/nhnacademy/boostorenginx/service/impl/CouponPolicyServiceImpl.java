@@ -3,6 +3,7 @@ package com.nhnacademy.boostorenginx.service.impl;
 import com.nhnacademy.boostorenginx.dto.CouponPolicySaveRequestDto;
 import com.nhnacademy.boostorenginx.entity.CouponPolicy;
 import com.nhnacademy.boostorenginx.entity.CouponTarget;
+import com.nhnacademy.boostorenginx.error.NotFoundCouponException;
 import com.nhnacademy.boostorenginx.error.NotFoundCouponPolicyException;
 import com.nhnacademy.boostorenginx.repository.CouponPolicyRepository;
 import com.nhnacademy.boostorenginx.repository.CouponTargetRepository;
@@ -19,7 +20,6 @@ public class CouponPolicyServiceImpl implements CouponPolicyService {
     private final CouponTargetRepository couponTargetRepository;
 
 
-    // 쿠폰정책 생성
     @Override
     public Long createCouponPolicy(CouponPolicySaveRequestDto requestDto) {
         if (requestDto == null) {
@@ -45,11 +45,16 @@ public class CouponPolicyServiceImpl implements CouponPolicyService {
         }
     }
 
-    // 이름으로 쿠폰정책 찾기
     @Override
     public CouponPolicy findByName(String name) {
         return couponPolicyRepository.findByName(name).orElseThrow(
                 () -> new NotFoundCouponPolicyException("해당 이름의 쿠폰정책을 찾을 수 없습니다: " + name)
         );
+    }
+
+    @Override
+    public CouponPolicy findById(Long couponPolicyId) {
+        return couponPolicyRepository.findById(couponPolicyId).orElseThrow(
+                () -> new NotFoundCouponPolicyException("잘못된 쿠폰정책 ID: " + couponPolicyId));
     }
 }

@@ -36,13 +36,16 @@ class CouponServiceTest {
     @Mock
     private CouponHistoryRepository couponHistoryRepository;
 
+    @Mock
+    private CouponPolicyService couponPolicyService;
+
     private CouponService couponService;
     private Coupon mockCoupon;
     private CouponPolicy mockCouponPolicy;
 
     @BeforeEach
     void setUp() {
-        couponService = new CouponServiceImpl(couponRepository, couponHistoryRepository);
+        couponService = new CouponServiceImpl(couponRepository, couponPolicyService, couponHistoryRepository);
 
         mockCouponPolicy = CouponPolicy.builder().name("test").build();
 
