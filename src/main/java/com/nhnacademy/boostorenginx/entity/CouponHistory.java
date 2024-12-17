@@ -13,14 +13,13 @@ import java.time.LocalDateTime;
 @Entity
 public class CouponHistory {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "coupon_history_id")
-    private Long id;
+    @EmbeddedId
+    private CouponHistoryPrimaryKey id; // 복합키
 
+    @MapsId("couponId")
     @ManyToOne
     @JoinColumn(name = "coupon_id", nullable = false)
-    private Coupon coupon; // 식별관계 - 부모테이블(coupon)의 PK를 가져옴
+    private Coupon coupon;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -33,7 +32,8 @@ public class CouponHistory {
     private String reason;
 
     @Builder
-    public CouponHistory(Coupon coupon, Status status, LocalDateTime changeDate, String reason) {
+    public CouponHistory(Coupon coupon, Long historyId, Status status, LocalDateTime changeDate, String reason) {
+        this.id = new CouponHistoryPrimaryKey(coupon.getId(), historyId);
         this.coupon = coupon;
         this.status = status;
         this.changeDate = changeDate;

@@ -3,6 +3,7 @@ package com.nhnacademy.boostorenginx.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
 @NoArgsConstructor
@@ -10,11 +11,15 @@ import lombok.NoArgsConstructor;
 public class MemberCoupon {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long memberCouponId; // 회원 쿠폰 ID -> auto_increment
-    private Long mcMemberId; // 회원 ID -> MSA 구조 에서 다른 DB(회원) 의 식별키를 외래키로 받아야함
+    @Column(name = "member_coupon_id")
+    private Long memberCouponId; // 회원쿠폰 ID
+
+    @Setter
+    @Column(name = "mc_member_id", nullable = false)
+    private Long mcMemberId; // 회원 ID
 
     @OneToOne
-    @JoinColumn(name = "coupon_id")
+    @JoinColumn(name = "coupon_id", nullable = false)
     private Coupon coupon; // 쿠폰 (외래키)
 
     public MemberCoupon(Long mcMemberId, Coupon coupon) {

@@ -19,28 +19,31 @@ public class Coupon {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "coupon_id")
-    private Long id;
+    private Long id; // 쿠폰 ID
 
     @Column(unique = true, nullable = false)
-    private String code;
+    private String code; // 쿠폰코드
 
     @Setter
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private Status status;
+    private Status status; // 쿠폰상태
 
     @Column(nullable = false)
-    private LocalDateTime issuedAt;
+    private LocalDateTime issuedAt; // 쿠폰발급일자
 
     @Column(nullable = false)
-    private LocalDateTime expiredAt;
+    private LocalDateTime expiredAt; // 쿠폰만료일자
 
     @ManyToOne
     @JoinColumn(name = "coupon_policy_id", nullable = false)
-    private CouponPolicy couponPolicy;
+    private CouponPolicy couponPolicy; // 쿠폰정책(N:1)
 
     @OneToMany(mappedBy = "coupon")
-    private List<CouponHistory> couponHistoryList = new ArrayList<>();
+    private List<CouponHistory> couponHistoryList = new ArrayList<>(); // 쿠폰변경이력(1:N, 복합키)
+
+    @OneToOne(mappedBy = "coupon")
+    private MemberCoupon memberCoupon; // 쿠폰정책(1:1)
 
     public Coupon(Status status, LocalDateTime issuedAt, LocalDateTime expiredAt, CouponPolicy couponPolicy) {
         this.code = UUID.randomUUID().toString();
@@ -50,16 +53,18 @@ public class Coupon {
         this.couponPolicy = couponPolicy;
     }
 
-
+    // 쿠폰상태(status) 가 변경될때마다 호출
     public void addHistory(Status status, LocalDateTime changeDate, String reason) {
+        Long nextHistoryId = couponHistoryList.size() + 1L; // 다음 historyId 계산
         CouponHistory history = CouponHistory.builder()
                 .coupon(this)
+                .historyId(nextHistoryId)
                 .status(status)
                 .changeDate(changeDate)
                 .reason(reason)
                 .build();
 
-        couponHistoryList.add(history); // 양방향관계이므로 coupon 에서 couponHistory 를 저장함
+        couponHistoryList.add(history);
     }
 
 }
