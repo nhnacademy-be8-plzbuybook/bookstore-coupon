@@ -13,30 +13,30 @@ import java.time.LocalDateTime;
 @Entity
 public class CouponHistory {
 
-    @EmbeddedId
-    private CouponHistoryPrimaryKey id; // 복합키
-
-    @MapsId("couponId")
-    @ManyToOne
-    @JoinColumn(name = "coupon_id", nullable = false)
-    private Coupon coupon;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "coupon_history_id")
+    private Long id; // 쿠폰변경이력 ID
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private Status status;
+    private Status status; // 쿠폰상태
 
     @Column(nullable = false)
-    private LocalDateTime changeDate;
+    private LocalDateTime changeDate; // 변경일자
 
     @Column(nullable = false)
-    private String reason;
+    private String reason; // 변경사유
+
+    @ManyToOne
+    @JoinColumn(name = "coupon_id", nullable = false)
+    private Coupon coupon; // 외래키
 
     @Builder
-    public CouponHistory(Coupon coupon, Long historyId, Status status, LocalDateTime changeDate, String reason) {
-        this.id = new CouponHistoryPrimaryKey(coupon.getId(), historyId);
-        this.coupon = coupon;
+    public CouponHistory(Status status, LocalDateTime changeDate, String reason, Coupon coupon) {
         this.status = status;
         this.changeDate = changeDate;
         this.reason = reason;
+        this.coupon = coupon;
     }
 }

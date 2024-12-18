@@ -3,66 +3,150 @@ package com.nhnacademy.boostorenginx.repository;
 
 import com.nhnacademy.boostorenginx.entity.Coupon;
 import com.nhnacademy.boostorenginx.entity.CouponHistory;
+import com.nhnacademy.boostorenginx.entity.CouponPolicy;
+import com.nhnacademy.boostorenginx.enums.SaleType;
 import com.nhnacademy.boostorenginx.enums.Status;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.TypedQuery;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@SpringBootTest
+
+@DataJpaTest
 class CouponHistoryRepositoryTest {
 
-    @Mock
-    CouponHistoryRepository couponHistoryRepository;
+    @PersistenceContext
+    private EntityManager entityManager;
 
     private Coupon coupon;
-    private CouponHistory couponHistory1;
-    private CouponHistory couponHistory2;
+    private CouponPolicy policy;
+    private CouponHistory history1;
+    private CouponHistory history2;
 
     @BeforeEach
     void setUp() {
+        LocalDateTime now = LocalDateTime.now();
+
+        policy = CouponPolicy.builder()
+                .name("test")
+                .saleType(SaleType.RATIO)
+                .minimumAmount(new BigDecimal("1000"))
+                .discountLimit(new BigDecimal("10000"))
+                .discountRatio(10)
+                .isStackable(true)
+                .couponScope("ALL")
+                .startDate(now.minusDays(1))
+                .endDate(now.plusDays(10))
+                .couponActive(true)
+                .build();
+        entityManager.persist(policy);
+
         coupon = new Coupon(
                 Status.UNUSED,
-                LocalDateTime.now().minusDays(5),
-                LocalDateTime.now().plusDays(5),
-                null
+                now.minusDays(5),
+                now.plusDays(5),
+                policy
         );
+        entityManager.persist(coupon);
 
-        couponHistory1 = CouponHistory.builder()
-                .coupon(coupon)
+        history1 = CouponHistory.builder()
                 .status(Status.USED)
-                .changeDate(LocalDateTime.now().minusDays(1))
+                .changeDate(now.minusDays(1))
                 .reason("CANCEL")
-                .build();
-
-        couponHistory2 = CouponHistory.builder()
                 .coupon(coupon)
-                .status(Status.EXPIRED)
-                .changeDate(LocalDateTime.now().minusDays(3))
-                .reason("EXPIRED")
                 .build();
+
+        history2 = CouponHistory.builder()
+                .status(Status.EXPIRED)
+                .changeDate(now.minusDays(3))
+                .reason("EXPIRED")
+                .coupon(coupon)
+                .build();
+        entityManager.persist(history1);
+        entityManager.persist(history2);
+        entityManager.flush();
     }
 
+    @DisplayName("쿠폰으로 쿠폰변경이력 리스트 조회")
     @Test
-    void findByCouponTest() {
-        when(couponHistoryRepository.findByCoupon(coupon)).thenReturn(Arrays.asList(couponHistory1, couponHistory2));
-        List<CouponHistory> result = couponHistoryRepository.findByCoupon(coupon);
-        assertThat(result).hasSize(2);
-        assertThat(result).extracting("status").containsExactlyInAnyOrder(Status.USED, Status.EXPIRED);
+    void findByCoupon() {
+        String jpql = "SELECT c FROM CouponHistory c WHERE c.coupon = :coupon";
+
+        TypedQuery<CouponHistory> query = entityManager.createQuery(jpql, CouponHistory.class);
+        query.setParameter("coupon", coupon);
+        List<CouponHistory> results = query.getResultList();
+
+        System.out.println("CouponHistory: ");
+
+        results.forEach(history -> System.out.println(
+                String.format("Id: %d, Status: %s, ChangeDate: %s, Reason: %s",
+                        history.getId(),
+                        history.getStatus(),
+                        history.getChangeDate(),
+                        history.getReason())
+        ));
+
+        assertEquals(2, results.size());
+        assertEquals(1L, results.get(0).getId());
+        assertEquals(2L, results.get(1).getId());
     }
 
+    @DisplayName("쿠폰 ID 로 쿠폰변경이력 리스트 조회")
     @Test
-    void findByCoupon_idTest() {
-        when(couponHistoryRepository.findByCoupon_id(coupon.getId())).thenReturn(Arrays.asList(couponHistory1, couponHistory2));
-        List<CouponHistory> result = couponHistoryRepository.findByCoupon_id(coupon.getId());
-        assertThat(result).hasSize(2);
-        assertThat(result).extracting("status").containsExactlyInAnyOrder(Status.USED, Status.EXPIRED);
+    void findByCoupon_id() {
+        String jpql = "SELECT c FROM CouponHistory c WHERE c.coupon.id = :id";
+
+        TypedQuery<CouponHistory> query = entityManager.createQuery(jpql, CouponHistory.class);
+        query.setParameter("id", coupon.getId());
+        List<CouponHistory> results = query.getResultList();
+
+        System.out.println("CouponHistory: ");
+
+        results.forEach(history -> System.out.println(
+                String.format("Id: %d, Status: %s, ChangeDate: %s, Reason: %s",
+                        history.getId(),
+                        history.getStatus(),
+                        history.getChangeDate(),
+                        history.getReason())
+        ));
+
+        assertEquals(2, results.size());
+        assertEquals(1L, results.get(0).getId());
+        assertEquals(2L, results.get(1).getId());
+    }
+
+    @DisplayName("")
+    @Test
+    void findByCouponAndStatus() {
+        String jpql = "SELECT c FROM CouponHistory c WHERE c.coupon = :coupon AND c.status = :status";
+
+        TypedQuery<CouponHistory> query = entityManager.createQuery(jpql, CouponHistory.class);
+        query.setParameter("coupon", coupon);
+        query.setParameter("status", Status.USED);
+
+        List<CouponHistory> results = query.getResultList();
+
+        System.out.println("CouponHistory: ");
+
+        results.forEach(history -> System.out.println(
+                String.format("Id: %d, Status: %s, ChangeDate: %s, Reason: %s",
+                        history.getId(),
+                        history.getStatus(),
+                        history.getChangeDate(),
+                        history.getReason())
+        ));
+
+        assertEquals(1, results.size());
+        assertEquals(1L, results.get(0).getId());
     }
 }
