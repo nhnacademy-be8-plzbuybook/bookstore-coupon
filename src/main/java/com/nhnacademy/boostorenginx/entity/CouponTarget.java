@@ -16,7 +16,7 @@ public class CouponTarget {
     private Long id; // 쿠폰대상 ID
 
     @Setter
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "coupon_policy_id", nullable = false)
     private CouponPolicy couponPolicy; // 쿠폰정책 (외래키)
 
