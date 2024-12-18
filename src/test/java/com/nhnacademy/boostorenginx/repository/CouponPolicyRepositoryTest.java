@@ -2,94 +2,143 @@ package com.nhnacademy.boostorenginx.repository;
 
 import com.nhnacademy.boostorenginx.entity.CouponPolicy;
 import com.nhnacademy.boostorenginx.enums.SaleType;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.TypedQuery;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@SpringBootTest
+@DataJpaTest
 class CouponPolicyRepositoryTest {
 
-    @Mock
-    CouponPolicyRepository couponPolicyRepository;
+    @PersistenceContext
+    private EntityManager entityManager;
 
     private CouponPolicy policy1;
     private CouponPolicy policy2;
+    private CouponPolicy policy3;
 
     @BeforeEach
     void setUp() {
+        LocalDateTime now = LocalDateTime.now();
+
         policy1 = CouponPolicy.builder()
-                .name("Policy1")
-                .saleType(SaleType.AMOUNT)
+                .name("test1")
+                .saleType(SaleType.RATIO)
                 .minimumAmount(new BigDecimal("1000"))
-                .discountLimit(new BigDecimal("5000"))
-                .discountRatio(0)
+                .discountLimit(new BigDecimal("10000"))
+                .discountRatio(10)
                 .isStackable(true)
-                .couponScope("book")
-                .startDate(LocalDateTime.now().minusDays(1))
-                .endDate(LocalDateTime.now().plusDays(1))
+                .couponScope("ALL")
+                .startDate(now.minusDays(1))
+                .endDate(now.plusDays(10))
                 .couponActive(true)
                 .build();
 
         policy2 = CouponPolicy.builder()
-                .name("Policy2")
-                .saleType(SaleType.RATIO)
-                .minimumAmount(new BigDecimal("2000"))
-                .discountLimit(new BigDecimal("7000"))
+                .name("test2")
+                .saleType(SaleType.AMOUNT)
+                .minimumAmount(new BigDecimal("1000"))
+                .discountLimit(new BigDecimal("20000"))
                 .discountRatio(0)
                 .isStackable(false)
-                .couponScope("category")
-                .startDate(LocalDateTime.now().minusDays(2))
-                .endDate(LocalDateTime.now().plusDays(5))
+                .couponScope("CATEGORY")
+                .startDate(now.minusDays(2))
+                .endDate(now.plusDays(3))
                 .couponActive(true)
                 .build();
+
+        policy3 = CouponPolicy.builder()
+                .name("test3")
+                .saleType(SaleType.AMOUNT)
+                .minimumAmount(new BigDecimal("1000"))
+                .discountLimit(new BigDecimal("20000"))
+                .discountRatio(0)
+                .isStackable(false)
+                .couponScope("CATEGORY")
+                .startDate(now.minusDays(2))
+                .endDate(now.plusDays(3))
+                .couponActive(false)
+                .build();
+
+        entityManager.persist(policy1);
+        entityManager.persist(policy2);
+        entityManager.persist(policy3);
+        entityManager.flush();
     }
 
+    @DisplayName("CouponActive 가 true 인 쿠폰정책 조회")
     @Test
-    void findByCouponActiveTest() {
-        when(couponPolicyRepository.findByCouponActive(true)).thenReturn(Arrays.asList(policy1, policy2));
-        List<CouponPolicy> activePolicies = couponPolicyRepository.findByCouponActive(true);
-        assertThat(activePolicies).hasSize(2);
-        assertThat(activePolicies).extracting("name").containsExactly("Policy1", "Policy2");
+    void findByCouponActive() {
+        String jpql = "SELECT c FROM CouponPolicy c WHERE c.couponActive = :active";
+
+        TypedQuery<CouponPolicy> query = entityManager.createQuery(jpql, CouponPolicy.class);
+        query.setParameter("active", true);
+        List<CouponPolicy> results = query.getResultList();
+
+        System.out.println("(couponActive = true)인 CouponPolicy: ");
+
+        results.forEach(couponPolicy -> System.out.println(
+                String.format("Name: %s, SaleType: %s",
+                        couponPolicy.getName(),
+                        couponPolicy.getSaleType())
+        ));
+
+        assertEquals(2, results.size());
+        assertEquals("test1", results.get(0).getName());
+        assertEquals("test2", results.get(1).getName());
     }
 
+    @DisplayName("name 에 해당되는 쿠폰정책 조회")
     @Test
-    void findByNameTest() {
-        when(couponPolicyRepository.findByName("Policy1")).thenReturn(Optional.of(policy1));
-        Optional<CouponPolicy> policy = couponPolicyRepository.findByName("Policy1");
-        assertThat(policy).isPresent();
-        assertThat(policy.get().getName()).isEqualTo("Policy1");
+    void findByName() {
+        String jpql = "SELECT c FROM CouponPolicy c WHERE c.name = :name";
+        TypedQuery<CouponPolicy> query = entityManager.createQuery(jpql, CouponPolicy.class);
+        query.setParameter("name", "test1");
+
+        CouponPolicy result = query.getSingleResult();
+        System.out.printf("Name: %s %n", result.getName());
+
+        assertEquals("test1", result.getName());
     }
 
+    @DisplayName("쿠폰정책을 페이지블을 적용하여 조회")
     @Test
-    void findByMinimumAmountLessThanEqualTest() {
-        when(couponPolicyRepository.findByMinimumAmountLessThanEqual(new BigDecimal("1000"))).thenReturn(Collections.singletonList(policy1));
-        List<CouponPolicy> policyList = couponPolicyRepository.findByMinimumAmountLessThanEqual(new BigDecimal("1000"));
-        assertThat(policyList).hasSize(1);
-        assertThat(policyList).extracting("name").containsExactly("Policy1");
-    }
+    void findAllBy() {
+        String jpql = "SELECT c FROM CouponPolicy c";
+        TypedQuery<CouponPolicy> query = entityManager.createQuery(jpql, CouponPolicy.class);
 
-    @Test
-    void findAllByTest() {
-        Pageable pageable = PageRequest.of(0, 2);
-        Page<CouponPolicy> mockPage = new PageImpl<>(Arrays.asList(policy1, policy2), pageable, 2);
-        when(couponPolicyRepository.findAllBy(pageable)).thenReturn(mockPage);
-        Page<CouponPolicy> page = couponPolicyRepository.findAllBy(pageable);
-        assertThat(page.getContent()).hasSize(2);
-        assertThat(page.getContent()).extracting("name").containsExactly("Policy1","Policy2");
+        int page = 0;
+        int size = 2;
+        query.setFirstResult(page * size);
+        query.setMaxResults(size);
+
+        List<CouponPolicy> results = query.getResultList();
+        results.forEach(couponPolicy -> System.out.printf(
+                "ID: %d, Name: %s, SaleType: %s, MinimumAmount: %s, DiscountLimit: %s, DiscountRatio: %d, IsStackable: %b, Scope: %s, StartDate: %s, EndDate: %s, Active: %b%n",
+                couponPolicy.getId(),
+                couponPolicy.getName(),
+                couponPolicy.getSaleType(),
+                couponPolicy.getMinimumAmount(),
+                couponPolicy.getDiscountLimit(),
+                couponPolicy.getDiscountRatio(),
+                couponPolicy.isStackable(),
+                couponPolicy.getCouponScope(),
+                couponPolicy.getStartDate(),
+                couponPolicy.getEndDate(),
+                couponPolicy.isCouponActive()
+        ));
+
+        assertEquals(2, results.size());
+        assertEquals("test1", results.get(0).getName());
+        assertEquals("test2", results.get(1).getName());
     }
 }
