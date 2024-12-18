@@ -103,6 +103,13 @@
             <artifactId>spring-cloud-starter-openfeign</artifactId>
             <version>4.2.0</version>
         </dependency>
+
+        <!-- P6Spy -->
+        <dependency>
+            <groupId>p6spy</groupId>
+            <artifactId>p6spy</artifactId>
+            <version>3.9.1</version>
+        </dependency>
     </dependencies>
 
     <dependencyManagement>
