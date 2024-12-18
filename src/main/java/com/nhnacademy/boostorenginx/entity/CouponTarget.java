@@ -20,6 +20,7 @@ public class CouponTarget {
     @JoinColumn(name = "coupon_policy_id", nullable = false)
     private CouponPolicy couponPolicy; // 쿠폰정책 (외래키)
 
+    @Setter
     @Column(name = "ct_target_id", nullable = false, unique = true)
     private Long targetId; // 쿠폰대상 -> 다른 테이블의 엔티티의 식별키 참조
 
