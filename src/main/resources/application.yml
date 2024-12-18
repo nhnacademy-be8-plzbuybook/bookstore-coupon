@@ -14,9 +14,12 @@ spring:
     password:  # 비밀번호를 빈 문자열로 두었음
 
   jpa:
-    hibernate:
-      ddl-auto: create #update  # 애플리케이션 실행 시 DB 스키마 자동 업데이트
-    show-sql: false #true  # 실행되는 SQL을 콘솔에 출력
+    show-sql: true # 실행되는 SQL 을 콘솔에 출력
+
+    properties:
+      hibernate:
+        format_sql: true
+#        ddl-auto: update # 애플리케이션 실행 시 DB 스키마 자동 업데이트
 
   h2:
     console:
@@ -26,6 +29,8 @@ spring:
 logging:
   level:
     root: DEBUG
+    org.hibernate.SQL: DEBUG         # SQL 쿼리를 출력
+    org.hibernate.type.descriptor.sql: TRACE # SQL 파라미터 바인딩도 확인
 
 
 eureka:
