@@ -143,5 +143,4 @@ public class CouponServiceImpl implements CouponService {
         couponHistoryRepository.save(history);
     }
 
-
 }

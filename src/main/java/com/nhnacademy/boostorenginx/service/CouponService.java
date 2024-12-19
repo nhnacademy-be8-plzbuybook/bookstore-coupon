@@ -20,8 +20,8 @@ public interface CouponService {
 
     Page<Coupon> getCouponsByStatus(CouponFindStatusRequestDto dto); // 상태별로 쿠폰 조회 페이징
 
-    void updateExpiredCoupon(CouponUpdateExpiredRequestDto dto);
+    void updateExpiredCoupon(CouponUpdateExpiredRequestDto dto); // 만료된 쿠폰 상태 업데이트
 
-    void useCoupon(CouponUseRequestDto dto);
+    void useCoupon(CouponUseRequestDto dto); // 쿠폰 사용시 상태 업데이트
 
 }
