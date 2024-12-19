@@ -1,6 +1,7 @@
 package com.nhnacademy.boostorenginx.service;
 
 import com.nhnacademy.boostorenginx.dto.coupon.*;
+import com.nhnacademy.boostorenginx.dto.membercoupon.MemberCouponUseRequestDto;
 import com.nhnacademy.boostorenginx.entity.Coupon;
 import org.springframework.data.domain.Page;
 
@@ -22,6 +23,6 @@ public interface CouponService {
 
     void updateExpiredCoupon(CouponUpdateExpiredRequestDto dto); // 만료된 쿠폰 상태 업데이트
 
-    void useCoupon(CouponUseRequestDto dto); // 쿠폰 사용시 상태 업데이트
+    void useCoupon(MemberCouponUseRequestDto dto); // 회원이 쿠폰을 사용할 경우 업데이트
 
 }

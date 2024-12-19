@@ -1,6 +1,7 @@
 package com.nhnacademy.boostorenginx.service.impl;
 
 import com.nhnacademy.boostorenginx.dto.coupon.*;
+import com.nhnacademy.boostorenginx.dto.membercoupon.MemberCouponUseRequestDto;
 import com.nhnacademy.boostorenginx.entity.Coupon;
 import com.nhnacademy.boostorenginx.entity.CouponHistory;
 import com.nhnacademy.boostorenginx.entity.CouponPolicy;
@@ -132,9 +133,9 @@ public class CouponServiceImpl implements CouponService {
     }
 
     @Override
-    public void useCoupon(CouponUseRequestDto requestDto) {
+    public void useCoupon(MemberCouponUseRequestDto requestDto) {
         Coupon coupon = couponRepository.findById(requestDto.couponId()).orElseThrow(() -> new NotFoundCouponException("해당 ID 의 쿠폰을 찾을 수 없습니다" + requestDto.couponId()));
-        LocalDateTime useTime = requestDto.useTime();
+        LocalDateTime useTime = LocalDateTime.now();
         if (!coupon.getStatus().equals(Status.UNUSED)) {
             throw new CouponException("현재 쿠폰 상태: " + coupon.getStatus());
         }
