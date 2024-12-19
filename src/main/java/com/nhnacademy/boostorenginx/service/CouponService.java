@@ -4,7 +4,6 @@ import com.nhnacademy.boostorenginx.dto.coupon.*;
 import com.nhnacademy.boostorenginx.entity.Coupon;
 import org.springframework.data.domain.Page;
 
-import java.time.LocalDateTime;
 import java.util.Optional;
 
 public interface CouponService {
@@ -23,7 +22,7 @@ public interface CouponService {
 
     void updateExpiredCoupon(CouponUpdateExpiredRequestDto dto);
 
-    void useCoupon(Long couponId);
+    void useCoupon(CouponUseRequestDto dto);
     // void updateExpiredCoupon -> 쿠폰기간확인 -> 현재 시간이 만료시간보다 같거나 적은경우 쿠폰상태를 EXPIRED 로 변경 -> couponHistory 객체 생성 메소드인 changeStatus(Status newStatus, LocalDateTime changeDate, String reason) 실행
     // void useCoupon -> 쿠폰을 사용할 경우 -> 쿠폰 상태를 USED 로 변경 -> couponHistory 객체 생성 메소드인 changeStatus(Status newStatus, LocalDateTime changeDate, String reason) 실행
 }
