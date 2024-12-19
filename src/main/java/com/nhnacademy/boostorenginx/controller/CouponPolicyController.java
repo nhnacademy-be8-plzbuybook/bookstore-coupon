@@ -1,7 +1,7 @@
 //package com.nhnacademy.boostorenginx.controller;
 //
-//import com.nhnacademy.boostorenginx.dto.CouponPolicySaveRequestDto;
-//import com.nhnacademy.boostorenginx.dto.CouponPolicySaveResponseDto;
+//import com.nhnacademy.boostorenginx.dto.couponpolicy.CouponPolicySaveRequestDto;
+//import com.nhnacademy.boostorenginx.dto.couponpolicy.CouponPolicySaveResponseDto;
 //import com.nhnacademy.boostorenginx.service.CouponPolicyService;
 //import lombok.RequiredArgsConstructor;
 //import org.springframework.http.HttpStatus;

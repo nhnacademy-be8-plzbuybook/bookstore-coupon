@@ -1,4 +1,4 @@
-package com.nhnacademy.boostorenginx.dto;
+package com.nhnacademy.boostorenginx.dto.couponpolicy;
 
 import com.nhnacademy.boostorenginx.enums.SaleType;
 

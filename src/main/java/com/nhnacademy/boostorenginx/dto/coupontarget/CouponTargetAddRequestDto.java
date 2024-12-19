@@ -1,4 +1,4 @@
-package com.nhnacademy.boostorenginx.dto;
+package com.nhnacademy.boostorenginx.dto.coupontarget;
 
 public record CouponTargetAddRequestDto(
         Long policyId,

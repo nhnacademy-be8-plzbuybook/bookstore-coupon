@@ -1,88 +1,143 @@
-//package com.nhnacademy.boostorenginx.service.impl;
-//
-//import com.nhnacademy.boostorenginx.dto.CouponCreateDto;
-//import com.nhnacademy.boostorenginx.entity.Coupon;
-//import com.nhnacademy.boostorenginx.entity.CouponHistory;
-//import com.nhnacademy.boostorenginx.entity.CouponPolicy;
-//import com.nhnacademy.boostorenginx.enums.Status;
-//import com.nhnacademy.boostorenginx.error.NotFoundCouponException;
-//import com.nhnacademy.boostorenginx.error.NotFoundCouponPolicyException;
-//import com.nhnacademy.boostorenginx.repository.CouponHistoryRepository;
-//import com.nhnacademy.boostorenginx.repository.CouponRepository;
-//import com.nhnacademy.boostorenginx.service.CouponPolicyService;
-//import com.nhnacademy.boostorenginx.service.CouponService;
-//import lombok.RequiredArgsConstructor;
-//import org.springframework.data.domain.Page;
-//import org.springframework.data.domain.Pageable;
-//import org.springframework.stereotype.Service;
-//
-//import java.time.LocalDateTime;
-//import java.util.List;
-//
-//@RequiredArgsConstructor
-//@Service
-//public class CouponServiceImpl implements CouponService {
-//    private final CouponRepository couponRepository;
-//    private final CouponPolicyService couponPolicyService;
-//    private final CouponHistoryRepository couponHistoryRepository;
-//
-//    @Override
-//    public Long registerCoupon(CouponCreateDto dto) {
-//        CouponPolicy couponPolicy = couponPolicyService.findById(dto.getCouponPolicyId());
-//        Coupon coupon = new Coupon(
-//                Status.UNUSED, // 쿠폰 발급할때 상태는 무조건 UNUSED
-//                LocalDateTime.now(), // 발급시간는 서버시간기준
-//                dto.getExpiredAt(), // 만료시간은 요청 기준
-//                couponPolicy
-//        );
-//        return couponRepository.save(coupon).getId();
-//    }
-//
-//    @Override
-//    public Coupon getCouponByCode(String code) {
-//        return couponRepository.findByCode(code).orElseThrow(() -> new NotFoundCouponException("코드에 해당하는 쿠폰을 찾을 수 없습니다: " + code));
-//    }
-//
-//    @Override
-//    public List<Coupon> getExpiredCoupons(LocalDateTime currentDateTime) {
-//        if (currentDateTime == null) {
-//            throw new IllegalArgumentException("입력받은 currentDateTime 이 null 입니다");
-//        }
-//        return couponRepository.findByExpiredAtBefore(currentDateTime);
-//    }
-//
-//    @Override
-//    public List<Coupon> getActiveCoupons(LocalDateTime currentDateTime) {
-//        if (currentDateTime == null) {
-//            throw new IllegalArgumentException("입력받은 currentDateTime 이 null 입니다");
-//        }
-//        return couponRepository.findActiveCoupons(currentDateTime);
-//    }
-//
-//    @Override
-//    public List<Coupon> getCouponsByPolicy(CouponPolicy couponPolicy) {
-//        if (couponPolicy == null) {
-//            throw new NotFoundCouponPolicyException("입력받은 couponPolicy 가 null 입니다");
-//        }
-//        return couponRepository.findByCouponPolicy(couponPolicy);
-//    }
-//
-//    @Override
-//    public Page<Coupon> getCouponsByStatus(Status status, Pageable pageable) {
-//        return couponRepository.findByStatus(status, pageable);
-//    }
-//
-//    @Override
-//    public void updateCouponStatus(String code, Status newStatus, String reason) {
-//        Coupon coupon = couponRepository.findByCode(code).orElseThrow(() -> new NotFoundCouponException("코드에 해당하는 쿠폰을 찾을 수 없습니다: " + code));
-//        coupon.setStatus(newStatus);
-//        CouponHistory history = CouponHistory.builder()
-//                .coupon(coupon)
-//                .status(newStatus)
-//                .changeDate(LocalDateTime.now())
-//                .reason(reason)
-//                .build();
-//        couponHistoryRepository.save(history);
-//    }
-//
-//}
+package com.nhnacademy.boostorenginx.service.impl;
+
+import com.nhnacademy.boostorenginx.dto.coupon.*;
+import com.nhnacademy.boostorenginx.entity.Coupon;
+import com.nhnacademy.boostorenginx.entity.CouponHistory;
+import com.nhnacademy.boostorenginx.entity.CouponPolicy;
+import com.nhnacademy.boostorenginx.enums.Status;
+import com.nhnacademy.boostorenginx.error.CouponException;
+import com.nhnacademy.boostorenginx.error.NotFoundCouponException;
+import com.nhnacademy.boostorenginx.error.NotFoundCouponPolicyException;
+import com.nhnacademy.boostorenginx.repository.CouponHistoryRepository;
+import com.nhnacademy.boostorenginx.repository.CouponRepository;
+import com.nhnacademy.boostorenginx.service.CouponPolicyService;
+import com.nhnacademy.boostorenginx.service.CouponService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
+
+@RequiredArgsConstructor
+@Service
+public class CouponServiceImpl implements CouponService {
+    private final CouponRepository couponRepository;
+    private final CouponPolicyService couponPolicyService;
+    private final CouponHistoryRepository couponHistoryRepository;
+
+    @Override
+    public Long createCoupon(CouponCreateRequestDto requestDto) {
+        CouponPolicy couponPolicy = couponPolicyService.findById(requestDto.couponPolicyId())
+                .orElseThrow(() -> new NotFoundCouponPolicyException("ID 에 해당하는 CouponPolicy 를 찾지 못했습니다: " + requestDto.couponPolicyId()));
+
+        Coupon coupon = new Coupon(
+                Status.UNUSED,
+                LocalDateTime.now(),
+                requestDto.expiredAt(),
+                couponPolicy
+        );
+        Coupon saveCoupon = couponRepository.save(coupon);
+
+        return saveCoupon.getId();
+    }
+
+    @Override
+    public Optional<Coupon> getCouponByCode(CouponCodeRequestDto requestDto) {
+        String code = requestDto.code();
+
+        if (code == null || code.isBlank()) {
+            throw new NotFoundCouponException("입력받은 code 에 해당하는 Coupon 을 찾지 못헀습니다" + code);
+        }
+
+        return couponRepository.findByCode(code);
+    }
+
+    @Override
+    public Page<Coupon> getExpiredCoupons(CouponExpiredRequestDto requestDto) {
+        Pageable pageable = PageRequest.of(requestDto.page(), requestDto.pageSize());
+        LocalDateTime expiredAt = requestDto.expiredAt();
+
+        if (expiredAt == null) {
+            throw new IllegalArgumentException("입력받은 currentDateTime 이 null 입니다");
+        }
+
+        return couponRepository.findByExpiredAtBeforeOrderByExpiredAtAsc(expiredAt, pageable);
+    }
+
+    @Override
+    public Page<Coupon> getActiveCoupons(CouponActiveRequestDto requestDto) {
+        Pageable pageable = PageRequest.of(requestDto.page(), requestDto.pageSize());
+        LocalDateTime currentDateTime = requestDto.currentDateTime();
+
+        if (currentDateTime == null) {
+            throw new IllegalArgumentException("입력받은 currentDateTime 이 null 입니다");
+        }
+
+        return couponRepository.findActiveCoupons(currentDateTime, pageable);
+    }
+
+    @Override
+    public Page<Coupon> getCouponsByPolicy(CouponFindCouponPolicyIdRequestDto requestDto) {
+        Pageable pageable = PageRequest.of(requestDto.page(), requestDto.pageSize());
+
+        CouponPolicy couponPolicy = couponPolicyService.findById(requestDto.policyId()).orElseThrow(
+                () -> new NotFoundCouponPolicyException("해당 ID 의 CouponPolicy 를 찾을 수 없습니다")
+        );
+
+        if (couponPolicy == null) {
+            throw new NotFoundCouponPolicyException("입력받은 couponPolicy 가 null 입니다");
+        }
+
+        return couponRepository.findByCouponPolicyOrderByCouponPolicyAsc(couponPolicy, pageable);
+    }
+
+    @Override
+    public Page<Coupon> getCouponsByStatus(CouponFindStatusRequestDto requestDto) {
+        Pageable pageable = PageRequest.of(requestDto.page(), requestDto.pageSize());
+
+        if (requestDto.status() == null) {
+            throw new CouponException("Status 가 null 입니다");
+        }
+
+        Status status = Status.valueOf(requestDto.status());
+
+        return couponRepository.findByStatusOrderByStatusAsc(status, pageable);
+    }
+
+    //
+    @Override
+    public void updateExpiredCoupon(CouponUpdateExpiredRequestDto requestDto) {
+        if (requestDto.status() == null) {
+            throw new CouponException("Status 가 null 입니다");
+        }
+
+        Status status = Status.valueOf(requestDto.status());
+        Pageable pageable = PageRequest.of(requestDto.page(), requestDto.pageSize());
+
+        Page<Coupon> expiredCoupon = couponRepository.findByExpiredAtBeforeAndStatusOrderByExpiredAtAsc(requestDto.expiredDate(), status, pageable);
+
+        for (Coupon coupon : expiredCoupon.getContent()) {
+            coupon.changeStatus(Status.EXPIRED, LocalDateTime.now(), "EXPIRED"); // CouponHistory 객체가 생성됨 -> 여기서 생성된 CouponHistory 객체를 어떻게 CouponHistoryRepository.save() 할 수 있을지 고민
+        }
+
+        couponRepository.saveAll(expiredCoupon.getContent());
+    }
+
+    //
+    public void updateCouponStatus(String code, Status newStatus, String reason) {
+        Coupon coupon = couponRepository.findByCode(code).orElseThrow(() -> new NotFoundCouponException("코드에 해당하는 쿠폰을 찾을 수 없습니다: " + code));
+        coupon.setStatus(newStatus);
+        CouponHistory history = CouponHistory.builder()
+                .coupon(coupon)
+                .status(newStatus)
+                .changeDate(LocalDateTime.now())
+                .reason(reason)
+                .build();
+        couponHistoryRepository.save(history);
+    }
+
+}

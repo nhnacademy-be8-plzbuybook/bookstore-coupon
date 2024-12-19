@@ -10,8 +10,11 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 public interface CouponRepository extends JpaRepository<Coupon, Long> {
+
+    Optional<Coupon> findByCode(String code); // 코드로 쿠폰 객체 찾기
 
     Page<Coupon> findByExpiredAtBeforeOrderByExpiredAtAsc(LocalDateTime currentDateTime, Pageable pageable); // 만료된 쿠폰들 조회(현재시각기준)
 
@@ -20,5 +23,9 @@ public interface CouponRepository extends JpaRepository<Coupon, Long> {
 
     Page<Coupon> findByCouponPolicyOrderByCouponPolicyAsc(CouponPolicy couponPolicy, Pageable pageable); // 쿠폰정책으로 쿠폰들 조회
 
-    Page<Coupon> findByStatusOrderByStatusAsc(Status status, Pageable pageable); // 특정상태인 쿠폰들 페이징 조회
+    Page<Coupon> findByStatusOrderByStatusAsc(Status status, Pageable pageable); // 쿠폰 상태로 쿠폰들 페이징 조회 -> 사용 내역 확인 가능
+
+    Page<Coupon> findByExpiredAtBeforeAndStatusOrderByExpiredAtAsc(LocalDateTime expiredAt, Status status, Pageable pageable); // 기한이 만료된 쿠폰의 상태가 UNUSED 인 쿠폰들 조회
+
 }
+

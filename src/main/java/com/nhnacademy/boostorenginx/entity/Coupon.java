@@ -37,7 +37,7 @@ public class Coupon {
     @JoinColumn(name = "coupon_policy_id", nullable = false)
     private CouponPolicy couponPolicy; // 쿠폰정책(N:1)
 
-    @OneToMany(mappedBy = "coupon")
+    @OneToMany(mappedBy = "coupon", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CouponHistory> couponHistoryList = new ArrayList<>(); // 쿠폰변경이력(1:N, 복합키)
 
     @OneToOne(mappedBy = "coupon")
@@ -48,7 +48,7 @@ public class Coupon {
         this.status = status;
         this.issuedAt = issuedAt;
         this.expiredAt = expiredAt;
-        this.couponPolicy = couponPolicy;
+        this.couponPolicy = couponPolicy; // 쿠폰정책으로 부터 쿠폰을 생성함 -> Dto 에 담겨있어야 되는 단점이있음
     }
 
     // status 속성이 변경될때 외부에서 호출하는 메서드
