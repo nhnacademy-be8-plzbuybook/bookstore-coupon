@@ -52,23 +52,22 @@ public class Coupon {
     }
 
     // status 속성이 변경될때 외부에서 호출하는 메서드
-    public void changeStatus(Status newStatus, LocalDateTime changeDate, String reason) {
-        if (this.status != newStatus) {
+    public CouponHistory changeStatus(Status newStatus, LocalDateTime changeDate, String reason) {
+        if (!this.status.equals(newStatus)) {
             this.status = newStatus;
-            this.addHistory(newStatus, changeDate, reason);
+
+            CouponHistory history = CouponHistory.builder()
+                    .coupon(this)
+                    .status(status)
+                    .changeDate(changeDate)
+                    .reason(reason)
+                    .build();
+
+            this.couponHistoryList.add(history);
+
+            return history;
         }
-    }
-
-    // 쿠폰상태(status) 가 변경될때마다 호출
-    public void addHistory(Status status, LocalDateTime changeDate, String reason) {
-        CouponHistory history = CouponHistory.builder()
-                .coupon(this)
-                .status(status)
-                .changeDate(changeDate)
-                .reason(reason)
-                .build();
-
-        couponHistoryList.add(history);
+        return null;
     }
 
 }
