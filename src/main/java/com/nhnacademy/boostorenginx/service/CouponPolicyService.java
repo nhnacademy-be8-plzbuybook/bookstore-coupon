@@ -7,7 +7,6 @@ import com.nhnacademy.boostorenginx.entity.CouponPolicy;
 
 import java.util.Optional;
 
-
 public interface CouponPolicyService {
 
     Long createCouponPolicy(CouponPolicySaveRequestDto requestDto); // 쿠폰정책 생성 기능 -> 쿠폰정책 ID 반환
