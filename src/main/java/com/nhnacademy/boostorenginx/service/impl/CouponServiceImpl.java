@@ -1,6 +1,7 @@
 package com.nhnacademy.boostorenginx.service.impl;
 
 import com.nhnacademy.boostorenginx.dto.coupon.*;
+import com.nhnacademy.boostorenginx.dto.couponpolicy.CouponPolicyIdRequestDto;
 import com.nhnacademy.boostorenginx.dto.membercoupon.MemberCouponUseRequestDto;
 import com.nhnacademy.boostorenginx.entity.Coupon;
 import com.nhnacademy.boostorenginx.entity.CouponHistory;
@@ -33,7 +34,10 @@ public class CouponServiceImpl implements CouponService {
 
     @Override
     public Long createCoupon(CouponCreateRequestDto requestDto) {
-        CouponPolicy couponPolicy = couponPolicyService.findById(requestDto.couponPolicyId())
+        CouponPolicyIdRequestDto couponPolicyIdRequestDto = new CouponPolicyIdRequestDto(
+                requestDto.couponPolicyId()
+        );
+        CouponPolicy couponPolicy = couponPolicyService.findById(couponPolicyIdRequestDto)
                 .orElseThrow(() -> new NotFoundCouponPolicyException("ID 에 해당하는 CouponPolicy 를 찾지 못했습니다: " + requestDto.couponPolicyId()));
 
         Coupon coupon = new Coupon(
@@ -86,7 +90,11 @@ public class CouponServiceImpl implements CouponService {
     public Page<Coupon> getCouponsByPolicy(CouponFindCouponPolicyIdRequestDto requestDto) {
         Pageable pageable = PageRequest.of(requestDto.page(), requestDto.pageSize());
 
-        CouponPolicy couponPolicy = couponPolicyService.findById(requestDto.policyId()).orElseThrow(
+        CouponPolicyIdRequestDto couponPolicyIdRequestDto = new CouponPolicyIdRequestDto(
+                requestDto.policyId()
+        );
+
+        CouponPolicy couponPolicy = couponPolicyService.findById(couponPolicyIdRequestDto).orElseThrow(
                 () -> new NotFoundCouponPolicyException("해당 ID 의 CouponPolicy 를 찾을 수 없습니다")
         );
 

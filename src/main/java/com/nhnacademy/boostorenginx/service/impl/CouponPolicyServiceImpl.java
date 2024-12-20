@@ -1,5 +1,6 @@
 package com.nhnacademy.boostorenginx.service.impl;
 
+import com.nhnacademy.boostorenginx.dto.couponpolicy.CouponPolicyIdRequestDto;
 import com.nhnacademy.boostorenginx.dto.couponpolicy.CouponPolicyNameRequestDto;
 import com.nhnacademy.boostorenginx.dto.couponpolicy.CouponPolicySaveRequestDto;
 import com.nhnacademy.boostorenginx.dto.coupontarget.CouponTargetAddRequestDto;
@@ -32,12 +33,12 @@ public class CouponPolicyServiceImpl implements CouponPolicyService {
     @Override
     public Optional<CouponPolicy> findByName(CouponPolicyNameRequestDto requestDto) {
         String name = requestDto.couponPolicyName();
-        return Optional.ofNullable(couponPolicyRepository.findByName(name).orElseThrow(() -> new NotFoundCouponPolicyException("해당 이름의 CouponPolicy 를 찾을 수 없습니다")));
+        return Optional.ofNullable(couponPolicyRepository.findByName(name).orElseThrow(() -> new NotFoundCouponPolicyException("해당 이름의 CouponPolicy 를 찾을 수 없습니다: " + requestDto.couponPolicyName())));
     }
 
     @Override
-    public Optional<CouponPolicy> findById(Long couponPolicyId) {
-        return Optional.ofNullable(couponPolicyRepository.findById(couponPolicyId).orElseThrow(() -> new NotFoundCouponPolicyException("해당 ID 의 CouponPolicy 를 찾을 수 없습니다")));
+    public Optional<CouponPolicy> findById(CouponPolicyIdRequestDto requestDto) {
+        return Optional.ofNullable(couponPolicyRepository.findById(requestDto.couponPolicyId()).orElseThrow(() -> new NotFoundCouponPolicyException("해당 ID 의 CouponPolicy 를 찾을 수 없습니다: " + requestDto.couponPolicyId())));
     }
 
     @Override

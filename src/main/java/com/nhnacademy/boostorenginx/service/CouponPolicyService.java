@@ -1,5 +1,6 @@
 package com.nhnacademy.boostorenginx.service;
 
+import com.nhnacademy.boostorenginx.dto.couponpolicy.CouponPolicyIdRequestDto;
 import com.nhnacademy.boostorenginx.dto.couponpolicy.CouponPolicyNameRequestDto;
 import com.nhnacademy.boostorenginx.dto.couponpolicy.CouponPolicySaveRequestDto;
 import com.nhnacademy.boostorenginx.dto.coupontarget.CouponTargetAddRequestDto;
@@ -13,7 +14,7 @@ public interface CouponPolicyService {
 
     Optional<CouponPolicy> findByName(CouponPolicyNameRequestDto requestDto); // 쿠폰정책 이름으로 조회 기능
 
-    Optional<CouponPolicy> findById(Long couponPolicyId); // 쿠폰정책 번호로 조회 기능
+    Optional<CouponPolicy> findById(CouponPolicyIdRequestDto requestDto); // 쿠폰정책 번호로 조회 기능
 
     void addTargetToPolicy(CouponTargetAddRequestDto requestDto); // 쿠폰대상 연결 추가
 }
