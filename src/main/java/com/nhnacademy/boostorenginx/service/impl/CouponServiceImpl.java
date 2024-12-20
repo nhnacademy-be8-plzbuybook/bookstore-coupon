@@ -94,7 +94,7 @@ public class CouponServiceImpl implements CouponService {
             throw new NotFoundCouponPolicyException("입력받은 couponPolicy 가 null 입니다");
         }
 
-        return couponRepository.findByCouponPolicyOrderByCouponPolicyAsc(couponPolicy, pageable);
+        return couponRepository.findByCouponPolicyOrderByIdAsc(couponPolicy, pageable);
     }
 
     @Override
