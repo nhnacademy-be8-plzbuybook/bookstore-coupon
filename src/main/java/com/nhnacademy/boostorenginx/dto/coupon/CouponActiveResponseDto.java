@@ -4,15 +4,15 @@ import com.nhnacademy.boostorenginx.entity.Coupon;
 
 import java.time.LocalDateTime;
 
-public record CouponExpiredResponseDto(
+public record CouponActiveResponseDto(
         Long couponId,
         String code,
         String status,
         LocalDateTime issuedAt,
         LocalDateTime expiredAt
 ) {
-    public static CouponExpiredResponseDto fromEntity(Coupon coupon) {
-        return new CouponExpiredResponseDto(
+    public static CouponActiveResponseDto fromEntity(Coupon coupon) {
+        return new CouponActiveResponseDto(
                 coupon.getId(),
                 coupon.getCode(),
                 coupon.getStatus().toString(),
