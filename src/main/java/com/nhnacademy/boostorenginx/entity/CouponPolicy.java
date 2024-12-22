@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @NoArgsConstructor
@@ -53,10 +54,10 @@ public class CouponPolicy {
     private boolean couponActive; // 쿠폰정책활성화 여부
 
     @OneToMany(mappedBy = "couponPolicy")
-    private List<CouponTarget> couponTargetList;
+    private List<CouponTarget> couponTargetList = new ArrayList<>();
 
     @OneToMany(mappedBy = "couponPolicy") // @OneToMany 는 빈 리스트로 초기화됨
-    private List<Coupon> couponList;
+    private List<Coupon> couponList = new ArrayList<>();
 
     @Builder
     public CouponPolicy(String name, SaleType saleType, BigDecimal minimumAmount, BigDecimal discountLimit, Integer discountRatio, boolean isStackable, String couponScope, LocalDateTime startDate, LocalDateTime endDate, boolean couponActive) {

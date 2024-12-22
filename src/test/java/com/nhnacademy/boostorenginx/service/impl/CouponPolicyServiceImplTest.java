@@ -4,13 +4,13 @@ import com.nhnacademy.boostorenginx.dto.couponpolicy.CouponPolicyIdRequestDto;
 import com.nhnacademy.boostorenginx.dto.couponpolicy.CouponPolicyNameRequestDto;
 import com.nhnacademy.boostorenginx.dto.couponpolicy.CouponPolicySaveRequestDto;
 import com.nhnacademy.boostorenginx.dto.coupontarget.CouponTargetAddRequestDto;
-import com.nhnacademy.boostorenginx.entity.Coupon;
 import com.nhnacademy.boostorenginx.entity.CouponPolicy;
 import com.nhnacademy.boostorenginx.entity.CouponTarget;
 import com.nhnacademy.boostorenginx.enums.SaleType;
+import com.nhnacademy.boostorenginx.error.CouponPolicyException;
+import com.nhnacademy.boostorenginx.error.NotFoundCouponPolicyException;
 import com.nhnacademy.boostorenginx.repository.CouponPolicyRepository;
 import com.nhnacademy.boostorenginx.repository.CouponTargetRepository;
-import com.nhnacademy.boostorenginx.service.CouponPolicyService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -40,7 +40,7 @@ class CouponPolicyServiceImplTest {
     private CouponTargetRepository couponTargetRepository;
 
     private CouponPolicy couponPolicy;
-    LocalDateTime now = LocalDateTime.now();
+    private final LocalDateTime now = LocalDateTime.now();
 
     @BeforeEach
     void setUp() {
@@ -74,10 +74,11 @@ class CouponPolicyServiceImplTest {
                 now.plusDays(2),
                 true
         );
-
         CouponPolicy mockPolicy = mock(CouponPolicy.class);
+
         when(mockPolicy.getId()).thenReturn(1L);
         when(couponPolicyRepository.save(any(CouponPolicy.class))).thenReturn(mockPolicy);
+
         Long result = couponPolicyService.createCouponPolicy(requestDto);
 
         assertEquals(1L, result);
@@ -109,18 +110,39 @@ class CouponPolicyServiceImplTest {
         verify(couponPolicyRepository, times(1)).findById(anyLong());
     }
 
-    // 테스트 나중에 작성하기
-//    @DisplayName("쿠폰정책으로 쿠폰대상 만들기")
-//    @Test
-//    void addTargetToPolicy_Success() {
-//        CouponTargetAddRequestDto requestDto = new CouponTargetAddRequestDto(1L, 1L);
-//
-//        when(couponPolicyRepository.findById(1L)).thenReturn(Optional.of(couponPolicy));
-//        when(couponTargetRepository.save(any(CouponTarget.class))).thenAnswer(invocation -> invocation.getArgument(0));
-//
-//        couponPolicyService.addTargetToPolicy(requestDto);
-//
-//        verify(couponPolicyRepository, times(1)).findById(1L);
-//        verify(couponTargetRepository, times(1)).save(any(CouponTarget.class));
-//    }
+    @DisplayName("쿠폰정책으로 쿠폰대상 만들기")
+    @Test
+    void addTargetToPolicy_Success() {
+        Long policyId = 1L;
+        Long targetId = 10L;
+        CouponTargetAddRequestDto requestDto = new CouponTargetAddRequestDto(policyId, targetId);
+        CouponPolicy mockPolicy = new CouponPolicy();
+        when(couponPolicyRepository.findById(policyId)).thenReturn(Optional.of(mockPolicy));
+
+        couponPolicyService.addTargetToPolicy(requestDto);
+
+        verify(couponPolicyRepository, times(1)).findById(policyId);
+        verify(couponTargetRepository, times(1)).save(any(CouponTarget.class));
+    }
+
+    @DisplayName("RequestDto 가 null 인 경우 예외 발생")
+    @Test
+    void addTargetToPolicy_NullRequestDto() {
+        CouponTargetAddRequestDto requestDto = null;
+        CouponPolicyException exception = assertThrows(CouponPolicyException.class,
+                () -> couponPolicyService.addTargetToPolicy(requestDto));
+        assertEquals("requestDto is null", exception.getMessage());
+    }
+
+    @DisplayName("쿠폰정책 ID 에 해당되는 쿠폰정책이 없을 경우 예외 발생")
+    @Test
+    void addTargetToPolicy_NotFoundPolicy() {
+        Long policyId = 1L;
+        Long targetId = 10L;
+        CouponTargetAddRequestDto requestDto = new CouponTargetAddRequestDto(policyId, targetId);
+        when(couponPolicyRepository.findById(policyId)).thenReturn(Optional.empty());
+        NotFoundCouponPolicyException exception = assertThrows(NotFoundCouponPolicyException.class,
+                () -> couponPolicyService.addTargetToPolicy(requestDto));
+        assertEquals("잘못된 쿠폰정책 ID: 1", exception.getMessage());
+    }
 }
