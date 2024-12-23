@@ -68,7 +68,7 @@ public class CouponServiceImpl implements CouponService {
         LocalDateTime expiredAt = requestDto.expiredAt();
 
         if (expiredAt == null) {
-            throw new IllegalArgumentException("입력받은 currentDateTime 이 null 입니다");
+            throw new CouponException("입력받은 currentDateTime 이 null 입니다");
         }
 
         return couponRepository.findByExpiredAtBeforeOrderByExpiredAtAsc(expiredAt, pageable);
@@ -80,7 +80,7 @@ public class CouponServiceImpl implements CouponService {
         LocalDateTime currentDateTime = requestDto.currentDateTime();
 
         if (currentDateTime == null) {
-            throw new IllegalArgumentException("입력받은 currentDateTime 이 null 입니다");
+            throw new CouponException("입력받은 currentDateTime 이 null 입니다");
         }
 
         return couponRepository.findActiveCoupons(currentDateTime, pageable);
@@ -125,7 +125,7 @@ public class CouponServiceImpl implements CouponService {
         }
 
         Status status = Status.valueOf(requestDto.status());
-        Pageable pageable = PageRequest.of(requestDto.page(), requestDto.pageSize());
+        Pageable pageable = PageRequest.of(requestDto.page(), requestDto.size());
 
         Page<Coupon> expiredCoupon = couponRepository.findByExpiredAtBeforeAndStatusOrderByExpiredAtAsc(requestDto.expiredDate(), status, pageable);
 

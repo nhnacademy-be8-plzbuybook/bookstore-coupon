@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 public record CouponUpdateExpiredRequestDto(
         LocalDateTime expiredDate,
         String status,
-        int pageSize,
-        int page
+        int page,
+        int size
 ) {
 }
