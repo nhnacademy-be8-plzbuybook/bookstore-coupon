@@ -31,7 +31,7 @@ public class MemberCouponServiceImpl implements MemberCouponService {
                 () -> new NotFoundCouponException("ID 에 해당하는 쿠폰이 존재하지 않습니다" + couponId)
         );
 
-        if (!memberCouponRepository.existsByMcMemberIdAndMemberCouponId(memberId, couponId)) {
+        if (memberCouponRepository.existsByMcMemberIdAndMemberCouponId(memberId, couponId)) {
             throw new MemberCouponException("회원에게 이미 발급된 쿠폰입니다");
         }
 
