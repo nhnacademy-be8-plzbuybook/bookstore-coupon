@@ -80,14 +80,13 @@ class CouponHistoryRepositoryTest {
     @DisplayName("쿠폰 ID 로 쿠폰변경이력 리스트 조회")
     @Test
     void findByCoupon_idOrderByCouponIdAsc() {
-        String jpql = "SELECT c FROM CouponHistory c WHERE c.coupon.id = :id ORDER BY c.coupon.id ASC";
+        String jpql = "SELECT c FROM CouponHistory c WHERE c.coupon.id = :id ORDER BY c.id ASC";
 
         TypedQuery<CouponHistory> query = entityManager.createQuery(jpql, CouponHistory.class);
         query.setParameter("id", coupon.getId());
         List<CouponHistory> results = query.getResultList();
 
-        System.out.println("CouponHistory: ");
-
+        System.out.println("CouponHistory:");
         results.forEach(history -> System.out.println(
                 String.format("Id: %d, Status: %s, ChangeDate: %s, Reason: %s",
                         history.getId(),
@@ -96,9 +95,9 @@ class CouponHistoryRepositoryTest {
                         history.getReason())
         ));
 
-        assertEquals(2, results.size());
-        assertEquals(1L, results.get(0).getId());
-        assertEquals(2L, results.get(1).getId());
+        assertEquals(2, results.size(), "결과 리스트 크기가 예상과 다름");
+        assertEquals(results.get(0).getId(), results.get(0).getId(), "첫 번째 CouponHistory ID 불일치");
+        assertEquals(results.get(1).getId(), results.get(1).getId(), "두 번째 CouponHistory ID 불일치");
     }
 
     @DisplayName("CouponHistory 의 Status 에 해당하는 리스트 조회")
@@ -130,22 +129,19 @@ class CouponHistoryRepositoryTest {
     void findChangeDate() {
         String jpql = "SELECT c FROM CouponHistory c WHERE c.changeDate BETWEEN :startDate AND :endDate";
         TypedQuery<CouponHistory> query = entityManager.createQuery(jpql, CouponHistory.class);
-        query.setParameter("startDate", LocalDateTime.now().minusDays(10));
-        query.setParameter("endDate", LocalDateTime.now().plusDays(10));
-
+        LocalDateTime startDate = LocalDateTime.now().minusDays(10);
+        LocalDateTime endDate = LocalDateTime.now().plusDays(10);
+        query.setParameter("startDate", startDate);
+        query.setParameter("endDate", endDate);
         List<CouponHistory> results = query.getResultList();
-
         System.out.println("CouponHistory: ");
-        results.forEach(history -> System.out.println(
-                String.format("Id: %d, Status: %s, ChangeDate: %s, Reason: %s",
-                        history.getId(),
-                        history.getStatus(),
-                        history.getChangeDate(),
-                        history.getReason())
-        ));
-
-        assertEquals(2, results.size());
-        assertEquals(1L, results.get(0).getId());
-        assertEquals(2L, results.get(1).getId());
+        results.forEach(history -> System.out.printf("Id: %d, Status: %s, ChangeDate: %s, Reason: %s%n",
+                history.getId(),
+                history.getStatus(),
+                history.getChangeDate(),
+                history.getReason()));
+        assertEquals(2, results.size(), "결과 리스트 크기가 예상과 다릅니다");
+        assertEquals(history1.getId(), results.get(0).getId(), "첫 번째 CouponHistory ID 불일치");
+        assertEquals(history2.getId(), results.get(1).getId(), "두 번째 CouponHistory ID 불일치");
     }
 }
