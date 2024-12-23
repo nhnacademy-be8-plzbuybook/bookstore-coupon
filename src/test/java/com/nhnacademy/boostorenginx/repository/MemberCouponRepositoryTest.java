@@ -85,11 +85,9 @@ class MemberCouponRepositoryTest {
     void findMemberCouponByMemberCouponIdOrderByMemberCouponIdAsc() {
         String jpql = "SELECT mc FROM MemberCoupon mc WHERE mc.memberCouponId = :id ORDER BY mc.memberCouponId ASC";
         TypedQuery<MemberCoupon> query = entityManager.createQuery(jpql, MemberCoupon.class);
-        query.setParameter("id", 1L);
-
+        query.setParameter("id", memberCoupon1.getMemberCouponId());
         MemberCoupon result = query.getSingleResult();
         System.out.printf("MemberCouponId: %d, Coupon: %s %n", result.getMemberCouponId(), result.getCoupon().getCode());
-
         assertEquals(memberCoupon1.getMemberCouponId(), result.getMemberCouponId());
         assertEquals(memberCoupon1.getCoupon().getCode(), result.getCoupon().getCode());
         assertEquals(memberCoupon1.getCoupon().getStatus(), result.getCoupon().getStatus());
@@ -119,16 +117,22 @@ class MemberCouponRepositoryTest {
     void existsByMcMemberIdAndMemberCouponId() {
         String jpql = "SELECT mc FROM MemberCoupon mc WHERE mc.mcMemberId = :id AND mc.memberCouponId = :couponId";
         TypedQuery<MemberCoupon> query = entityManager.createQuery(jpql, MemberCoupon.class);
-        query.setParameter("id", 1L);
-        query.setParameter("couponId", 1L);
-        boolean exists = query.getResultList().size() > 0;
-        System.out.printf("MemberCouponId: %d, Coupon: %s, Status: %s %n",
-                memberCoupon1.getMemberCouponId(),
-                memberCoupon1.getCoupon().getCode(),
-                memberCoupon1.getCoupon().getStatus().toString());
-        assertTrue(exists);
-        assertEquals(memberCoupon1.getMemberCouponId(), query.getSingleResult().getMemberCouponId());
-        assertEquals(memberCoupon1.getCoupon().getCode(), query.getSingleResult().getCoupon().getCode());
-        assertEquals(memberCoupon1.getCoupon().getStatus(), query.getSingleResult().getCoupon().getStatus());
+        Long memberId = memberCoupon1.getMcMemberId();
+        Long couponId = memberCoupon1.getMemberCouponId();
+        query.setParameter("id", memberId);
+        query.setParameter("couponId", couponId);
+
+        List<MemberCoupon> results = query.getResultList();
+
+        results.forEach(result -> System.out.printf(
+                "MemberCouponId: %d, Coupon: %s, Status: %s %n",
+                result.getMemberCouponId(),
+                result.getCoupon().getCode(),
+                result.getCoupon().getStatus()
+        ));
+
+        assertEquals(memberCoupon1.getMemberCouponId(), results.get(0).getMemberCouponId());
+        assertEquals(memberCoupon1.getCoupon().getCode(), results.get(0).getCoupon().getCode());
+        assertEquals(memberCoupon1.getCoupon().getStatus(), results.get(0).getCoupon().getStatus());
     }
 }
