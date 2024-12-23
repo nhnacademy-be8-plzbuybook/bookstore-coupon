@@ -41,7 +41,7 @@ public class Coupon {
     private List<CouponHistory> couponHistoryList = new ArrayList<>(); // 쿠폰변경이력(1:N, 복합키)
 
     @OneToOne(mappedBy = "coupon")
-    private MemberCoupon memberCoupon; // 쿠폰정책(1:1)
+    private MemberCoupon memberCoupon; // 회원쿠폰(1:1)
 
     public Coupon(Status status, LocalDateTime issuedAt, LocalDateTime expiredAt, CouponPolicy couponPolicy) {
         this.code = UUID.randomUUID().toString();
