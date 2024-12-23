@@ -6,7 +6,7 @@
 //
 //import java.awt.print.Book;
 //
-//@FeignClient(name = "유레카에등록한서비스이름 -> 유레카에 등록된 이름 그대로")
+//@FeignClient(name = "http://localhost:8761/eureka/")
 //public interface BookServiceClient {
 //
 //    @GetMapping("연결할서비스매핑HTTP요청")
