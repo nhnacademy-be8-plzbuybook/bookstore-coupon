@@ -6,7 +6,7 @@ spring:
     activate:
       on-profile: dev
   application:
-    name: bookstore-coupon-dev
+    name: coupon
   datasource:
     url: jdbc:h2:mem:bookstore-db-prod;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE  # prod DB 설정
     driver-class-name: org.h2.Driver
@@ -40,4 +40,3 @@ eureka:
     service-url:
       defaultZone: http://localhost:8761/eureka  # Eureka 서버 URL
 
----

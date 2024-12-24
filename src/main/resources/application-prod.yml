@@ -5,7 +5,7 @@ spring:
         activate:
             on-profile: prod
     application:
-        name: bookstore-coupon-prod
+        name: coupon
     #  datasource:
     #    url: jdbc:mysql://133.186.241.167:3306/project_be8_plzbuybook_bookstore  # MySQL 데이터베이스 URL
     #    driver-class-name: com.mysql.cj.jdbc.Driver  # MySQL 드라이버 클래스
