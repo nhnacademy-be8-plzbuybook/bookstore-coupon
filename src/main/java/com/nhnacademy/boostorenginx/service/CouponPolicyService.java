@@ -2,19 +2,21 @@ package com.nhnacademy.boostorenginx.service;
 
 import com.nhnacademy.boostorenginx.dto.couponpolicy.CouponPolicyIdRequestDto;
 import com.nhnacademy.boostorenginx.dto.couponpolicy.CouponPolicyNameRequestDto;
+import com.nhnacademy.boostorenginx.dto.couponpolicy.CouponPolicyResponseDto;
 import com.nhnacademy.boostorenginx.dto.couponpolicy.CouponPolicySaveRequestDto;
 import com.nhnacademy.boostorenginx.dto.coupontarget.CouponTargetAddRequestDto;
-import com.nhnacademy.boostorenginx.entity.CouponPolicy;
-
-import java.util.Optional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 public interface CouponPolicyService {
 
-    Long createCouponPolicy(CouponPolicySaveRequestDto requestDto); // 쿠폰정책 생성 기능 -> 쿠폰정책 ID 반환
+    CouponPolicyResponseDto createCouponPolicy(CouponPolicySaveRequestDto requestDto); // 쿠폰정책 생성
 
-    Optional<CouponPolicy> findByName(CouponPolicyNameRequestDto requestDto); // 쿠폰정책 이름으로 조회 기능
+    CouponPolicyResponseDto findByName(CouponPolicyNameRequestDto requestDto); // 쿠폰정책 이름으로 쿠폰정책 조회
 
-    Optional<CouponPolicy> findById(CouponPolicyIdRequestDto requestDto); // 쿠폰정책 번호로 조회 기능
+    CouponPolicyResponseDto findById(CouponPolicyIdRequestDto requestDto); // 쿠폰정책 ID 로 조회 기능
+
+    Page<CouponPolicyResponseDto> findActiveCouponPolicy(boolean couponActive,Pageable pageable); // 활성화된 쿠폰 정책 조회
 
     void addTargetToPolicy(CouponTargetAddRequestDto requestDto); // 쿠폰대상 연결 추가
 }
