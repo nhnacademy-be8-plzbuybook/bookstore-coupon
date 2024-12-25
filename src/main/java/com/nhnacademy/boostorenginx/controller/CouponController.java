@@ -5,7 +5,6 @@ import com.nhnacademy.boostorenginx.dto.membercoupon.MemberCouponUseRequestDto;
 import com.nhnacademy.boostorenginx.entity.Coupon;
 import com.nhnacademy.boostorenginx.error.NotFoundCouponException;
 import com.nhnacademy.boostorenginx.service.CouponService;
-import jakarta.ws.rs.core.Response;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -42,8 +41,8 @@ public class CouponController {
     // 만료된 쿠폰들 검색 -> 예: GET /api/coupons/expired?expiredAt=2023-12-31T23:59:59&page=0&pageSize=10
     @GetMapping("/coupons/expired")
     public ResponseEntity<Page<CouponExpiredResponseDto>> getExpiredCoupons(@RequestParam("expiredAt") LocalDateTime expiredAt,
-                                              @RequestParam("page") int page,
-                                              @RequestParam("pageSize") int pageSize) {
+                                                                            @RequestParam("page") int page,
+                                                                            @RequestParam("pageSize") int pageSize) {
         CouponExpiredRequestDto request = new CouponExpiredRequestDto(expiredAt, page, pageSize);
         Page<Coupon> expiredCoupons = couponService.getExpiredCoupons(request);
         Page<CouponExpiredResponseDto> response = expiredCoupons.map(CouponExpiredResponseDto::fromEntity);
@@ -64,8 +63,8 @@ public class CouponController {
     // 쿠폰정책들로 검색 -> 예: GET /api/coupons/by-policy/123?page=0&pageSize=10
     @GetMapping("/coupons/coupon-policies/{policy-id}")
     public ResponseEntity<Page<CouponFindCouponPolicyIdResponseDto>> getCouponsByPolicies(@PathVariable("policy-id") Long policyId,
-                                                           @RequestParam("page") int page,
-                                                           @RequestParam("pageSize") int pageSize) {
+                                                                                          @RequestParam("page") int page,
+                                                                                          @RequestParam("pageSize") int pageSize) {
         CouponFindCouponPolicyIdRequestDto request = new CouponFindCouponPolicyIdRequestDto(policyId, page, pageSize);
         Page<Coupon> coupons = couponService.getCouponsByPolicy(request);
         Page<CouponFindCouponPolicyIdResponseDto> response = coupons.map(CouponFindCouponPolicyIdResponseDto::fromEntity);
