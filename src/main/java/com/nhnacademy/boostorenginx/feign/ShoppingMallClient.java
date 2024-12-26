@@ -6,7 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @FeignClient(name = "bookstore-back1") // 게이트웨이 url 도는 유레카
-public interface SellingBookClient {
+public interface ShoppingMallClient {
 
     @GetMapping("/api/selling-books/{sellingBookId}")
     ResponseEntity<SellingBookResponseDto> getBookById(@PathVariable Long sellingBookId);

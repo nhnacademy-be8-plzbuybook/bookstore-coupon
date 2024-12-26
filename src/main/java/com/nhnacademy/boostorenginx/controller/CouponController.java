@@ -3,7 +3,6 @@ package com.nhnacademy.boostorenginx.controller;
 import com.nhnacademy.boostorenginx.dto.coupon.*;
 import com.nhnacademy.boostorenginx.dto.membercoupon.MemberCouponUseRequestDto;
 import com.nhnacademy.boostorenginx.entity.Coupon;
-import com.nhnacademy.boostorenginx.error.NotFoundCouponException;
 import com.nhnacademy.boostorenginx.service.CouponService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -12,6 +11,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
 
 @RequiredArgsConstructor
 @RestController
@@ -22,79 +23,87 @@ public class CouponController {
     // 쿠폰생성
     @PostMapping("/coupons")
     public ResponseEntity<CouponCreateResponseDto> createCoupon(@RequestBody CouponCreateRequestDto createRequest) {
-        Long couponId = couponService.createCoupon(createRequest);
-        CouponCreateResponseDto response = new CouponCreateResponseDto(couponId);
+        CouponResponseDto createdCoupon = couponService.createCoupon(createRequest);
+        CouponCreateResponseDto response = new CouponCreateResponseDto(createdCoupon.id());
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     // 쿠폰코드로 검색
-    @GetMapping("/coupons/{code}")
+    @GetMapping("/coupons/code/{code}")
     public ResponseEntity<CouponCodeResponseDto> getCouponByCode(@PathVariable("code") String code) {
-        CouponCodeRequestDto request = new CouponCodeRequestDto(code);
-        Coupon coupon = couponService.getCouponByCode(request).orElseThrow(
-                () -> new NotFoundCouponException("입력받은 code 에 해당하는 쿠폰이 없습니다: " + code)
-        );
-        CouponCodeResponseDto response = CouponCodeResponseDto.fromEntity(coupon);
-        return ResponseEntity.ok(response);
+        CouponCodeRequestDto requestDto = new CouponCodeRequestDto(code);
+        Coupon coupon = couponService.getCouponByCode(requestDto);
+        CouponCodeResponseDto couponCodeResponseDto = CouponCodeResponseDto.fromCoupon(coupon);
+        return ResponseEntity.status(HttpStatus.OK).body(couponCodeResponseDto);
     }
 
     // 만료된 쿠폰들 검색 -> 예: GET /api/coupons/expired?expiredAt=2023-12-31T23:59:59&page=0&pageSize=10
     @GetMapping("/coupons/expired")
-    public ResponseEntity<Page<CouponExpiredResponseDto>> getExpiredCoupons(@RequestParam("expiredAt") LocalDateTime expiredAt,
+    public ResponseEntity<Page<CouponResponseDto>> getExpiredCoupons(@RequestParam("expiredAt") LocalDateTime expiredAt,
                                                                             @RequestParam("page") int page,
                                                                             @RequestParam("pageSize") int pageSize) {
-        CouponExpiredRequestDto request = new CouponExpiredRequestDto(expiredAt, page, pageSize);
-        Page<Coupon> expiredCoupons = couponService.getExpiredCoupons(request);
-        Page<CouponExpiredResponseDto> response = expiredCoupons.map(CouponExpiredResponseDto::fromEntity);
-        return ResponseEntity.ok(response);
+        CouponExpiredRequestDto couponExpiredRequestDto = new CouponExpiredRequestDto(expiredAt, page, pageSize);
+
+        Page<CouponResponseDto> expiredCoupons = couponService.getExpiredCoupons(couponExpiredRequestDto);
+
+        return ResponseEntity.status(HttpStatus.OK).body(expiredCoupons);
     }
 
     // 활성화된 쿠폰들 검색 -> 예: GET /api/coupons/active?currentDateTime=2023-12-20T12:00:00&page=1&pageSize=3
     @GetMapping("/coupons/active")
-    public ResponseEntity<Page<CouponActiveResponseDto>> getActiveCoupons(@RequestParam("currentDateTime") LocalDateTime currentDateTime,
+    public ResponseEntity<Page<CouponResponseDto>> getActiveCoupons(@RequestParam("currentDateTime") LocalDateTime currentDateTime,
                                                                           @RequestParam("page") int page,
                                                                           @RequestParam("pageSize") int pageSize) {
-        CouponActiveRequestDto request = new CouponActiveRequestDto(currentDateTime, page, pageSize);
-        Page<Coupon> coupons = couponService.getActiveCoupons(request);
-        Page<CouponActiveResponseDto> response = coupons.map(CouponActiveResponseDto::fromEntity);
-        return ResponseEntity.ok(response);
+        CouponActiveRequestDto requestDto = new CouponActiveRequestDto(currentDateTime, page, pageSize);
+
+        Page<CouponResponseDto> activeCoupons = couponService.getActiveCoupons(requestDto);
+
+        return ResponseEntity.status(HttpStatus.OK).body(activeCoupons);
     }
 
     // 쿠폰정책들로 검색 -> 예: GET /api/coupons/by-policy/123?page=0&pageSize=10
     @GetMapping("/coupons/coupon-policies/{policy-id}")
-    public ResponseEntity<Page<CouponFindCouponPolicyIdResponseDto>> getCouponsByPolicies(@PathVariable("policy-id") Long policyId,
+    public ResponseEntity<Page<CouponResponseDto>> getCouponsByPolicies(@PathVariable("policy-id") Long policyId,
                                                                                           @RequestParam("page") int page,
                                                                                           @RequestParam("pageSize") int pageSize) {
-        CouponFindCouponPolicyIdRequestDto request = new CouponFindCouponPolicyIdRequestDto(policyId, page, pageSize);
-        Page<Coupon> coupons = couponService.getCouponsByPolicy(request);
-        Page<CouponFindCouponPolicyIdResponseDto> response = coupons.map(CouponFindCouponPolicyIdResponseDto::fromEntity);
-        return ResponseEntity.ok(response);
+        CouponFindCouponPolicyIdRequestDto requestDto = new CouponFindCouponPolicyIdRequestDto(policyId, page, pageSize);
+
+        Page<CouponResponseDto> couponsByPolicy = couponService.getCouponsByPolicy(requestDto);
+
+        return ResponseEntity.status(HttpStatus.OK).body(couponsByPolicy);
     }
 
     // 쿠폰 상태로 검색 -> 예: GET /api/coupons/status?status=UNUSED&page=0&pageSize=5
     @GetMapping("/coupons/status")
-    public ResponseEntity<Page<CouponFindStatusResponseDto>> getCouponsByStatus(
+    public ResponseEntity<Page<CouponResponseDto>> getCouponsByStatus(
             @RequestParam("status") String status,
             @RequestParam("page") int page,
             @RequestParam("pageSize") int pageSize
     ) {
         CouponFindStatusRequestDto requestDto = new CouponFindStatusRequestDto(status, page, pageSize);
-        Page<Coupon> coupons = couponService.getCouponsByStatus(requestDto);
-        Page<CouponFindStatusResponseDto> response = coupons.map(CouponFindStatusResponseDto::fromEntity);
-        return ResponseEntity.ok(response);
+
+        Page<CouponResponseDto> couponsByStatus = couponService.getCouponsByStatus(requestDto);
+
+        return ResponseEntity.status(HttpStatus.OK).body(couponsByStatus);
     }
 
     // 만료되었는지 체크 -> 쿠폰 상태를 Expired 로 변경
     @PatchMapping("/coupons/update-expired")
-    public ResponseEntity<String> updateExpiredCoupons(@RequestBody CouponUpdateExpiredRequestDto request) {
+    public ResponseEntity<Page<CouponResponseDto>> updateExpiredCoupons(@RequestBody CouponUpdateExpiredRequestDto request) {
         couponService.updateExpiredCoupon(request);
-        return ResponseEntity.ok("쿠폰을 만료된 상태로 업데이트 하였습니다");
+        Page<CouponResponseDto> expiredCoupons = couponService.getExpiredCoupons(
+                new CouponExpiredRequestDto(request.expiredDate(), request.page(), request.size())
+        );
+        return ResponseEntity.status(HttpStatus.OK).body(expiredCoupons);
     }
 
     // 쿠폰 사용 -> 쿠폰 상태를 USED 로 변경
     @PatchMapping("/coupons/use")
-    public ResponseEntity<String> useCoupon(@RequestBody MemberCouponUseRequestDto request) {
+    public ResponseEntity<Map<String, String>> useCoupon(@RequestBody MemberCouponUseRequestDto request) {
         couponService.useCoupon(request);
-        return ResponseEntity.ok("쿠폰 사용완료");
+        Map<String, String> response = new HashMap<>();
+        response.put("message", "쿠폰이 성공적으로 사용되었습니다");
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 }

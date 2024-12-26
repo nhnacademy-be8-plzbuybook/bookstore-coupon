@@ -2,61 +2,57 @@ package com.nhnacademy.boostorenginx.dto.coupon;
 
 import com.nhnacademy.boostorenginx.entity.Coupon;
 import com.nhnacademy.boostorenginx.entity.CouponPolicy;
+import com.nhnacademy.boostorenginx.enums.Status;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 public record CouponCodeResponseDto(
-        CouponInfo coupon,
-        CouponPolicyInfo couponPolicy
+        Long id,
+        String code,
+        Status status,
+        LocalDateTime issuedAt,
+        LocalDateTime expiredAt,
+        CouponPolicyDto couponPolicy
 ) {
-    public static CouponCodeResponseDto fromEntity(Coupon coupon) {
-        CouponPolicy policy = coupon.getCouponPolicy();
+    public static CouponCodeResponseDto fromCoupon(Coupon coupon) {
         return new CouponCodeResponseDto(
-                new CouponInfo(
-                        coupon.getId(),
-                        coupon.getCode(),
-                        coupon.getStatus().toString(),
-                        coupon.getIssuedAt(),
-                        coupon.getExpiredAt()
-                ),
-                new CouponPolicyInfo(
-                        policy.getId(),
-                        policy.getName(),
-                        policy.getSaleType().toString(),
-                        policy.getMinimumAmount(),
-                        policy.getDiscountLimit(),
-                        policy.getDiscountRatio(),
-                        policy.isStackable(),
-                        policy.getCouponScope(),
-                        policy.getStartDate(),
-                        policy.getEndDate(),
-                        policy.isCouponActive()
-                )
+                coupon.getId(),
+                coupon.getCode(),
+                coupon.getStatus(),
+                coupon.getIssuedAt(),
+                coupon.getExpiredAt(),
+                CouponPolicyDto.fromCouponPolicy(coupon.getCouponPolicy()) // Mapping CouponPolicy
         );
     }
 
-    public record CouponInfo(
-            Long couponId,
-            String code,
-            String status,
-            LocalDateTime issuedAt,
-            LocalDateTime expiredAt
-    ) {
-    }
-
-    public record CouponPolicyInfo(
-            Long couponPolicyId,
+    public record CouponPolicyDto(
+            Long id,
             String name,
             String saleType,
             BigDecimal minimumAmount,
             BigDecimal discountLimit,
             Integer discountRatio,
             boolean isStackable,
-            String scope,
+            String couponScope,
             LocalDateTime startDate,
             LocalDateTime endDate,
-            boolean active
+            boolean couponActive
     ) {
+        public static CouponPolicyDto fromCouponPolicy(CouponPolicy couponPolicy) {
+            return new CouponPolicyDto(
+                    couponPolicy.getId(),
+                    couponPolicy.getName(),
+                    couponPolicy.getSaleType().name(),
+                    couponPolicy.getMinimumAmount(),
+                    couponPolicy.getDiscountLimit(),
+                    couponPolicy.getDiscountRatio(),
+                    couponPolicy.isStackable(),
+                    couponPolicy.getCouponScope(),
+                    couponPolicy.getStartDate(),
+                    couponPolicy.getEndDate(),
+                    couponPolicy.isCouponActive()
+            );
+        }
     }
 }
