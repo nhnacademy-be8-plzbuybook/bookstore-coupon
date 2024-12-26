@@ -6,6 +6,7 @@ import com.nhnacademy.boostorenginx.dto.couponpolicy.CouponPolicyResponseDto;
 import com.nhnacademy.boostorenginx.dto.couponpolicy.CouponPolicySaveRequestDto;
 import com.nhnacademy.boostorenginx.dto.coupontarget.CouponTargetAddRequestDto;
 import com.nhnacademy.boostorenginx.dto.coupontarget.CouponTargetResponseDto;
+import com.nhnacademy.boostorenginx.dto.membercoupon.MemberCouponCreateRequestDto;
 import com.nhnacademy.boostorenginx.dto.welcome.WelComeCouponRequestDto;
 import com.nhnacademy.boostorenginx.enums.SaleType;
 import jakarta.transaction.Transactional;
@@ -24,6 +25,7 @@ public class WelcomeCouponService {
     private final MemberCouponService memberCouponService;
     private final CouponService couponService;
 
+    @Transactional
     public void issueWelcomeCoupon(WelComeCouponRequestDto requestDto) {
 
         // Welcome 쿠폰정책 Dto 생성
@@ -55,8 +57,15 @@ public class WelcomeCouponService {
                 requestDto.registeredAt()
         );
         CouponResponseDto couponResponseDto = couponService.createCoupon(couponCreateRequestDto);
-        //memberCoupon 객체를 생성해서 저장하는것 까지 되도록 수정
 
+        // 회원쿠폰 발급
+        MemberCouponCreateRequestDto memberCouponCreateRequestDto = new MemberCouponCreateRequestDto(
+                requestDto.memberId(),
+                couponResponseDto.id(),
+                0,
+                1
+        );
+        memberCouponService.createMemberCoupon(memberCouponCreateRequestDto);
 
     }
 }
