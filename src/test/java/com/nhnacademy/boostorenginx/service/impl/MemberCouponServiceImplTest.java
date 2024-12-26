@@ -1,11 +1,11 @@
 package com.nhnacademy.boostorenginx.service.impl;
 
-import com.nhnacademy.boostorenginx.dto.membercoupon.MemberCouponCreateRequestDto;
-import com.nhnacademy.boostorenginx.dto.membercoupon.MemberCouponUseRequestDto;
+import com.nhnacademy.boostorenginx.dto.membercoupon.*;
 import com.nhnacademy.boostorenginx.entity.Coupon;
+import com.nhnacademy.boostorenginx.entity.CouponPolicy;
 import com.nhnacademy.boostorenginx.entity.MemberCoupon;
+import com.nhnacademy.boostorenginx.enums.SaleType;
 import com.nhnacademy.boostorenginx.enums.Status;
-import com.nhnacademy.boostorenginx.error.CouponException;
 import com.nhnacademy.boostorenginx.error.MemberCouponException;
 import com.nhnacademy.boostorenginx.error.NotFoundCouponException;
 import com.nhnacademy.boostorenginx.repository.CouponRepository;
@@ -18,7 +18,14 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -44,28 +51,50 @@ class MemberCouponServiceImplTest {
 
     @BeforeEach
     void setUp() {
-        mockCoupon = new Coupon();
-        mockMemberCoupon = new MemberCoupon();
+        LocalDateTime now = LocalDateTime.now();
+
+        CouponPolicy couponPolicy = CouponPolicy.builder()
+                .name("Test Policy")
+                .saleType(SaleType.RATIO)
+                .minimumAmount(new BigDecimal("1000"))
+                .discountLimit(new BigDecimal("5000"))
+                .discountRatio(20)
+                .isStackable(true)
+                .couponScope("ALL")
+                .startDate(now.minusDays(1))
+                .endDate(now.plusDays(10))
+                .couponActive(true)
+                .build();
+
+        mockCoupon = new Coupon(
+                Status.UNUSED,
+                now.minusDays(1),
+                now.plusDays(10),
+                couponPolicy
+        );
+        mockMemberCoupon = new MemberCoupon(
+                1L,
+                mockCoupon
+        );
     }
 
     @DisplayName("회원쿠폰 발급")
     @Test
     void createMemberCoupon() {
-        Long memberId = 3L;
-        Long couponId = 1L;
-        int page = 0;
-        int pageSize = 5;
-        MemberCouponCreateRequestDto requestDto = new MemberCouponCreateRequestDto(memberId, couponId, page, pageSize);
-        mockCoupon = mock(Coupon.class);
-        when(couponRepository.findById(couponId)).thenReturn(Optional.of(mockCoupon));
-        when(memberCouponRepository.existsByMcMemberIdAndMemberCouponId(memberId, couponId)).thenReturn(false);
-        memberCouponService.createMemberCoupon(requestDto);
-        verify(couponRepository, times(1)).findById(couponId);
-        verify(memberCouponRepository, times(1)).existsByMcMemberIdAndMemberCouponId(memberId, couponId);
+        MemberCouponCreateRequestDto requestDto = new MemberCouponCreateRequestDto(1L, 100L, 0, 10);
+
+        when(couponRepository.findById(100L)).thenReturn(Optional.of(mockCoupon));
+        when(memberCouponRepository.existsByMcMemberIdAndId(1L, 100L)).thenReturn(false);
+        when(memberCouponRepository.save(any(MemberCoupon.class))).thenReturn(mockMemberCoupon);
+
+        MemberCouponResponseDto responseDto = memberCouponService.createMemberCoupon(requestDto);
+
+        assertEquals(1L, responseDto.memberId());
+        assertEquals(Status.UNUSED, responseDto.coupon().status());
         verify(memberCouponRepository, times(1)).save(any(MemberCoupon.class));
     }
 
-    @DisplayName("회원쿠폰 생성시 해당 쿠폰을 못찾을 경우 예외발생")
+    @DisplayName("회원쿠폰 발급시 발급할려는 쿠폰을 못찾을 경우")
     @Test
     void createMemberCoupon_NotFoundCoupon() {
         Long memberId = 1L;
@@ -79,7 +108,7 @@ class MemberCouponServiceImplTest {
 
         assertEquals("ID 에 해당하는 쿠폰이 존재하지 않습니다" + couponId, exception.getMessage());
         verify(couponRepository, times(1)).findById(couponId);
-        verify(memberCouponRepository, never()).existsByMcMemberIdAndMemberCouponId(anyLong(), anyLong());
+        verify(memberCouponRepository, never()).existsByMcMemberIdAndId(anyLong(), anyLong());
         verify(memberCouponRepository, never()).save(any(MemberCoupon.class));
     }
 
@@ -92,63 +121,45 @@ class MemberCouponServiceImplTest {
         int pageSize = 5;
         MemberCouponCreateRequestDto requestDto = new MemberCouponCreateRequestDto(memberId, couponId, page, pageSize);
         when(couponRepository.findById(couponId)).thenReturn(Optional.of(mock(Coupon.class)));
-        when(memberCouponRepository.existsByMcMemberIdAndMemberCouponId(memberId, couponId)).thenReturn(true);
+        when(memberCouponRepository.existsByMcMemberIdAndId(memberId, couponId)).thenReturn(true);
         MemberCouponException exception = assertThrows(MemberCouponException.class,
                 () -> memberCouponService.createMemberCoupon(requestDto));
         assertEquals("회원에게 이미 발급된 쿠폰입니다", exception.getMessage());
         verify(couponRepository, times(1)).findById(couponId);
-        verify(memberCouponRepository, times(1)).existsByMcMemberIdAndMemberCouponId(memberId, couponId);
+        verify(memberCouponRepository, times(1)).existsByMcMemberIdAndId(memberId, couponId);
         verify(memberCouponRepository, never()).save(any(MemberCoupon.class));
     }
 
-    @DisplayName("회원이 쿠폰사용")
+    //
+    @DisplayName("회원 ID로 회원 쿠폰 조회 테스트")
     @Test
-    void useMemberCoupon() {
-        Long couponId = 1L;
-        Long memberId = 1L;
-        MemberCouponUseRequestDto requestDto = new MemberCouponUseRequestDto(couponId, memberId);
-        mockMemberCoupon = mock(MemberCoupon.class);
-        mockCoupon = mock(Coupon.class);
-        when(memberCouponRepository.findById(memberId)).thenReturn(Optional.of(mockMemberCoupon));
-        when(couponRepository.findById(couponId)).thenReturn(Optional.of(mockCoupon));
-        when(mockCoupon.getStatus()).thenReturn(Status.UNUSED);
-        doNothing().when(couponService).useCoupon(requestDto);
-        memberCouponService.useMemberCoupon(requestDto);
-        verify(memberCouponRepository, times(1)).findById(memberId);
-        verify(couponRepository, times(1)).findById(couponId);
-        verify(mockCoupon, times(1)).getStatus();
-        verify(couponService, times(1)).useCoupon(requestDto);
-        verify(memberCouponRepository, times(1)).save(mockMemberCoupon);
+    void getMemberCouponsByMemberId() {
+        MemberCouponFindByMemberIdRequestDto requestDto = new MemberCouponFindByMemberIdRequestDto(1L, 0, 10);
+        Pageable pageable = PageRequest.of(0, 10);
+        Page<MemberCoupon> memberCoupons = new PageImpl<>(Collections.singletonList(mockMemberCoupon), pageable, 1);
+
+        when(memberCouponRepository.findByMcMemberIdOrderByIdAsc(1L, pageable)).thenReturn(memberCoupons);
+
+        Page<MemberCouponResponseDto> response = memberCouponService.getMemberCouponsByMemberId(requestDto);
+
+        assertNotNull(response);
+        assertEquals(1, response.getTotalElements());
+        verify(memberCouponRepository, times(1)).findByMcMemberIdOrderByIdAsc(1L, pageable);
     }
 
-    @DisplayName("회원의 ID 를 찾지 못하는 경우 예외발생")
+    @DisplayName("쿠폰 ID로 회원 쿠폰 조회 테스트")
     @Test
-    void useMemberCoupon_NotFoundMemberId() {
-        Long couponId = 1L;
-        Long memberId = 1L;
-        MemberCouponUseRequestDto requestDto = new MemberCouponUseRequestDto(couponId, memberId);
-        MemberCouponException exception = assertThrows(MemberCouponException.class,
-                () -> memberCouponService.useMemberCoupon(requestDto));
+    void getMemberCouponsByCouponId() {
+        MemberCouponFindByCouponIdRequestDto requestDto = new MemberCouponFindByCouponIdRequestDto(100L, 0, 10);
+        Pageable pageable = PageRequest.of(0, 10);
+        Page<MemberCoupon> memberCoupons = new PageImpl<>(Collections.singletonList(mockMemberCoupon), pageable, 1);
 
-        assertEquals("회원쿠폰 ID 에 해당되는 것을 찾을 수 없습니다: " + memberId, exception.getMessage());
-        verify(memberCouponRepository, times(1)).findById(memberId);
-        verifyNoInteractions(couponRepository);
-        verifyNoInteractions(couponService);
-    }
+        when(memberCouponRepository.findByCoupon_IdOrderByIdAsc(100L, pageable)).thenReturn(memberCoupons);
 
-    @DisplayName("회원 ID 에 해당되는 쿠폰 ID 를 찾지 못하는 경우 예외발생")
-    @Test
-    void useMemberCoupon_NotFoundMemberCoupon() {
-        Long couponId = 1L;
-        Long memberId = 1L;
-        MemberCouponUseRequestDto requestDto = new MemberCouponUseRequestDto(couponId, memberId);
-        when(memberCouponRepository.findById(memberId)).thenReturn(Optional.of(mock(MemberCoupon.class)));
-        when(couponRepository.findById(couponId)).thenReturn(Optional.empty());
-        NotFoundCouponException exception = assertThrows(NotFoundCouponException.class,
-                () -> memberCouponService.useMemberCoupon(requestDto));
-        assertEquals("쿠폰 ID 에 해당되는 것을 찾을 수 없습니다: " + couponId, exception.getMessage());
-        verify(memberCouponRepository, times(1)).findById(memberId);
-        verify(couponRepository, times(1)).findById(couponId);
-        verifyNoInteractions(couponService);
+        Page<MemberCouponResponseDto> response = memberCouponService.getMemberCouponsByCouponId(requestDto);
+
+        assertNotNull(response);
+        assertEquals(1, response.getTotalElements());
+        verify(memberCouponRepository, times(1)).findByCoupon_IdOrderByIdAsc(100L, pageable);
     }
 }
