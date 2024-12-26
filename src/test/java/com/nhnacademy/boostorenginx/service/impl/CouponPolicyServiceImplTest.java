@@ -2,6 +2,7 @@ package com.nhnacademy.boostorenginx.service.impl;
 
 import com.nhnacademy.boostorenginx.dto.couponpolicy.CouponPolicyIdRequestDto;
 import com.nhnacademy.boostorenginx.dto.couponpolicy.CouponPolicyNameRequestDto;
+import com.nhnacademy.boostorenginx.dto.couponpolicy.CouponPolicyResponseDto;
 import com.nhnacademy.boostorenginx.dto.couponpolicy.CouponPolicySaveRequestDto;
 import com.nhnacademy.boostorenginx.dto.coupontarget.CouponTargetAddRequestDto;
 import com.nhnacademy.boostorenginx.entity.CouponPolicy;
@@ -11,6 +12,7 @@ import com.nhnacademy.boostorenginx.error.CouponPolicyException;
 import com.nhnacademy.boostorenginx.error.NotFoundCouponPolicyException;
 import com.nhnacademy.boostorenginx.repository.CouponPolicyRepository;
 import com.nhnacademy.boostorenginx.repository.CouponTargetRepository;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -18,9 +20,13 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -39,110 +45,151 @@ class CouponPolicyServiceImplTest {
     @Mock
     private CouponTargetRepository couponTargetRepository;
 
-    private CouponPolicy couponPolicy;
+    private CouponPolicy mockCouponPolicy;
+
     private final LocalDateTime now = LocalDateTime.now();
 
     @BeforeEach
     void setUp() {
-
-        couponPolicy = CouponPolicy.builder()
+        mockCouponPolicy = CouponPolicy.builder()
                 .name("test")
                 .saleType(SaleType.RATIO)
                 .minimumAmount(new BigDecimal("1000"))
                 .discountLimit(new BigDecimal("5000"))
                 .discountRatio(10)
                 .isStackable(true)
-                .couponScope("Category")
+                .couponScope("CATEGORY")
                 .startDate(now.minusDays(2))
                 .endDate(now.plusDays(2))
                 .couponActive(true)
                 .build();
     }
 
-    @DisplayName("쿠폰정책 생성 서비스 테스트")
+    @DisplayName("쿠폰정책 생성")
     @Test
-    void createCouponPolicy() {
-        CouponPolicySaveRequestDto requestDto = new CouponPolicySaveRequestDto(
+    void createCouponPolicy_Success() {
+        CouponPolicySaveRequestDto couponPolicySaveRequestDto = new CouponPolicySaveRequestDto(
                 "test",
                 SaleType.RATIO,
-                new BigDecimal("1000"),
-                new BigDecimal("5000"),
-                10,
+                new BigDecimal("10000"),
+                new BigDecimal("50000"),
+                0,
                 true,
-                "Category",
-                now.minusDays(2),
-                now.plusDays(2),
+                "BOOK",
+                now.minusDays(1),
+                now.plusDays(1),
                 true
         );
-        CouponPolicy mockPolicy = mock(CouponPolicy.class);
 
-        when(mockPolicy.getId()).thenReturn(1L);
-        when(couponPolicyRepository.save(any(CouponPolicy.class))).thenReturn(mockPolicy);
+        when(couponPolicyRepository.save(any(CouponPolicy.class))).thenReturn(mockCouponPolicy);
 
-        Long result = couponPolicyService.createCouponPolicy(requestDto);
+        CouponPolicyResponseDto couponPolicyResponseDto = couponPolicyService.createCouponPolicy(couponPolicySaveRequestDto);
 
-        assertEquals(1L, result);
+        assertEquals("test", couponPolicyResponseDto.name());
         verify(couponPolicyRepository, times(1)).save(any(CouponPolicy.class));
     }
 
     @DisplayName("이름으로 쿠폰정책 찾기")
     @Test
-    void findByName() {
-        CouponPolicyNameRequestDto requestDto = new CouponPolicyNameRequestDto("test");
+    void findByName_Success() {
+        CouponPolicyNameRequestDto couponPolicyNameRequestDto = new CouponPolicyNameRequestDto("test");
 
-        CouponPolicy mockPolicy = mock(CouponPolicy.class);
-        when(couponPolicyRepository.findByName(anyString())).thenReturn(Optional.of(mockPolicy));
-        Optional<CouponPolicy> result = couponPolicyService.findByName(requestDto);
+        when(couponPolicyRepository.findByName("test")).thenReturn(Optional.of(mockCouponPolicy));
 
-        assertEquals(mockPolicy, result.get());
-        verify(couponPolicyRepository, times(1)).findByName(anyString());
+        CouponPolicyResponseDto couponPolicyResponseDto = couponPolicyService.findByName(couponPolicyNameRequestDto);
+
+        assertEquals("test", couponPolicyResponseDto.name());
+        verify(couponPolicyRepository, times(1)).findByName("test");
+    }
+
+    @DisplayName("이름으로 쿠폰정책 찾기 실패")
+    @Test
+    void findByName_NotFoundCouponPolicy() {
+        String name = "test";
+        CouponPolicyNameRequestDto couponPolicyNameRequestDto = new CouponPolicyNameRequestDto(name);
+
+        when(couponPolicyRepository.findByName(name)).thenReturn(Optional.empty());
+
+        NotFoundCouponPolicyException exception = assertThrows(NotFoundCouponPolicyException.class,
+                () -> couponPolicyService.findByName(couponPolicyNameRequestDto));
+
+        assertEquals("이름에 해당하는 CouponPolicy 를 찾을 수 없습니다: test", exception.getMessage());
     }
 
     @DisplayName("ID 로 쿠폰정책 찾기")
     @Test
-    void findById() {
-        CouponPolicyIdRequestDto requestDto = new CouponPolicyIdRequestDto(1L);
-        CouponPolicy mockPolicy = mock(CouponPolicy.class);
-        when(couponPolicyRepository.findById(anyLong())).thenReturn(Optional.of(mockPolicy));
-        Optional<CouponPolicy> result = couponPolicyService.findById(requestDto);
+    void findById_Success() {
+        CouponPolicyIdRequestDto couponPolicyIdRequestDto = new CouponPolicyIdRequestDto(1L);
 
-        assertEquals(mockPolicy, result.get());
-        verify(couponPolicyRepository, times(1)).findById(anyLong());
+        when(couponPolicyRepository.findById(1L)).thenReturn(Optional.of(mockCouponPolicy));
+
+        CouponPolicyResponseDto couponPolicyResponseDto = couponPolicyService.findById(couponPolicyIdRequestDto);
+
+        assertEquals("test", couponPolicyResponseDto.name());
+        verify(couponPolicyRepository, times(1)).findById(1L);
     }
 
-    @DisplayName("쿠폰정책으로 쿠폰대상 만들기")
+    @DisplayName("ID 로 쿠폰정책 찾기 실패")
     @Test
-    void addTargetToPolicy_Success() {
-        Long policyId = 1L;
-        Long targetId = 10L;
-        CouponTargetAddRequestDto requestDto = new CouponTargetAddRequestDto(policyId, targetId);
-        CouponPolicy mockPolicy = new CouponPolicy();
-        when(couponPolicyRepository.findById(policyId)).thenReturn(Optional.of(mockPolicy));
+    void findById_NotFoundCouponPolicy() {
+        CouponPolicyIdRequestDto couponPolicyIdRequestDto = new CouponPolicyIdRequestDto(1L);
 
-        couponPolicyService.addTargetToPolicy(requestDto);
+        when(couponPolicyRepository.findById(1L)).thenReturn(Optional.empty());
 
-        verify(couponPolicyRepository, times(1)).findById(policyId);
+        NotFoundCouponPolicyException exception = assertThrows(NotFoundCouponPolicyException.class,
+                () -> couponPolicyService.findById(couponPolicyIdRequestDto));
+
+        assertEquals("ID 에 해당하는 CouponPolicy 를 찾을 수 없습니다: 1", exception.getMessage());
+    }
+
+    @DisplayName("활성화된 쿠폰정책 찾기")
+    @Test
+    void findActiveCouponPolicy() {
+        Page<CouponPolicy> activePolicies = new PageImpl<>(Collections.singletonList(mockCouponPolicy));
+        Pageable pageable = mock(Pageable.class);
+
+        when(couponPolicyRepository.findByCouponActiveOrderByIdAsc(true, pageable)).thenReturn(activePolicies);
+
+        Page<CouponPolicyResponseDto> result = couponPolicyService.findActiveCouponPolicy(true, pageable);
+
+        assertEquals(1, result.getTotalElements());
+        verify(couponPolicyRepository, times(1)).findByCouponActiveOrderByIdAsc(true, pageable);
+    }
+
+    @DisplayName("쿠폰정책에 쿠폰대상 추가")
+    @Test
+    void addTargetToPolicy() {
+        CouponTargetAddRequestDto couponTargetAddRequestDto = new CouponTargetAddRequestDto(1L, 10L);
+
+        when(couponPolicyRepository.findById(1L)).thenReturn(Optional.of(mockCouponPolicy));
+
+        couponPolicyService.addTargetToPolicy(couponTargetAddRequestDto);
+
+        verify(couponPolicyRepository, times(1)).findById(1L);
         verify(couponTargetRepository, times(1)).save(any(CouponTarget.class));
     }
 
-    @DisplayName("RequestDto 가 null 인 경우 예외 발생")
-    @Test
-    void addTargetToPolicy_NullRequestDto() {
-        CouponTargetAddRequestDto requestDto = null;
-        CouponPolicyException exception = assertThrows(CouponPolicyException.class,
-                () -> couponPolicyService.addTargetToPolicy(requestDto));
-        assertEquals("requestDto is null", exception.getMessage());
-    }
-
-    @DisplayName("쿠폰정책 ID 에 해당되는 쿠폰정책이 없을 경우 예외 발생")
+    @DisplayName("쿠폰정책을 찾을수 없는 경우")
     @Test
     void addTargetToPolicy_NotFoundPolicy() {
-        Long policyId = 1L;
-        Long targetId = 10L;
-        CouponTargetAddRequestDto requestDto = new CouponTargetAddRequestDto(policyId, targetId);
-        when(couponPolicyRepository.findById(policyId)).thenReturn(Optional.empty());
+        CouponTargetAddRequestDto couponTargetAddRequestDto = new CouponTargetAddRequestDto(1L, 10L);
+
+        when(couponPolicyRepository.findById(1L)).thenReturn(Optional.empty());
+
         NotFoundCouponPolicyException exception = assertThrows(NotFoundCouponPolicyException.class,
-                () -> couponPolicyService.addTargetToPolicy(requestDto));
-        assertEquals("잘못된 쿠폰정책 ID: 1", exception.getMessage());
+                () -> couponPolicyService.addTargetToPolicy(couponTargetAddRequestDto));
+
+        assertEquals("ID 에 해당하는 CouponPolicy 를 찾을 수 없습니다: 1", exception.getMessage());
     }
+
+    @DisplayName("requestDto null 인 경우")
+    @Test
+    void test_requestDtoIsNull() {
+        Assertions.assertAll(
+                () -> assertThrows(CouponPolicyException.class, () -> couponPolicyService.createCouponPolicy(null)),
+                () -> assertThrows(CouponPolicyException.class, () -> couponPolicyService.findByName(null)),
+                () -> assertThrows(CouponPolicyException.class, () -> couponPolicyService.findById(null))
+        );
+    }
+
 }

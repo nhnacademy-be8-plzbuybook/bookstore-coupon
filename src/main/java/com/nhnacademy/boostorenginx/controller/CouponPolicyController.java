@@ -2,8 +2,6 @@ package com.nhnacademy.boostorenginx.controller;
 
 import com.nhnacademy.boostorenginx.dto.couponpolicy.*;
 import com.nhnacademy.boostorenginx.dto.coupontarget.CouponTargetAddRequestDto;
-import com.nhnacademy.boostorenginx.entity.CouponPolicy;
-import com.nhnacademy.boostorenginx.error.NotFoundCouponPolicyException;
 import com.nhnacademy.boostorenginx.service.CouponPolicyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -28,7 +26,7 @@ public class CouponPolicyController {
     }
 
     // 쿠폰정책 이름으로 검색
-    @GetMapping("/coupon-policies/{name}")
+    @GetMapping("/coupon-policies/name/{name}")
     public ResponseEntity<CouponPolicyResponseDto> findByName(@PathVariable String name) {
         CouponPolicyNameRequestDto couponPolicyNameRequestDto = new CouponPolicyNameRequestDto(name);
         CouponPolicyResponseDto couponPolicyResponseDto = couponPolicyService.findByName(couponPolicyNameRequestDto);
