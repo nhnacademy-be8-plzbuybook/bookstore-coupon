@@ -31,8 +31,7 @@ class CouponHistoryServiceImplTest {
 
     @InjectMocks
     private CouponHistoryServiceImpl couponHistoryService;
-    @InjectMocks
-    private CouponServiceImpl couponService;
+
     @Mock
     private CouponHistoryRepository couponHistoryRepository;
 

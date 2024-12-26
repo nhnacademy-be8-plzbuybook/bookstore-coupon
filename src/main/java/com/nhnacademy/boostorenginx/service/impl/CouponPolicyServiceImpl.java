@@ -2,6 +2,7 @@ package com.nhnacademy.boostorenginx.service.impl;
 
 import com.nhnacademy.boostorenginx.dto.couponpolicy.CouponPolicyIdRequestDto;
 import com.nhnacademy.boostorenginx.dto.couponpolicy.CouponPolicyNameRequestDto;
+import com.nhnacademy.boostorenginx.dto.couponpolicy.CouponPolicyResponseDto;
 import com.nhnacademy.boostorenginx.dto.couponpolicy.CouponPolicySaveRequestDto;
 import com.nhnacademy.boostorenginx.dto.coupontarget.CouponTargetAddRequestDto;
 import com.nhnacademy.boostorenginx.entity.CouponPolicy;
@@ -12,9 +13,9 @@ import com.nhnacademy.boostorenginx.repository.CouponPolicyRepository;
 import com.nhnacademy.boostorenginx.repository.CouponTargetRepository;
 import com.nhnacademy.boostorenginx.service.CouponPolicyService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
@@ -23,45 +24,60 @@ public class CouponPolicyServiceImpl implements CouponPolicyService {
     private final CouponTargetRepository couponTargetRepository;
 
     @Override
-    public Long createCouponPolicy(CouponPolicySaveRequestDto requestDto) {
+    public CouponPolicyResponseDto createCouponPolicy(CouponPolicySaveRequestDto requestDto) {
         if (requestDto == null) {
-            throw new CouponPolicyException("requestDto is null");
+            throw new CouponPolicyException("requestDto 가 null 입니다!");
         }
 
         CouponPolicy couponPolicy = couponPolicyRepository.save(requestDto.toEntity());
 
-        return couponPolicy.getId();
+        return CouponPolicyResponseDto.fromCouponPolicy(couponPolicy);
     }
 
     @Override
-    public Optional<CouponPolicy> findByName(CouponPolicyNameRequestDto requestDto) {
+    public CouponPolicyResponseDto findByName(CouponPolicyNameRequestDto requestDto) {
         if (requestDto == null) {
-            throw new CouponPolicyException("requestDto is null");
+            throw new CouponPolicyException("requestDto 가 null 입니다!");
         }
 
-        return couponPolicyRepository.findByName(requestDto.couponPolicyName());
+        CouponPolicy couponPolicy = couponPolicyRepository.findByName(requestDto.couponPolicyName()).orElseThrow(
+                () -> new NotFoundCouponPolicyException("이름에 해당하는 CouponPolicy 를 찾을 수 없습니다: " + requestDto.couponPolicyName())
+        );
+
+        return CouponPolicyResponseDto.fromCouponPolicy(couponPolicy);
     }
 
     @Override
-    public Optional<CouponPolicy> findById(CouponPolicyIdRequestDto requestDto) {
+    public CouponPolicyResponseDto findById(CouponPolicyIdRequestDto requestDto) {
         if (requestDto == null) {
-            throw new CouponPolicyException("requestDto is null");
+            throw new CouponPolicyException("requestDto 가 null 입니다!");
         }
 
-        return couponPolicyRepository.findById(requestDto.couponPolicyId());
+        CouponPolicy couponPolicy = couponPolicyRepository.findById(requestDto.couponPolicyId()).orElseThrow(
+                () -> new NotFoundCouponPolicyException("ID 에 해당하는 CouponPolicy 를 찾을 수 없습니다: " + requestDto.couponPolicyId())
+        );
+
+        return CouponPolicyResponseDto.fromCouponPolicy(couponPolicy);
+    }
+
+    @Override
+    public Page<CouponPolicyResponseDto> findActiveCouponPolicy(boolean couponActive, Pageable pageable) {
+        return couponPolicyRepository.findByCouponActiveOrderByIdAsc(true, pageable).map(CouponPolicyResponseDto::fromCouponPolicy);
     }
 
     @Override
     public void addTargetToPolicy(CouponTargetAddRequestDto requestDto) {
         if (requestDto == null) {
-            throw new CouponPolicyException("requestDto is null");
+            throw new CouponPolicyException("requestDto 가 null 입니다!");
         }
 
         CouponPolicy couponPolicy = couponPolicyRepository.findById(requestDto.policyId()).orElseThrow(
-                () -> new NotFoundCouponPolicyException("잘못된 쿠폰정책 ID: " + requestDto.policyId()));
+                () -> new NotFoundCouponPolicyException("ID 에 해당하는 CouponPolicy 를 찾을 수 없습니다: " + requestDto.policyId())
+        );
 
+        // 쿠폰대상 생성 및 저장
         CouponTarget couponTarget = new CouponTarget();
-        couponTarget.setTargetId(requestDto.targetId());
+        couponTarget.setCtTargetId(requestDto.ctTargetId());
         couponPolicy.addCouponTarget(couponTarget);
 
         couponTargetRepository.save(couponTarget);
