@@ -48,12 +48,12 @@ class CouponTargetRepositoryTest {
         entityManager.persist(couponPolicy);
 
         couponTarget1 = CouponTarget.builder()
-                .targetId(0L)
+                .ctTargetId(0L)
                 .build();
         couponTarget1.setCouponPolicy(couponPolicy);
 
         couponTarget2 = CouponTarget.builder()
-                .targetId(1L)
+                .ctTargetId(1L)
                 .build();
         couponTarget2.setCouponPolicy(couponPolicy);
 
@@ -64,8 +64,8 @@ class CouponTargetRepositoryTest {
 
     @DisplayName("쿠폰대상 ID 로 쿠폰대상 조회")
     @Test
-    void findByTargetId() {
-        String jpql = "SELECT c FROM CouponTarget c WHERE c.targetId = :targetId";
+    void findByctTargetId() {
+        String jpql = "SELECT c FROM CouponTarget c WHERE c.ctTargetId = :targetId";
 
         TypedQuery<CouponTarget> query = entityManager.createQuery(jpql, CouponTarget.class);
         query.setParameter("targetId", 1L);
@@ -73,10 +73,10 @@ class CouponTargetRepositoryTest {
         Optional<CouponTarget> result = query.getResultList().stream().findFirst();
 
         System.out.println("CouponTarget: ");
-        result.ifPresent(couponTarget -> System.out.println(couponTarget.getTargetId()));
+        result.ifPresent(couponTarget -> System.out.println(couponTarget.getCtTargetId()));
 
         assertTrue(result.isPresent());
-        assertEquals(1L, result.get().getTargetId());
+        assertEquals(1L, result.get().getCtTargetId());
     }
 
     @DisplayName("쿠폰정책 ID 에 연결된 쿠폰대상 조회")
@@ -93,12 +93,12 @@ class CouponTargetRepositoryTest {
         results.forEach(couponTarget -> System.out.println(
                 String.format("CouponPolicy: %s, CouponTarget: %d",
                         couponPolicy.getName(),
-                        couponTarget.getTargetId())
+                        couponTarget.getCtTargetId())
         ));
 
         assertEquals(2, results.size());
-        assertEquals(0L, results.get(0).getTargetId());
-        assertEquals(1L, results.get(1).getTargetId());
+        assertEquals(0L, results.get(0).getCtTargetId());
+        assertEquals(1L, results.get(1).getCtTargetId());
     }
 
     @DisplayName("특정 쿠폰정책을 속하는 쿠폰대상 조회")
@@ -117,7 +117,7 @@ class CouponTargetRepositoryTest {
         results.forEach(couponTarget -> System.out.printf(
                 "CouponPolicy: %s, CouponTarget: %d%n",
                 couponPolicy.getName(),
-                couponTarget.getTargetId()
+                couponTarget.getCtTargetId()
         ));
 
         assertEquals(2, results.size());

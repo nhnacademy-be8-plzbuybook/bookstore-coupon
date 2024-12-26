@@ -77,7 +77,7 @@ public class CouponPolicyServiceImpl implements CouponPolicyService {
 
         // 쿠폰대상 생성 및 저장
         CouponTarget couponTarget = new CouponTarget();
-        couponTarget.setTargetId(requestDto.targetId());
+        couponTarget.setCtTargetId(requestDto.ctTargetId());
         couponPolicy.addCouponTarget(couponTarget);
 
         couponTargetRepository.save(couponTarget);
