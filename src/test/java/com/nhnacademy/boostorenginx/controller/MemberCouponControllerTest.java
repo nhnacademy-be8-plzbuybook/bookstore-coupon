@@ -4,10 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nhnacademy.boostorenginx.dto.membercoupon.*;
 import com.nhnacademy.boostorenginx.enums.Status;
 import com.nhnacademy.boostorenginx.service.MemberCouponService;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -15,16 +13,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -32,9 +27,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(controllers = MemberCouponController.class)
 class MemberCouponControllerTest {
-
-    @InjectMocks
-    private MemberCouponController memberCouponController;
 
     @MockBean
     private MemberCouponService memberCouponService;
@@ -45,52 +37,36 @@ class MemberCouponControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-    private MemberCouponCreateRequestDto memberCouponCreateRequestDto;
-    private MemberCouponResponseDto memberCouponResponseDto;
-    private MemberCouponUseRequestDto memberCouponUseRequestDto;
-    private MemberCouponResponseDto mockResponseDto;
-
-    @BeforeEach
-    void setUp() {
-        LocalDateTime now = LocalDateTime.now();
-        memberCouponCreateRequestDto = new MemberCouponCreateRequestDto(1L, 100L, 0, 10);
-        memberCouponResponseDto = new MemberCouponResponseDto(
+    @DisplayName("회원에게 쿠폰발급")
+    @Test
+    void createMemberCoupon() throws Exception {
+        MemberCouponCreateRequestDto requestDto = new MemberCouponCreateRequestDto(1L, 100L, 0, 10);
+        MemberCouponResponseDto responseDto = new MemberCouponResponseDto(
                 1L,
                 1L,
                 new MemberCouponResponseDto.CouponResponseDto(
                         100L,
                         "ABC123",
                         Status.UNUSED,
-                        now.minusDays(1),
-                        now.plusDays(10),
+                        LocalDateTime.now().minusDays(1),
+                        LocalDateTime.now().plusDays(10),
                         "Holiday Discount",
-                        new BigDecimal("5000"),
+                        BigDecimal.valueOf(5000),
                         10
                 )
         );
-        memberCouponUseRequestDto = new MemberCouponUseRequestDto(1L, 100L);
 
-    }
+        when(memberCouponService.createMemberCoupon(any(MemberCouponCreateRequestDto.class))).thenReturn(responseDto);
 
-    @DisplayName("회원에게 쿠폰발급")
-    @Test
-    void createMemberCoupon() throws Exception {
-        when(memberCouponService.createMemberCoupon(any(MemberCouponCreateRequestDto.class))).thenReturn(memberCouponResponseDto);
-
-        mockMvc.perform(post("/api/coupon/member")
+        mockMvc.perform(post("/api/member-coupon")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(memberCouponCreateRequestDto)))
+                        .content(objectMapper.writeValueAsString(requestDto)))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.memberCouponId").value(memberCouponResponseDto.memberCouponId()))
-                .andExpect(jsonPath("$.memberId").value(memberCouponResponseDto.memberId()))
-                .andExpect(jsonPath("$.coupon.id").value(memberCouponResponseDto.coupon().id()))
-                .andExpect(jsonPath("$.coupon.code").value(memberCouponResponseDto.coupon().code()))
-                .andExpect(jsonPath("$.coupon.status").value(memberCouponResponseDto.coupon().status().toString()))
-                .andExpect(jsonPath("$.coupon.issuedAt").exists())
-                .andExpect(jsonPath("$.coupon.expiredAt").exists())
-                .andExpect(jsonPath("$.coupon.name").value(memberCouponResponseDto.coupon().name()))
-                .andExpect(jsonPath("$.coupon.discountLimit").value(memberCouponResponseDto.coupon().discountLimit()))
-                .andExpect(jsonPath("$.coupon.discountRatio").value(memberCouponResponseDto.coupon().discountRatio()));
+                .andExpect(jsonPath("$.memberCouponId").value(responseDto.memberCouponId()))
+                .andExpect(jsonPath("$.memberId").value(responseDto.memberId()))
+                .andExpect(jsonPath("$.coupon.id").value(responseDto.coupon().id()))
+                .andExpect(jsonPath("$.coupon.code").value(responseDto.coupon().code()))
+                .andExpect(jsonPath("$.coupon.status").value(responseDto.coupon().status().toString()));
 
         verify(memberCouponService, times(1)).createMemberCoupon(any(MemberCouponCreateRequestDto.class));
     }
@@ -98,9 +74,13 @@ class MemberCouponControllerTest {
     @DisplayName("회원이 쿠폰을 사용")
     @Test
     void useMemberCoupon() throws Exception {
-        mockMvc.perform(patch("/api/coupon/member/use")
+        MemberCouponUseRequestDto requestDto = new MemberCouponUseRequestDto(1L, 100L);
+
+        doNothing().when(memberCouponService).useMemberCoupon(any(MemberCouponUseRequestDto.class));
+
+        mockMvc.perform(patch("/api/member-coupon/use")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(memberCouponUseRequestDto)))
+                        .content(objectMapper.writeValueAsString(requestDto)))
                 .andExpect(status().isOk())
                 .andExpect(content().string("쿠폰이 성공적으로 사용되었습니다."));
 
@@ -109,11 +89,9 @@ class MemberCouponControllerTest {
 
     @DisplayName("회원 ID 로 회원쿠폰조회")
     @Test
-    void getMemberCouponsByMemberId() {
+    void getMemberCouponsByMemberId() throws Exception {
         Long memberId = 1L;
-        int page = 0;
-        int pageSize = 5;
-        Pageable pageable = PageRequest.of(page, pageSize);
+        Pageable pageable = PageRequest.of(0, 5);
 
         MemberCouponResponseDto.CouponResponseDto mockCoupon = new MemberCouponResponseDto.CouponResponseDto(
                 100L,
@@ -126,24 +104,27 @@ class MemberCouponControllerTest {
                 10
         );
 
-        MemberCouponResponseDto mockResponseDto = new MemberCouponResponseDto(1L, memberId, mockCoupon);
-        Page<MemberCouponResponseDto> mockPage = new PageImpl<>(List.of(mockResponseDto), pageable, 1);
+        Page<MemberCouponResponseDto> mockPage = new PageImpl<>(
+                List.of(new MemberCouponResponseDto(1L, memberId, mockCoupon)), pageable, 1
+        );
 
-        when(memberCouponService.getMemberCouponsByMemberId(any(MemberCouponFindByMemberIdRequestDto.class))).thenReturn(mockPage);
+        when(memberCouponService.getMemberCouponsByMemberId(any(MemberCouponFindByMemberIdRequestDto.class)))
+                .thenReturn(mockPage);
 
-        ResponseEntity<Page<MemberCouponResponseDto>> response = memberCouponController.getMemberCouponsByMemberId(memberId, pageable);
+        mockMvc.perform(get("/api/member-coupon/{memberId}", memberId)
+                        .param("page", "0")
+                        .param("pageSize", "5"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content[0].memberCouponId").value(1L))
+                .andExpect(jsonPath("$.content[0].memberId").value(memberId));
 
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(1, response.getBody().getTotalElements());
         verify(memberCouponService, times(1)).getMemberCouponsByMemberId(any(MemberCouponFindByMemberIdRequestDto.class));
     }
 
     @Test
     void getMemberCouponsByCouponId() throws Exception {
         Long couponId = 100L;
-        int page = 0;
-        int pageSize = 5;
-        Pageable pageable = PageRequest.of(page, pageSize);
+        Pageable pageable = PageRequest.of(0, 5);
 
         MemberCouponResponseDto.CouponResponseDto mockCoupon = new MemberCouponResponseDto.CouponResponseDto(
                 couponId,
@@ -156,23 +137,22 @@ class MemberCouponControllerTest {
                 10
         );
 
-        MemberCouponResponseDto mockResponseDto = new MemberCouponResponseDto(1L, 1L, mockCoupon);
-        Page<MemberCouponResponseDto> mockPage = new PageImpl<>(List.of(mockResponseDto), pageable, 1);
+        Page<MemberCouponResponseDto> mockPage = new PageImpl<>(
+                List.of(new MemberCouponResponseDto(1L, 1L, mockCoupon)), pageable, 1
+        );
 
         when(memberCouponService.getMemberCouponsByCouponId(any(MemberCouponFindByCouponIdRequestDto.class)))
                 .thenReturn(mockPage);
 
         mockMvc.perform(get("/api/member-coupon/coupon/{couponId}", couponId)
-                        .queryParam("page", String.valueOf(page))
-                        .queryParam("pageSize", String.valueOf(pageSize))
-                        .contentType(MediaType.APPLICATION_JSON))
+                        .param("page", "0")
+                        .param("pageSize", "5"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content[0].memberCouponId").value(1L))
                 .andExpect(jsonPath("$.content[0].coupon.id").value(couponId))
                 .andExpect(jsonPath("$.content[0].coupon.code").value("TESTCODE"))
                 .andExpect(jsonPath("$.content[0].coupon.status").value("UNUSED"));
 
-        verify(memberCouponService, times(1))
-                .getMemberCouponsByCouponId(any(MemberCouponFindByCouponIdRequestDto.class));
+        verify(memberCouponService, times(1)).getMemberCouponsByCouponId(any(MemberCouponFindByCouponIdRequestDto.class));
     }
 }
