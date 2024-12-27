@@ -18,7 +18,7 @@ public class BirthdayCouponController {
 
     // 생일쿠폰 발급 API
     @PostMapping("/coupons/birthday")
-    public ResponseEntity<?> issueBirthdayCoupon(@RequestBody BirthdayCouponRequestDto requestDto) {
+    public ResponseEntity<String> issueBirthdayCoupon(@RequestBody BirthdayCouponRequestDto requestDto) {
         birthdayCouponService.issueBirthdayCoupon(requestDto);
         return ResponseEntity.ok("생일 쿠폰이 성공적으로 발급되었습니다");
     }
