@@ -7,9 +7,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface MemberCouponRepository extends JpaRepository<MemberCoupon, Long> {
 
-    Page<MemberCoupon> findMemberCouponByMemberCouponIdOrderByMemberCouponIdAsc(Long couponId, Pageable pageable); // ID 로 회원쿠폰 조회
+    Page<MemberCoupon> findByCoupon_IdOrderByIdAsc(Long couponId, Pageable pageable); // 쿠폰의 ID로 회원쿠폰 조회
 
-    Page<MemberCoupon> findByMcMemberIdOrderByMcMemberIdAsc(Long mcMemberId, Pageable pageable); // 특정 회원 ID 에 해당되는 쿠폰 ID 들을 조회
+    Page<MemberCoupon> findByMcMemberIdOrderByIdAsc(Long mcMemberId, Pageable pageable); // 회원 ID에 해당되는 회원쿠폰 관계들을 모두 조회
 
-    boolean existsByMcMemberIdAndMemberCouponId(Long mcMemberId, Long memberCouponId); // 회원 ID 와 회원쿠폰 ID 가 DB 에 존재하는지 확인
+    boolean existsByMcMemberIdAndId(Long mcMemberId, Long memberCouponId); // 회원 ID 와 회원쿠폰 ID 로 회원쿠폰이 DB 에 존재하는지 확인
+
 }

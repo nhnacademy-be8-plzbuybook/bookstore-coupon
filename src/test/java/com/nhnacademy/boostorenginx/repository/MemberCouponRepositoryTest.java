@@ -12,6 +12,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -82,57 +86,53 @@ class MemberCouponRepositoryTest {
 
     @DisplayName("ID 로 회원쿠폰 조회")
     @Test
-    void findMemberCouponByMemberCouponIdOrderByMemberCouponIdAsc() {
-        String jpql = "SELECT mc FROM MemberCoupon mc WHERE mc.memberCouponId = :id ORDER BY mc.memberCouponId ASC";
-        TypedQuery<MemberCoupon> query = entityManager.createQuery(jpql, MemberCoupon.class);
-        query.setParameter("id", memberCoupon1.getMemberCouponId());
-        MemberCoupon result = query.getSingleResult();
-        System.out.printf("MemberCouponId: %d, Coupon: %s %n", result.getMemberCouponId(), result.getCoupon().getCode());
-        assertEquals(memberCoupon1.getMemberCouponId(), result.getMemberCouponId());
-        assertEquals(memberCoupon1.getCoupon().getCode(), result.getCoupon().getCode());
-        assertEquals(memberCoupon1.getCoupon().getStatus(), result.getCoupon().getStatus());
-    }
+    void findByMcMemberIdOrderByIdAsc() {
+        Pageable pageable = PageRequest.of(0, 10);
 
-    @DisplayName("특정 회원 ID 에 해당되는 쿠폰 ID 들을 조회")
-    @Test
-    void findByMcMemberIdOrderByMcMemberIdAsc() {
-        String jpql = "SELECT mc FROM MemberCoupon mc WHERE mc.mcMemberId = :id ORDER BY mc.mcMemberId ASC";
+        String jpql = "SELECT mc FROM MemberCoupon mc WHERE mc.mcMemberId = :memberId ORDER BY mc.id ASC";
         TypedQuery<MemberCoupon> query = entityManager.createQuery(jpql, MemberCoupon.class);
-        query.setParameter("id", 1L);
-        List<MemberCoupon> results = query.getResultList();
-        System.out.println("MemberCoupon: ");
-        results.forEach(memberCoupon -> System.out.printf("MemberCouponId: %d, Coupon: %s, Status: %s %n",
-                memberCoupon.getMemberCouponId(),
-                memberCoupon.getCoupon().getCode(),
-                memberCoupon.getCoupon().getStatus().toString()
-        ));
-        assertEquals(1, results.size());
-        assertEquals(memberCoupon1.getMemberCouponId(), results.get(0).getMemberCouponId());
-        assertEquals(memberCoupon1.getCoupon().getCode(), results.get(0).getCoupon().getCode());
-        assertEquals(memberCoupon1.getCoupon().getStatus(), results.get(0).getCoupon().getStatus());
-    }
-
-    @DisplayName("회원 ID 와 회원쿠폰 ID 가 DB 에 존재하는지 확인")
-    @Test
-    void existsByMcMemberIdAndMemberCouponId() {
-        String jpql = "SELECT mc FROM MemberCoupon mc WHERE mc.mcMemberId = :id AND mc.memberCouponId = :couponId";
-        TypedQuery<MemberCoupon> query = entityManager.createQuery(jpql, MemberCoupon.class);
-        Long memberId = memberCoupon1.getMcMemberId();
-        Long couponId = memberCoupon1.getMemberCouponId();
-        query.setParameter("id", memberId);
-        query.setParameter("couponId", couponId);
-
+        query.setParameter("memberId", 1L);
         List<MemberCoupon> results = query.getResultList();
 
-        results.forEach(result -> System.out.printf(
-                "MemberCouponId: %d, Coupon: %s, Status: %s %n",
-                result.getMemberCouponId(),
-                result.getCoupon().getCode(),
-                result.getCoupon().getStatus()
-        ));
+        Page<MemberCoupon> page = new PageImpl<>(results, pageable, results.size());
 
-        assertEquals(memberCoupon1.getMemberCouponId(), results.get(0).getMemberCouponId());
-        assertEquals(memberCoupon1.getCoupon().getCode(), results.get(0).getCoupon().getCode());
-        assertEquals(memberCoupon1.getCoupon().getStatus(), results.get(0).getCoupon().getStatus());
+        assertNotNull(page);
+        assertEquals(1, page.getContent().size());
+        assertEquals(memberCoupon1.getMcMemberId(), page.getContent().get(0).getMcMemberId());
+    }
+
+    @DisplayName("회원 ID 에 발급된 쿠폰들을 조회")
+    @Test
+    void findByCoupon_IdOrderByIdAsc() {
+        Pageable pageable = PageRequest.of(0, 10);
+
+        String jpql = "SELECT mc FROM MemberCoupon mc WHERE mc.coupon.id = :couponId ORDER BY mc.id ASC";
+        TypedQuery<MemberCoupon> query = entityManager.createQuery(jpql, MemberCoupon.class);
+        query.setParameter("couponId", coupon1.getId());
+        List<MemberCoupon> results = query.getResultList();
+
+        Page<MemberCoupon> page = new PageImpl<>(results, pageable, results.size());
+
+        assertNotNull(page);
+        assertEquals(1, page.getContent().size());
+        assertEquals(memberCoupon1.getCoupon().getId(), page.getContent().get(0).getCoupon().getId());
+    }
+
+    @DisplayName("회원 ID 와 회원쿠폰 ID 가 존재하는지 확인")
+    @Test
+    void existsByMcMemberIdAndId() {
+        String jpql = "SELECT COUNT(mc) FROM MemberCoupon mc WHERE mc.mcMemberId = :memberId AND mc.id = :memberCouponId";
+        TypedQuery<Long> query = entityManager.createQuery(jpql, Long.class);
+        query.setParameter("memberId", 1L);
+        query.setParameter("memberCouponId", memberCoupon1.getId());
+        Long count = query.getSingleResult();
+
+        assertTrue(count > 0);
+
+        query.setParameter("memberId", 3L);
+        query.setParameter("memberCouponId", memberCoupon1.getId());
+        count = query.getSingleResult();
+
+        assertFalse(count > 0);
     }
 }
