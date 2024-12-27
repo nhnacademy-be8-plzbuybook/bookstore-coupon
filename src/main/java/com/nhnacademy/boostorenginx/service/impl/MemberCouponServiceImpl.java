@@ -85,4 +85,10 @@ public class MemberCouponServiceImpl implements MemberCouponService {
                 .map(MemberCouponResponseDto::fromEntity);
     }
 
+    @Transactional(readOnly = true)
+    @Override
+    public Page<MemberCouponResponseDto> getUnusedMemberCouponsByMemberId(MemberCouponFindByMemberIdRequestDto requestDto) {
+        Pageable pageable = PageRequest.of(requestDto.page(), requestDto.pageSize());
+        return memberCouponRepository.findByMcMemberIdAndCoupon_Status(requestDto.memberId(), Status.UNUSED, pageable).map(MemberCouponResponseDto::fromEntity);
+    }
 }

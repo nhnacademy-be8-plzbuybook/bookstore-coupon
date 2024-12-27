@@ -1,13 +1,13 @@
 package com.nhnacademy.boostorenginx.service;
 
+
+import com.nhnacademy.boostorenginx.dto.birthday.BirthdayCouponRequestDto;
 import com.nhnacademy.boostorenginx.dto.coupon.CouponCreateRequestDto;
 import com.nhnacademy.boostorenginx.dto.coupon.CouponResponseDto;
 import com.nhnacademy.boostorenginx.dto.couponpolicy.CouponPolicyResponseDto;
 import com.nhnacademy.boostorenginx.dto.couponpolicy.CouponPolicySaveRequestDto;
 import com.nhnacademy.boostorenginx.dto.coupontarget.CouponTargetAddRequestDto;
-import com.nhnacademy.boostorenginx.dto.coupontarget.CouponTargetResponseDto;
 import com.nhnacademy.boostorenginx.dto.membercoupon.MemberCouponCreateRequestDto;
-import com.nhnacademy.boostorenginx.dto.welcome.WelComeCouponRequestDto;
 import com.nhnacademy.boostorenginx.enums.SaleType;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -19,21 +19,22 @@ import java.time.LocalDateTime;
 
 @RequiredArgsConstructor
 @Service
-public class WelcomeCouponService {
+public class BirthdayCouponService {
+
     private final CouponPolicyService couponPolicyService;
     private final CouponTargetService couponTargetService;
     private final MemberCouponService memberCouponService;
     private final CouponService couponService;
 
     @Transactional
-    public void issueWelcomeCoupon(WelComeCouponRequestDto requestDto) {
+    public void issueBirthdayCoupon(BirthdayCouponRequestDto requestDto) {
 
-        // Welcome 쿠폰정책 Dto 생성
+        // Birthday 쿠폰정책 요청
         CouponPolicySaveRequestDto couponPolicySaveRequestDto = new CouponPolicySaveRequestDto(
-                "WELCOME_COUPON",
+                "BIRTHDAY_COUPON",
                 SaleType.AMOUNT,
-                new BigDecimal("50000"),
                 new BigDecimal("10000"),
+                new BigDecimal("5000"),
                 0,
                 true,
                 "ALL",
@@ -42,19 +43,20 @@ public class WelcomeCouponService {
                 true
         );
 
-        // Welcome 쿠폰정책 생성
+        // Birthday 쿠폰정책 생성
         CouponPolicyResponseDto couponPolicyResponseDto = couponPolicyService.createCouponPolicy(couponPolicySaveRequestDto);
 
-        // Welcome 쿠폰대상 생성
+        // Birthday 쿠폰대상 생성
         CouponTargetAddRequestDto couponTargetAddRequestDto = new CouponTargetAddRequestDto(
-                couponPolicyResponseDto.id(), requestDto.memberId()
+                couponPolicyResponseDto.id(),
+                requestDto.memberId()
         );
         couponTargetService.createCouponTarget(couponTargetAddRequestDto);
 
-        // Welcome 쿠폰 생성
+        // Birthday 쿠폰 생성
         CouponCreateRequestDto couponCreateRequestDto = new CouponCreateRequestDto(
                 couponPolicyResponseDto.id(),
-                requestDto.registeredAt()
+                requestDto.registerAt()
         );
         CouponResponseDto couponResponseDto = couponService.createCoupon(couponCreateRequestDto);
 
@@ -63,9 +65,9 @@ public class WelcomeCouponService {
                 requestDto.memberId(),
                 couponResponseDto.id(),
                 0,
-                1
+                10
         );
         memberCouponService.createMemberCoupon(memberCouponCreateRequestDto);
-
     }
+
 }
