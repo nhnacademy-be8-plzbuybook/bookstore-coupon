@@ -85,7 +85,7 @@ class MemberCouponControllerTest {
 
         doNothing().when(memberCouponService).useMemberCoupon(any(MemberCouponUseRequestDto.class));
 
-        mockMvc.perform(patch("/api/coupons/member-coupon/use")
+        mockMvc.perform(patch("/api/coupons/member-coupons/coupon/use")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(requestDto)))
                 .andExpect(status().isOk())
@@ -123,7 +123,7 @@ class MemberCouponControllerTest {
         when(memberCouponService.getMemberCouponsByMemberId(any(MemberCouponFindByMemberIdRequestDto.class)))
                 .thenReturn(mockPage);
 
-        mockMvc.perform(get("/api/coupons/member-coupon/member/{memberId}", memberId)
+        mockMvc.perform(get("/api/coupons/member-coupons/member/{memberId}", memberId)
                         .param("page", "0")
                         .param("pageSize", "5"))
                 .andExpect(status().isOk())
@@ -162,7 +162,7 @@ class MemberCouponControllerTest {
         when(memberCouponService.getMemberCouponsByCouponId(any(MemberCouponFindByCouponIdRequestDto.class)))
                 .thenReturn(mockPage);
 
-        mockMvc.perform(get("/api/coupons/member-coupon/coupon/{couponId}", couponId)
+        mockMvc.perform(get("/api/coupons/member-coupons/coupon/{couponId}", couponId)
                         .param("page", "0")
                         .param("pageSize", "5"))
                 .andExpect(status().isOk())

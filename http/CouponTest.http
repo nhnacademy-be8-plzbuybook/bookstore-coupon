@@ -38,3 +38,24 @@ Content-Type: application/json
   "endDate": "2025-01-31T23:59:59",
   "couponActive": true
 }
+
+### 회원이 사용가능한 쿠폰조회
+GET http://localhost:8083/api/coupons/member-coupons/member/81/unused?page=0&size=10
+Content-Type: application/json
+
+### 회원ID로 쿠폰조회
+GET http://localhost:8083/api/coupons/member-coupons/member/81?page=0&size=10
+Content-Type: application/json
+
+### 쿠폰ID로 회원조회
+GET http://localhost:8083/api/coupons/member-coupons/coupon/3?page=0&size=10
+Content-Type: application/json
+
+### 회원이 쿠폰사용
+PATCH http://localhost:8083/api/coupons/member-coupons/coupon/use
+Content-Type: application/json
+
+{
+  "couponId": 3,
+  "memberId": 81
+}
