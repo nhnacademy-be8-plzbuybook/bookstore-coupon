@@ -47,6 +47,15 @@ public class CouponServiceImpl implements CouponService {
 
         Coupon saveCoupon = couponRepository.save(coupon);
 
+        // 쿠폰변경이력 저장
+        CouponHistory couponHistory = CouponHistory.builder()
+                .status(Status.USED)
+                .changeDate(LocalDateTime.now())
+                .reason("CREATE")
+                .coupon(saveCoupon)
+                .build();
+        couponHistoryRepository.save(couponHistory);
+
         return CouponResponseDto.fromCoupon(saveCoupon);
     }
 

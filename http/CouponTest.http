@@ -1,0 +1,61 @@
+### GET request to example server
+GET https://examples.http-client.intellij.net/get
+    ?generated-in=IntelliJ IDEA
+
+### 멤버쿠폰조회 테스트
+GET /api/coupons/member-coupon/member/81?page=0&size=10
+
+### 카테고리 조회 테스트
+POST http://localhost:8083/api/coupons/category/%EC%98%81%EB%AF%B8%EC%86%8C%EC%84%A4
+Content-Type: application/json
+
+{
+  "name": "Literature Coupon",
+  "saleType": "AMOUNT",
+  "minimumAmount": 10000,
+  "discountLimit": 5000,
+  "discountRatio": 0,
+  "isStackable": true,
+  "couponScope": "CATEGORY",
+  "startDate": "2024-12-30T00:00:00",
+  "endDate": "2025-01-30T23:59:59",
+  "isActive": true
+}
+
+### 도서별 조회 테스트
+POST http://localhost:8083/api/coupons/selling-books/1984
+Content-Type: application/json
+
+{
+  "name": "BOOK_COUPON",
+  "saleType": "AMOUNT",
+  "minimumAmount": 10000,
+  "discountLimit": 5000,
+  "discountRatio": 0,
+  "isStackable": true,
+  "couponScope": "BOOK",
+  "startDate": "2024-12-31T00:00:00",
+  "endDate": "2025-01-31T23:59:59",
+  "couponActive": true
+}
+
+### 회원이 사용가능한 쿠폰조회
+GET http://localhost:8083/api/coupons/member-coupons/member/81/unused?page=0&size=10
+Content-Type: application/json
+
+### 회원ID로 쿠폰조회
+GET http://localhost:8083/api/coupons/member-coupons/member/81?page=0&size=10
+Content-Type: application/json
+
+### 쿠폰ID로 회원조회
+GET http://localhost:8083/api/coupons/member-coupons/coupon/3?page=0&size=10
+Content-Type: application/json
+
+### 회원이 쿠폰사용
+PATCH http://localhost:8083/api/coupons/member-coupons/coupon/use
+Content-Type: application/json
+
+{
+  "couponId": 3,
+  "memberId": 81
+}

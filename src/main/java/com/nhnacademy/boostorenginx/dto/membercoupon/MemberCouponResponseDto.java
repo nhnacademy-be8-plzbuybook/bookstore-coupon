@@ -27,8 +27,13 @@ public record MemberCouponResponseDto(
             LocalDateTime issuedAt,
             LocalDateTime expiredAt,
             String name,
+            String saleType,
+            BigDecimal minimumAmount,
             BigDecimal discountLimit,
-            Integer discountRatio
+            Integer discountRatio,
+            boolean isStackable,
+            String couponScope,
+            boolean couponActive
     ) {
         public static CouponResponseDto fromCoupon(Coupon coupon) {
             return new CouponResponseDto(
@@ -38,8 +43,13 @@ public record MemberCouponResponseDto(
                     coupon.getIssuedAt(),
                     coupon.getExpiredAt(),
                     coupon.getCouponPolicy().getName(),
+                    coupon.getCouponPolicy().getSaleType().toString(),
+                    coupon.getCouponPolicy().getMinimumAmount(),
                     coupon.getCouponPolicy().getDiscountLimit(),
-                    coupon.getCouponPolicy().getDiscountRatio()
+                    coupon.getCouponPolicy().getDiscountRatio(),
+                    coupon.getCouponPolicy().isStackable(),
+                    coupon.getCouponPolicy().getCouponScope(),
+                    coupon.getCouponPolicy().isCouponActive()
             );
         }
     }

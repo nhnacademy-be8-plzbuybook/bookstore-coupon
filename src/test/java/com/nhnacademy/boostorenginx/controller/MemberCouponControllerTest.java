@@ -52,9 +52,14 @@ class MemberCouponControllerTest {
                         Status.UNUSED,
                         LocalDateTime.now().minusDays(1),
                         LocalDateTime.now().plusDays(10),
-                        "Holiday Discount",
+                        "할인쿠폰",
+                        "RATIO",
+                        BigDecimal.valueOf(10000),
                         BigDecimal.valueOf(5000),
-                        10
+                        10,
+                        true,
+                        "BOOK",
+                        true
                 )
         );
 
@@ -80,7 +85,7 @@ class MemberCouponControllerTest {
 
         doNothing().when(memberCouponService).useMemberCoupon(any(MemberCouponUseRequestDto.class));
 
-        mockMvc.perform(patch("/api/coupons/member-coupon/use")
+        mockMvc.perform(patch("/api/coupons/member-coupons/coupon/use")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(requestDto)))
                 .andExpect(status().isOk())
@@ -102,8 +107,13 @@ class MemberCouponControllerTest {
                 LocalDateTime.now().minusDays(1),
                 LocalDateTime.now().plusDays(10),
                 "Test Policy",
+                "RATIO",
+                BigDecimal.valueOf(10000),
                 BigDecimal.valueOf(5000),
-                10
+                10,
+                true,
+                "BOOK",
+                true
         );
 
         Page<MemberCouponResponseDto> mockPage = new PageImpl<>(
@@ -113,7 +123,7 @@ class MemberCouponControllerTest {
         when(memberCouponService.getMemberCouponsByMemberId(any(MemberCouponFindByMemberIdRequestDto.class)))
                 .thenReturn(mockPage);
 
-        mockMvc.perform(get("/api/coupons/member-coupon/member/{memberId}", memberId)
+        mockMvc.perform(get("/api/coupons/member-coupons/member/{memberId}", memberId)
                         .param("page", "0")
                         .param("pageSize", "5"))
                 .andExpect(status().isOk())
@@ -136,8 +146,13 @@ class MemberCouponControllerTest {
                 LocalDateTime.now().minusDays(1),
                 LocalDateTime.now().plusDays(10),
                 "Test Policy",
+                "RATIO",
+                BigDecimal.valueOf(10000),
                 BigDecimal.valueOf(5000),
-                10
+                10,
+                true,
+                "BOOK",
+                true
         );
 
         Page<MemberCouponResponseDto> mockPage = new PageImpl<>(
@@ -147,7 +162,7 @@ class MemberCouponControllerTest {
         when(memberCouponService.getMemberCouponsByCouponId(any(MemberCouponFindByCouponIdRequestDto.class)))
                 .thenReturn(mockPage);
 
-        mockMvc.perform(get("/api/coupons/member-coupon/coupon/{couponId}", couponId)
+        mockMvc.perform(get("/api/coupons/member-coupons/coupon/{couponId}", couponId)
                         .param("page", "0")
                         .param("pageSize", "5"))
                 .andExpect(status().isOk())
