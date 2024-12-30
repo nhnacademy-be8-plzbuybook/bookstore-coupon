@@ -52,7 +52,7 @@ public class WelcomeCouponService {
         );
         CouponTargetResponseDto couponTargetResponseDto = couponTargetService.createCouponTarget(couponTargetAddRequestDto);
 
-        Long couponTargetId = couponTargetResponseDto.id();
+        Long couponTargetId = couponTargetResponseDto.couponTargetId();
 
         // Welcome 쿠폰 생성
         CouponCreateRequestDto couponCreateRequestDto = new CouponCreateRequestDto(

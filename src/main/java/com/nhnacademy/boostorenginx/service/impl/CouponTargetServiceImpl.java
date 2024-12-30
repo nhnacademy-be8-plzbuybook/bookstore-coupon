@@ -1,6 +1,8 @@
 package com.nhnacademy.boostorenginx.service.impl;
 
 import com.nhnacademy.boostorenginx.dto.coupontarget.CouponTargetAddRequestDto;
+import com.nhnacademy.boostorenginx.dto.coupontarget.CouponTargetGetRequestDto;
+import com.nhnacademy.boostorenginx.dto.coupontarget.CouponTargetGetResponseDto;
 import com.nhnacademy.boostorenginx.dto.coupontarget.CouponTargetResponseDto;
 import com.nhnacademy.boostorenginx.entity.CouponPolicy;
 import com.nhnacademy.boostorenginx.entity.CouponTarget;
@@ -11,6 +13,10 @@ import com.nhnacademy.boostorenginx.repository.CouponTargetRepository;
 import com.nhnacademy.boostorenginx.service.CouponTargetService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -44,5 +50,19 @@ public class CouponTargetServiceImpl implements CouponTargetService {
         couponPolicyRepository.flush();
 
         return CouponTargetResponseDto.fromEntity(saveTarget);
+    }
+
+    @Transactional
+    @Override
+    public Page<CouponTargetGetResponseDto> getCouponTargetsByPolicyId(CouponTargetGetRequestDto dto) {
+        Pageable pageable = PageRequest.of(dto.page(), dto.pageSize(), Sort.by("id").ascending());
+
+        return couponTargetRepository.findByCouponPolicy_IdOrderByIdAsc(dto.couponPolicyId(), pageable)
+                .map(couponTarget -> new CouponTargetGetResponseDto(
+                        couponTarget.getId(),
+                        couponTarget.getCtTargetId(),
+                        couponTarget.getCouponPolicy().getId(),
+                        couponTarget.getCouponPolicy().getCouponScope()
+                ));
     }
 }

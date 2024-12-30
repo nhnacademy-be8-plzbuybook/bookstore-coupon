@@ -59,3 +59,6 @@ Content-Type: application/json
   "couponId": 3,
   "memberId": 81
 }
+
+### 쿠폰정책ID로 쿠폰대상 조회
+GET http://localhost:8083/api/coupons/targets/policy/25?page=0&size=10&sort=id,asc
