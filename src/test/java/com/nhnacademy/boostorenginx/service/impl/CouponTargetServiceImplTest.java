@@ -55,7 +55,7 @@ class CouponTargetServiceImplTest {
         CouponTargetAddRequestDto requestDto = new CouponTargetAddRequestDto(policyId, targetId);
 
         when(couponPolicyRepository.findById(policyId)).thenReturn(Optional.of(mockPolicy));
-        when(couponTargetRepository.existsById(targetId)).thenReturn(false);
+        when(couponTargetRepository.existsByCtTargetId(targetId)).thenReturn(false);
 
         mockTarget = CouponTarget.builder()
                 .couponPolicy(mockPolicy)
@@ -68,7 +68,8 @@ class CouponTargetServiceImplTest {
 
         assertEquals(targetId, responseDto.targetId());
 
-        verify(couponTargetRepository, times(1)).existsById(targetId);
+        verify(couponPolicyRepository, times(1)).findById(policyId);
+        verify(couponTargetRepository, times(1)).existsByCtTargetId(targetId);
         verify(couponTargetRepository, times(1)).save(any(CouponTarget.class));
     }
 
@@ -92,7 +93,7 @@ class CouponTargetServiceImplTest {
         CouponTargetAddRequestDto requestDto = new CouponTargetAddRequestDto(policyId, targetId);
 
         when(couponPolicyRepository.findById(policyId)).thenReturn(Optional.of(mockPolicy));
-        when(couponTargetRepository.existsById(targetId)).thenReturn(true);
+        when(couponTargetRepository.existsByCtTargetId(targetId)).thenReturn(true);
 
         CouponTargetException exception = assertThrows(CouponTargetException.class,
                 () -> couponTargetService.createCouponTarget(requestDto));
@@ -100,7 +101,6 @@ class CouponTargetServiceImplTest {
         assertEquals("이미 등록된 쿠폰 대상 입니다", exception.getMessage());
 
         verify(couponPolicyRepository, times(1)).findById(policyId);
-        verify(couponTargetRepository, times(1)).existsById(targetId);
-        verify(couponTargetRepository, never()).save(any(CouponTarget.class));
+        verify(couponTargetRepository, times(1)).existsByCtTargetId(targetId);
     }
 }
