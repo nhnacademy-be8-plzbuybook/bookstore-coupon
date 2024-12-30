@@ -11,13 +11,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 
 @RequiredArgsConstructor
-@RequestMapping("/api")
+@RequestMapping("/api/coupons")
 @RestController
 public class CategoryCouponController {
     private final CategoryCouponService categoryCouponService;
 
     // 카테고리 쿠폰 생성
-    @PostMapping("/coupons/category/{keyword}")
+    @PostMapping("/category/{keyword}")
     public ResponseEntity<String> categoryCoupon(@PathVariable("keyword") String keyword) {
         //dto 정리 하고 만들어야됨 -> 회원정책에 필요한 정보들
 //        categoryCouponService.issueCategoryCoupon();

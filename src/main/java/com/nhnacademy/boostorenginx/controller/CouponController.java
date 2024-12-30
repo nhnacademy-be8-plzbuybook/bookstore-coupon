@@ -16,12 +16,12 @@ import java.util.Map;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/coupons")
 public class CouponController {
     private final CouponService couponService;
 
     // 쿠폰생성
-    @PostMapping("/coupons")
+    @PostMapping
     public ResponseEntity<CouponCreateResponseDto> createCoupon(@RequestBody CouponCreateRequestDto createRequest) {
         CouponResponseDto createdCoupon = couponService.createCoupon(createRequest);
         CouponCreateResponseDto response = new CouponCreateResponseDto(createdCoupon.id());
@@ -29,7 +29,7 @@ public class CouponController {
     }
 
     // 쿠폰코드로 검색
-    @GetMapping("/coupons/code/{code}")
+    @GetMapping("/code/{code}")
     public ResponseEntity<CouponCodeResponseDto> getCouponByCode(@PathVariable("code") String code) {
         CouponCodeRequestDto requestDto = new CouponCodeRequestDto(code);
         Coupon coupon = couponService.getCouponByCode(requestDto);
@@ -38,7 +38,7 @@ public class CouponController {
     }
 
     // 만료된 쿠폰들 검색 -> 예: GET /api/coupons/expired?expiredAt=2023-12-31T23:59:59&page=0&pageSize=10
-    @GetMapping("/coupons/expired")
+    @GetMapping("/expired")
     public ResponseEntity<Page<CouponResponseDto>> getExpiredCoupons(@RequestParam("expiredAt") LocalDateTime expiredAt,
                                                                             @RequestParam("page") int page,
                                                                             @RequestParam("pageSize") int pageSize) {
@@ -50,7 +50,7 @@ public class CouponController {
     }
 
     // 활성화된 쿠폰들 검색 -> 예: GET /api/coupons/active?currentDateTime=2023-12-20T12:00:00&page=1&pageSize=3
-    @GetMapping("/coupons/active")
+    @GetMapping("/active")
     public ResponseEntity<Page<CouponResponseDto>> getActiveCoupons(@RequestParam("currentDateTime") LocalDateTime currentDateTime,
                                                                           @RequestParam("page") int page,
                                                                           @RequestParam("pageSize") int pageSize) {
@@ -62,7 +62,7 @@ public class CouponController {
     }
 
     // 쿠폰정책들로 검색 -> 예: GET /api/coupons/by-policy/123?page=0&pageSize=10
-    @GetMapping("/coupons/coupon-policies/{policy-id}")
+    @GetMapping("/coupon-policies/{policy-id}")
     public ResponseEntity<Page<CouponResponseDto>> getCouponsByPolicies(@PathVariable("policy-id") Long policyId,
                                                                                           @RequestParam("page") int page,
                                                                                           @RequestParam("pageSize") int pageSize) {
@@ -74,7 +74,7 @@ public class CouponController {
     }
 
     // 쿠폰 상태로 검색 -> 예: GET /api/coupons/status?status=UNUSED&page=0&pageSize=5
-    @GetMapping("/coupons/status")
+    @GetMapping("/status")
     public ResponseEntity<Page<CouponResponseDto>> getCouponsByStatus(
             @RequestParam("status") String status,
             @RequestParam("page") int page,
@@ -88,7 +88,7 @@ public class CouponController {
     }
 
     // 만료되었는지 체크 -> 쿠폰 상태를 Expired 로 변경
-    @PatchMapping("/coupons/update-expired")
+    @PatchMapping("/update-expired")
     public ResponseEntity<Page<CouponResponseDto>> updateExpiredCoupons(@RequestBody CouponUpdateExpiredRequestDto request) {
         couponService.updateExpiredCoupon(request);
         Page<CouponResponseDto> expiredCoupons = couponService.getExpiredCoupons(
@@ -98,7 +98,7 @@ public class CouponController {
     }
 
     // 쿠폰 사용 -> 쿠폰 상태를 USED 로 변경
-    @PatchMapping("/coupons/use")
+    @PatchMapping("/use")
     public ResponseEntity<Map<String, String>> useCoupon(@RequestBody MemberCouponUseRequestDto request) {
         couponService.useCoupon(request);
         Map<String, String> response = new HashMap<>();

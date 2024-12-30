@@ -53,7 +53,7 @@ public class CouponPolicy {
 
     private boolean couponActive; // 쿠폰정책활성화 여부
 
-    @OneToMany(mappedBy = "couponPolicy")
+    @OneToMany(mappedBy = "couponPolicy", cascade = CascadeType.ALL)
     private List<CouponTarget> couponTargetList = new ArrayList<>();
 
     @OneToMany(mappedBy = "couponPolicy") // @OneToMany 는 빈 리스트로 초기화됨

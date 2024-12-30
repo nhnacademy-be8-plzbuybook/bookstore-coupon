@@ -17,12 +17,12 @@ public class CouponTarget {
 
     @Setter
     @ManyToOne
-    @JoinColumn(name = "cp_id", nullable = false)
-    private CouponPolicy couponPolicy; // 쿠폰정책 (외래키)
+    @JoinColumn(name = "coupon_policy_id", nullable = false)
+    private CouponPolicy couponPolicy; // 쿠폰정책
 
     @Setter
     @Column(name = "ct_target_id", nullable = false, unique = true)
-    private Long ctTargetId; // 쿠폰대상 -> 다른 테이블의 엔티티의 식별키 참조
+    private Long ctTargetId; // 참조하는 대상의 ID
 
     @Builder
     public CouponTarget(CouponPolicy couponPolicy, Long ctTargetId) {
