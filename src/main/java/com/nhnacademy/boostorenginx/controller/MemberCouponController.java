@@ -10,13 +10,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
-@RequestMapping("/api")
+@RequestMapping("/api/coupons")
 @RestController
 public class MemberCouponController {
     private final MemberCouponService memberCouponService;
 
     // 회원에게 쿠폰 발급
-    @PostMapping("/member-coupon")
+    @PostMapping("/member-coupons")
     public ResponseEntity<MemberCouponResponseDto> createMemberCoupon(@RequestBody MemberCouponCreateRequestDto requestDto) {
         MemberCouponResponseDto responseDto = memberCouponService.createMemberCoupon(requestDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
@@ -30,8 +30,8 @@ public class MemberCouponController {
     }
 
     // 회원 ID 로 회원쿠폰 조회
-    @GetMapping("/member-coupon/{memberId}")
-    public ResponseEntity<Page<MemberCouponResponseDto>> getMemberCouponsByMemberId(@PathVariable("memberId") Long memberId, Pageable pageable) {
+    @GetMapping("/member-coupon/member/{memberId}")
+    public ResponseEntity<Page<MemberCouponResponseDto>> getMemberCouponsByMemberId(@PathVariable("memberId") Long memberId, Pageable pageable) { // 전부 x헤더 추가해여됨
         MemberCouponFindByMemberIdRequestDto requestDto = new MemberCouponFindByMemberIdRequestDto(memberId, pageable.getPageNumber(), pageable.getPageSize());
         Page<MemberCouponResponseDto> responseDto = memberCouponService.getMemberCouponsByMemberId(requestDto);
         return ResponseEntity.status(HttpStatus.OK).body(responseDto);
@@ -46,7 +46,7 @@ public class MemberCouponController {
     }
 
     // 회원이 자신이 사용가능한 쿠폰 목록(Status 가 UNUSED 인 쿠폰 목록 조회)
-    @GetMapping("/member-coupon/member/{memberId}")
+    @GetMapping("/member-coupon/member/{memberId}/unused")
     public ResponseEntity<Page<MemberCouponResponseDto>> getUnusedMemberCouponsByMemberId(@PathVariable("memberId") Long memberId, Pageable pageable) {
         MemberCouponFindByMemberIdRequestDto requestDto = new MemberCouponFindByMemberIdRequestDto(memberId, pageable.getPageNumber(), pageable.getPageSize());
         Page<MemberCouponResponseDto> responseDto = memberCouponService.getUnusedMemberCouponsByMemberId(requestDto);

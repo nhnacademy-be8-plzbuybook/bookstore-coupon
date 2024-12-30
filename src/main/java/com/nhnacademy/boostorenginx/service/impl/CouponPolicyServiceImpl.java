@@ -13,16 +13,20 @@ import com.nhnacademy.boostorenginx.repository.CouponPolicyRepository;
 import com.nhnacademy.boostorenginx.repository.CouponTargetRepository;
 import com.nhnacademy.boostorenginx.service.CouponPolicyService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class CouponPolicyServiceImpl implements CouponPolicyService {
     private final CouponPolicyRepository couponPolicyRepository;
     private final CouponTargetRepository couponTargetRepository;
 
+    @Transactional
     @Override
     public CouponPolicyResponseDto createCouponPolicy(CouponPolicySaveRequestDto requestDto) {
         if (requestDto == null) {
@@ -30,7 +34,8 @@ public class CouponPolicyServiceImpl implements CouponPolicyService {
         }
 
         CouponPolicy couponPolicy = couponPolicyRepository.save(requestDto.toEntity());
-
+        couponPolicyRepository.flush();
+        log.info("저장된 쿠폰정책 아이디: {}", couponPolicy.getId());
         return CouponPolicyResponseDto.fromCouponPolicy(couponPolicy);
     }
 

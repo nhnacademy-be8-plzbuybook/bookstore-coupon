@@ -10,12 +10,12 @@ import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/coupons")
 public class CouponTargetController {
     private final CouponTargetService couponTargetService;
 
     // 쿠폰대상 생성
-    @PostMapping("/coupon-targets")
+    @PostMapping("/targets")
     public ResponseEntity<CouponTargetResponseDto> createCouponTarget(@RequestBody CouponTargetAddRequestDto requestDto) {
         CouponTargetResponseDto couponTargetResponseDto = couponTargetService.createCouponTarget(requestDto);
 

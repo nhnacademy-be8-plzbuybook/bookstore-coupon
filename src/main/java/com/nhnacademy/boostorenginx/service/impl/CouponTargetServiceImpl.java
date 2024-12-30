@@ -10,9 +10,11 @@ import com.nhnacademy.boostorenginx.repository.CouponPolicyRepository;
 import com.nhnacademy.boostorenginx.repository.CouponTargetRepository;
 import com.nhnacademy.boostorenginx.service.CouponTargetService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class CouponTargetServiceImpl implements CouponTargetService {
@@ -20,6 +22,7 @@ public class CouponTargetServiceImpl implements CouponTargetService {
     private final CouponTargetRepository couponTargetRepository;
     private final CouponPolicyRepository couponPolicyRepository;
 
+    @Transactional
     @Override
     public CouponTargetResponseDto createCouponTarget(CouponTargetAddRequestDto dto) {
 
@@ -27,7 +30,7 @@ public class CouponTargetServiceImpl implements CouponTargetService {
                 () -> new NotFoundCouponPolicyException("ID 에 해당하는 CouponPolicy 를 찾을 수 없습니다: " + dto.policyId())
         );
 
-        if (couponTargetRepository.existsById(dto.ctTargetId())) {
+        if (couponTargetRepository.existsByCtTargetId(dto.ctTargetId())) {
             throw new CouponTargetException("이미 등록된 쿠폰 대상 입니다");
         }
 
@@ -37,6 +40,8 @@ public class CouponTargetServiceImpl implements CouponTargetService {
                 .build();
 
         CouponTarget saveTarget = couponTargetRepository.save(couponTarget);
+
+        couponPolicyRepository.flush();
 
         return CouponTargetResponseDto.fromEntity(saveTarget);
     }

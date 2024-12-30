@@ -97,7 +97,7 @@ class CouponPolicyControllerTest {
         Mockito.when(couponPolicyService.createCouponPolicy(any(CouponPolicySaveRequestDto.class)))
                 .thenReturn(responseDto);
 
-        mockMvc.perform(post("/api/coupon-policies")
+        mockMvc.perform(post("/api/coupons/policies")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(saveRequestDto)))
                 .andExpect(status().isCreated())
@@ -113,7 +113,7 @@ class CouponPolicyControllerTest {
         CouponTargetAddRequestDto addRequest = new CouponTargetAddRequestDto(1L, 10L);
         Mockito.doNothing().when(couponPolicyService).addTargetToPolicy(any(CouponTargetAddRequestDto.class));
 
-        mockMvc.perform(post("/api/coupon-policies/addTargets")
+        mockMvc.perform(post("/api/coupons/policies/addTargets")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(addRequest)))
                 .andExpect(status().isCreated());

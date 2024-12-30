@@ -42,7 +42,7 @@ class CouponTargetControllerTest {
         Mockito.when(couponTargetService.createCouponTarget(any(CouponTargetAddRequestDto.class)))
                 .thenReturn(responseDto);
 
-        mockMvc.perform(post("/api/coupon-targets")
+        mockMvc.perform(post("/api/coupons/targets")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(requestDto)))
                 .andExpect(status().isCreated())
@@ -59,7 +59,7 @@ class CouponTargetControllerTest {
         Mockito.doThrow(new CouponTargetException("이미 등록된 쿠폰 대상입니다"))
                 .when(couponTargetService).createCouponTarget(any(CouponTargetAddRequestDto.class));
 
-        mockMvc.perform(post("/api/coupon-targets")
+        mockMvc.perform(post("/api/coupons/targets")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(requestDto)))
                 .andExpect(status().isBadRequest())

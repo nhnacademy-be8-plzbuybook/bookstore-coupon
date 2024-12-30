@@ -11,12 +11,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 
 @RequiredArgsConstructor
-@RequestMapping("/api")
+@RequestMapping("/api/coupons")
 @RestController
 public class WelcomeCouponController {
     private final WelcomeCouponService welcomeCouponService;
 
-    @PostMapping("/coupons/welcome")
+    @PostMapping("/welcome")
     public ResponseEntity<String> issueWelcomeCoupon(@RequestBody WelComeCouponRequestDto requestDto) {
         welcomeCouponService.issueWelcomeCoupon(requestDto);
         return ResponseEntity.ok("웰컴 쿠폰이 성공적으로 발급되었습니다");

@@ -4,8 +4,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nhnacademy.boostorenginx.dto.membercoupon.*;
 import com.nhnacademy.boostorenginx.enums.Status;
 import com.nhnacademy.boostorenginx.service.MemberCouponService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -56,9 +58,9 @@ class MemberCouponControllerTest {
                 )
         );
 
-        when(memberCouponService.createMemberCoupon(any(MemberCouponCreateRequestDto.class))).thenReturn(responseDto);
+        Mockito.when(memberCouponService.createMemberCoupon(any(MemberCouponCreateRequestDto.class))).thenReturn(responseDto);
 
-        mockMvc.perform(post("/api/member-coupon")
+        mockMvc.perform(post("/api/coupons/member-coupons")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(requestDto)))
                 .andExpect(status().isCreated())
@@ -78,7 +80,7 @@ class MemberCouponControllerTest {
 
         doNothing().when(memberCouponService).useMemberCoupon(any(MemberCouponUseRequestDto.class));
 
-        mockMvc.perform(patch("/api/member-coupon/use")
+        mockMvc.perform(patch("/api/coupons/member-coupon/use")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(requestDto)))
                 .andExpect(status().isOk())
@@ -111,7 +113,7 @@ class MemberCouponControllerTest {
         when(memberCouponService.getMemberCouponsByMemberId(any(MemberCouponFindByMemberIdRequestDto.class)))
                 .thenReturn(mockPage);
 
-        mockMvc.perform(get("/api/member-coupon/{memberId}", memberId)
+        mockMvc.perform(get("/api/coupons/member-coupon/member/{memberId}", memberId)
                         .param("page", "0")
                         .param("pageSize", "5"))
                 .andExpect(status().isOk())
@@ -121,6 +123,7 @@ class MemberCouponControllerTest {
         verify(memberCouponService, times(1)).getMemberCouponsByMemberId(any(MemberCouponFindByMemberIdRequestDto.class));
     }
 
+    @DisplayName("쿠폰 ID 로 회원쿠폰 조회")
     @Test
     void getMemberCouponsByCouponId() throws Exception {
         Long couponId = 100L;
@@ -144,7 +147,7 @@ class MemberCouponControllerTest {
         when(memberCouponService.getMemberCouponsByCouponId(any(MemberCouponFindByCouponIdRequestDto.class)))
                 .thenReturn(mockPage);
 
-        mockMvc.perform(get("/api/member-coupon/coupon/{couponId}", couponId)
+        mockMvc.perform(get("/api/coupons/member-coupon/coupon/{couponId}", couponId)
                         .param("page", "0")
                         .param("pageSize", "5"))
                 .andExpect(status().isOk())

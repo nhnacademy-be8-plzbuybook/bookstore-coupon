@@ -12,13 +12,13 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDateTime;
 
 @RequiredArgsConstructor
-@RequestMapping("/api")
+@RequestMapping("/api/coupons")
 @RestController
 public class CouponHistoryController {
     private final CouponHistoryService couponHistoryService;
 
     // 쿠폰이력 조회 -> 예: GET /api/coupon-histories/1?page=1&size=3
-    @GetMapping("/coupon-histories/{coupon-id}")
+    @GetMapping("/histories/{coupon-id}")
     public ResponseEntity<Page<CouponHistoryFindResponseDto>> getHistoryByCouponId(
             @PathVariable("coupon-id") Long couponId,
             @RequestParam int page,
@@ -31,7 +31,7 @@ public class CouponHistoryController {
     }
 
     // 특정 상태인 쿠폰이력 조회
-    @GetMapping("/coupon-histories/status")
+    @GetMapping("/histories/status")
     public ResponseEntity<Page<CouponHistoryStatusResponseDto>> getHistoryByStatus(
             @RequestParam String status,
             @RequestParam int page,
@@ -44,7 +44,7 @@ public class CouponHistoryController {
     }
 
     // 특정 기간(활성화 기간인) 쿠폰이력 조회
-    @GetMapping("/coupon-histories/active")
+    @GetMapping("/histories/active")
     public ResponseEntity<Page<CouponHistoryDuringResponseDto>> getHistoryDate(
             @RequestParam("start") LocalDateTime start,
             @RequestParam("end") LocalDateTime end,

@@ -11,12 +11,13 @@ import com.nhnacademy.boostorenginx.dto.welcome.WelComeCouponRequestDto;
 import com.nhnacademy.boostorenginx.enums.SaleType;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class WelcomeCouponService {
@@ -28,7 +29,7 @@ public class WelcomeCouponService {
     @Transactional
     public void issueWelcomeCoupon(WelComeCouponRequestDto requestDto) {
 
-        // Welcome 쿠폰정책 Dto 생성
+        // Welcome 쿠폰정책 생성
         CouponPolicySaveRequestDto couponPolicySaveRequestDto = new CouponPolicySaveRequestDto(
                 "WELCOME_COUPON",
                 SaleType.AMOUNT,
@@ -41,27 +42,31 @@ public class WelcomeCouponService {
                 LocalDateTime.now().plusDays(30),
                 true
         );
-
-        // Welcome 쿠폰정책 생성
         CouponPolicyResponseDto couponPolicyResponseDto = couponPolicyService.createCouponPolicy(couponPolicySaveRequestDto);
 
+        Long couponPolicyId = couponPolicyResponseDto.id();
+        log.debug("CouponPolicyId: {}, MemberId: {}", couponPolicyId, requestDto.memberId());
         // Welcome 쿠폰대상 생성
         CouponTargetAddRequestDto couponTargetAddRequestDto = new CouponTargetAddRequestDto(
-                couponPolicyResponseDto.id(), requestDto.memberId()
+                couponPolicyId, requestDto.memberId()
         );
-        couponTargetService.createCouponTarget(couponTargetAddRequestDto);
+        CouponTargetResponseDto couponTargetResponseDto = couponTargetService.createCouponTarget(couponTargetAddRequestDto);
+
+        Long couponTargetId = couponTargetResponseDto.id();
 
         // Welcome 쿠폰 생성
         CouponCreateRequestDto couponCreateRequestDto = new CouponCreateRequestDto(
-                couponPolicyResponseDto.id(),
+                couponPolicyId,
                 requestDto.registeredAt()
         );
         CouponResponseDto couponResponseDto = couponService.createCoupon(couponCreateRequestDto);
 
+        Long couponId = couponResponseDto.id();
+
         // 회원쿠폰 발급
         MemberCouponCreateRequestDto memberCouponCreateRequestDto = new MemberCouponCreateRequestDto(
                 requestDto.memberId(),
-                couponResponseDto.id(),
+                couponId,
                 0,
                 1
         );
