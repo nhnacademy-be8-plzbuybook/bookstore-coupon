@@ -29,19 +29,19 @@ public class MemberCouponController {
         return ResponseEntity.status(HttpStatus.OK).body("쿠폰이 성공적으로 사용되었습니다.");
     }
 
-    // 회원 ID 로 회원쿠폰 조회
-    @GetMapping("/member-coupon/member/{memberId}")
-    public ResponseEntity<Page<MemberCouponResponseDto>> getMemberCouponsByMemberId(@PathVariable("memberId") Long memberId, Pageable pageable) {
-        MemberCouponFindByMemberIdRequestDto requestDto = new MemberCouponFindByMemberIdRequestDto(memberId, pageable.getPageNumber(), pageable.getPageSize());
-        Page<MemberCouponResponseDto> responseDto = memberCouponService.getMemberCouponsByMemberId(requestDto);
-        return ResponseEntity.status(HttpStatus.OK).body(responseDto);
-    }
-
     // 쿠폰 ID 로 회원쿠폰 조회
     @GetMapping("/member-coupon/coupon/{couponId}")
     public ResponseEntity<Page<MemberCouponResponseDto>> getMemberCouponsByCouponId(@PathVariable("couponId") Long couponId, Pageable pageable) {
         MemberCouponFindByCouponIdRequestDto requestDto = new MemberCouponFindByCouponIdRequestDto(couponId, pageable.getPageNumber(), pageable.getPageSize());
         Page<MemberCouponResponseDto> responseDto = memberCouponService.getMemberCouponsByCouponId(requestDto);
+        return ResponseEntity.status(HttpStatus.OK).body(responseDto);
+    }
+
+    // 회원 ID 로 회원쿠폰 조회
+    @GetMapping("/member-coupon/member/{memberId}")
+    public ResponseEntity<Page<MemberCouponResponseDto>> getMemberCouponsByMemberId(@PathVariable("memberId") Long memberId, Pageable pageable) {
+        MemberCouponFindByMemberIdRequestDto requestDto = new MemberCouponFindByMemberIdRequestDto(memberId, pageable.getPageNumber(), pageable.getPageSize());
+        Page<MemberCouponResponseDto> responseDto = memberCouponService.getMemberCouponsByMemberId(requestDto);
         return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }
 

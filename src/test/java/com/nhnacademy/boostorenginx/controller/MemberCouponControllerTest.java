@@ -52,9 +52,14 @@ class MemberCouponControllerTest {
                         Status.UNUSED,
                         LocalDateTime.now().minusDays(1),
                         LocalDateTime.now().plusDays(10),
-                        "Holiday Discount",
+                        "할인쿠폰",
+                        "RATIO",
+                        BigDecimal.valueOf(10000),
                         BigDecimal.valueOf(5000),
-                        10
+                        10,
+                        true,
+                        "BOOK",
+                        true
                 )
         );
 
@@ -102,8 +107,13 @@ class MemberCouponControllerTest {
                 LocalDateTime.now().minusDays(1),
                 LocalDateTime.now().plusDays(10),
                 "Test Policy",
+                "RATIO",
+                BigDecimal.valueOf(10000),
                 BigDecimal.valueOf(5000),
-                10
+                10,
+                true,
+                "BOOK",
+                true
         );
 
         Page<MemberCouponResponseDto> mockPage = new PageImpl<>(
@@ -136,8 +146,13 @@ class MemberCouponControllerTest {
                 LocalDateTime.now().minusDays(1),
                 LocalDateTime.now().plusDays(10),
                 "Test Policy",
+                "RATIO",
+                BigDecimal.valueOf(10000),
                 BigDecimal.valueOf(5000),
-                10
+                10,
+                true,
+                "BOOK",
+                true
         );
 
         Page<MemberCouponResponseDto> mockPage = new PageImpl<>(

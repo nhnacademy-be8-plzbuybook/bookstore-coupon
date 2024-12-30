@@ -27,7 +27,7 @@ public class CategoryCouponService {
 
     private final ShoppingMallClient shoppingMallClient;
 
-    // 카테고리 쿠폰 생성 및 발급 -> 나중에 dto 정리
+    // 카테고리 쿠폰 생성 및 발급
     @Transactional
     public void issueCategoryCoupon(String keyword, CouponPolicySaveRequestDto couponPolicySaveRequestDto) {
 
