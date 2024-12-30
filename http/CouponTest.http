@@ -1,0 +1,23 @@
+### GET request to example server
+GET https://examples.http-client.intellij.net/get
+    ?generated-in=IntelliJ IDEA
+
+### 멤버쿠폰조회 테스트
+GET /api/coupons/member-coupon/member/81?page=0&size=10
+
+### 카테고리 조회 테스트
+POST http://localhost:8083/api/coupons/category/%EC%98%81%EB%AF%B8%EC%86%8C%EC%84%A4
+Content-Type: application/json
+
+{
+  "name": "Literature Coupon",
+  "saleType": "AMOUNT",
+  "minimumAmount": 10000,
+  "discountLimit": 5000,
+  "discountRatio": 0,
+  "isStackable": true,
+  "couponScope": "CATEGORY",
+  "startDate": "2024-12-30T00:00:00",
+  "endDate": "2025-01-30T23:59:59",
+  "isActive": true
+}

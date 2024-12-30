@@ -34,24 +34,11 @@ public class CategoryCouponService {
         // 쇼핑몰 서버에서 카테고리 정보(카테고리 ID, 카테고리 이름) 가져오기
         List<CategorySimpleResponseDto> categories = shoppingMallClient.searchCategories(keyword);
 
+        // 카테고리별 쿠폰정책 생성
+        CouponPolicyResponseDto couponPolicyResponseDto = couponPolicyService.createCouponPolicy(couponPolicySaveRequestDto);
+        Long couponPolicyId = couponPolicyResponseDto.id();
+
         for (CategorySimpleResponseDto category : categories) {
-            // 카테고리별 쿠폰정책 생성
-            CouponPolicySaveRequestDto categoryPolicySaveRequestDto = new CouponPolicySaveRequestDto(
-                    category.getCategoryName() + " COUPON",
-                    couponPolicySaveRequestDto.saleType(),
-                    couponPolicySaveRequestDto.minimumAmount(),
-                    couponPolicySaveRequestDto.discountLimit(),
-                    couponPolicySaveRequestDto.discountRatio(),
-                    couponPolicySaveRequestDto.isStackable(),
-                    couponPolicySaveRequestDto.couponScope(),
-                    couponPolicySaveRequestDto.startDate(),
-                    couponPolicySaveRequestDto.endDate(),
-                    couponPolicySaveRequestDto.couponActive()
-            );
-
-            CouponPolicyResponseDto couponPolicyResponseDto = couponPolicyService.createCouponPolicy(categoryPolicySaveRequestDto);
-            Long couponPolicyId = couponPolicyResponseDto.id();
-
             // 카테고리별 쿠폰대상 생성
             CouponTargetAddRequestDto couponTargetAddRequestDto = new CouponTargetAddRequestDto(couponPolicyId, category.getCategoryId());
             CouponTargetResponseDto couponTargetResponseDto = couponTargetService.createCouponTarget(couponTargetAddRequestDto);
