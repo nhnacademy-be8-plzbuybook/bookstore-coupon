@@ -21,3 +21,20 @@ Content-Type: application/json
   "endDate": "2025-01-30T23:59:59",
   "isActive": true
 }
+
+### 도서별 조회 테스트
+POST http://localhost:8083/api/coupons/selling-books/1984
+Content-Type: application/json
+
+{
+  "name": "BOOK_COUPON",
+  "saleType": "AMOUNT",
+  "minimumAmount": 10000,
+  "discountLimit": 5000,
+  "discountRatio": 0,
+  "isStackable": true,
+  "couponScope": "BOOK",
+  "startDate": "2024-12-31T00:00:00",
+  "endDate": "2025-01-31T23:59:59",
+  "couponActive": true
+}
