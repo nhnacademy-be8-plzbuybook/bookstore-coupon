@@ -31,7 +31,7 @@ public class MemberCouponController {
 
     // 회원 ID 로 회원쿠폰 조회
     @GetMapping("/member-coupon/member/{memberId}")
-    public ResponseEntity<Page<MemberCouponResponseDto>> getMemberCouponsByMemberId(@PathVariable("memberId") Long memberId, Pageable pageable) { // 전부 x헤더 추가해여됨
+    public ResponseEntity<Page<MemberCouponResponseDto>> getMemberCouponsByMemberId(@PathVariable("memberId") Long memberId, Pageable pageable) {
         MemberCouponFindByMemberIdRequestDto requestDto = new MemberCouponFindByMemberIdRequestDto(memberId, pageable.getPageNumber(), pageable.getPageSize());
         Page<MemberCouponResponseDto> responseDto = memberCouponService.getMemberCouponsByMemberId(requestDto);
         return ResponseEntity.status(HttpStatus.OK).body(responseDto);
