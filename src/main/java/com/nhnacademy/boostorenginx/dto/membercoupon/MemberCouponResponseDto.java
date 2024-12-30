@@ -1,6 +1,5 @@
 package com.nhnacademy.boostorenginx.dto.membercoupon;
 
-import com.nhnacademy.boostorenginx.dto.coupon.CouponResponseDto;
 import com.nhnacademy.boostorenginx.entity.Coupon;
 import com.nhnacademy.boostorenginx.entity.MemberCoupon;
 import com.nhnacademy.boostorenginx.enums.Status;
