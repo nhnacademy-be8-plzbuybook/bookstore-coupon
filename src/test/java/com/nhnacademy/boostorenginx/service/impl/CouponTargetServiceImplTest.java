@@ -66,7 +66,7 @@ class CouponTargetServiceImplTest {
 
         CouponTargetResponseDto responseDto = couponTargetService.createCouponTarget(requestDto);
 
-        assertEquals(targetId, responseDto.targetId());
+        assertEquals(targetId, responseDto.ctTargetId());
 
         verify(couponPolicyRepository, times(1)).findById(policyId);
         verify(couponTargetRepository, times(1)).existsByCtTargetId(targetId);

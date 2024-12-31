@@ -5,7 +5,6 @@ import com.nhnacademy.boostorenginx.dto.coupontarget.CouponTargetAddRequestDto;
 import com.nhnacademy.boostorenginx.dto.coupontarget.CouponTargetResponseDto;
 import com.nhnacademy.boostorenginx.error.CouponTargetException;
 import com.nhnacademy.boostorenginx.service.CouponTargetService;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -15,7 +14,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -46,9 +44,9 @@ class CouponTargetControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(requestDto)))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.id").value(responseDto.id()))
-                .andExpect(jsonPath("$.policyId").value(responseDto.policyId()))
-                .andExpect(jsonPath("$.targetId").value(responseDto.targetId()));
+                .andExpect(jsonPath("$.couponTargetId").value(responseDto.couponTargetId()))
+                .andExpect(jsonPath("$.couponPolicyId").value(responseDto.couponPolicyId()))
+                .andExpect(jsonPath("$.ctTargetId").value(responseDto.ctTargetId()));
     }
 
     @DisplayName("쿠폰 대상 생성 - 서비스계층에서 예외가 발생할 경우")

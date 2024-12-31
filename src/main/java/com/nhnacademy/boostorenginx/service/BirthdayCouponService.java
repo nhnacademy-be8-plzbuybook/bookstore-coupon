@@ -56,7 +56,7 @@ public class BirthdayCouponService {
                 requestDto.memberId()
         );
         CouponTargetResponseDto couponTargetResponseDto = couponTargetService.createCouponTarget(couponTargetAddRequestDto);
-        Long couponTargetId = couponTargetResponseDto.id();
+        Long couponTargetId = couponTargetResponseDto.couponTargetId();
         log.debug("CouponTargetId: {}", couponTargetId);
 
         // Birthday 쿠폰 생성

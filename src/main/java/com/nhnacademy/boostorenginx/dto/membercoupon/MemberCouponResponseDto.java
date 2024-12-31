@@ -21,11 +21,12 @@ public record MemberCouponResponseDto(
     }
 
     public record CouponResponseDto(
-            Long id,
+            Long couponId,
             String code,
             Status status,
             LocalDateTime issuedAt,
             LocalDateTime expiredAt,
+            Long couponPolicyId,
             String name,
             String saleType,
             BigDecimal minimumAmount,
@@ -42,6 +43,7 @@ public record MemberCouponResponseDto(
                     coupon.getStatus(),
                     coupon.getIssuedAt(),
                     coupon.getExpiredAt(),
+                    coupon.getCouponPolicy().getId(),
                     coupon.getCouponPolicy().getName(),
                     coupon.getCouponPolicy().getSaleType().toString(),
                     coupon.getCouponPolicy().getMinimumAmount(),

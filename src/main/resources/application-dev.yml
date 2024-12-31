@@ -7,11 +7,18 @@ spring:
       on-profile: dev
   application:
     name: coupon
+#  datasource:
+#    url: jdbc:h2:mem:bookstore-db-prod;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE  # prod DB 설정
+#    driver-class-name: org.h2.Driver
+#    username: sa
+#    password:  # 비밀번호를 빈 문자열로 두었음
+
   datasource:
-    url: jdbc:h2:mem:bookstore-db-prod;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE  # prod DB 설정
-    driver-class-name: org.h2.Driver
-    username: sa
-    password:  # 비밀번호를 빈 문자열로 두었음
+    #{}에 값을 불러온다
+    url: ${app.skm.database.url}
+    username: ${app.skm.database.username}
+    password: ${app.skm.database.password}
+    driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:
     show-sql: true # 실행되는 SQL 을 콘솔에 출력
@@ -40,3 +47,13 @@ eureka:
     service-url:
       defaultZone: http://localhost:8761/eureka  # Eureka 서버 URL
 
+app:
+  skm:
+    url: https://api-keymanager.nhncloudservice.com
+    appKey: qTQNj7LyHhdAazH3
+    keystoreFile: skm.p12
+    password: 4444
+    database:
+      url: 1117490ed9294c8798e83f2cb162982d
+      username: 7f2f713f0a6c4d82acb64ed3aa831cee
+      password: 7ac2c65487d34a7fa73997fada11d730
