@@ -24,7 +24,7 @@ public class GlobalExceptionHandler {
     }
 
     // 400 BAD REQUEST
-    @ExceptionHandler({CouponException.class, CouponPolicyException.class, MemberCouponException.class, CouponHistoryException.class, CouponTargetException.class})
+    @ExceptionHandler({CouponException.class, CouponPolicyException.class, MemberCouponException.class, CouponHistoryException.class, CouponTargetException.class, CouponCalculationExcption.class})
     public ResponseEntity<ErrorResponseDto> handleCouponHistoryException(RuntimeException ex) {
         ErrorResponseDto errorResponseDto = new ErrorResponseDto(
                 HttpStatus.BAD_REQUEST.value(),

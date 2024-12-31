@@ -130,7 +130,7 @@ class MemberCouponServiceImplTest {
         verify(memberCouponRepository, never()).save(any(MemberCoupon.class));
     }
 
-    //
+
     @DisplayName("회원 ID로 회원 쿠폰 조회 테스트")
     @Test
     void getMemberCouponsByMemberId() {
@@ -140,10 +140,18 @@ class MemberCouponServiceImplTest {
 
         when(memberCouponRepository.findByMcMemberIdOrderByIdAsc(1L, pageable)).thenReturn(memberCoupons);
 
-        Page<MemberCouponResponseDto> response = memberCouponService.getMemberCouponsByMemberId(requestDto);
+        Page<MemberCouponGetResponseDto> response = memberCouponService.getMemberCouponsByMemberId(requestDto);
 
-        assertNotNull(response);
         assertEquals(1, response.getTotalElements());
+        assertEquals("Test Policy", response.getContent().get(0).getName());
+        assertEquals("UNUSED", response.getContent().get(0).getStatus());
+        assertEquals("RATIO", response.getContent().get(0).getSaleType());
+        assertEquals(new BigDecimal("1000"), response.getContent().get(0).getMinimumAmount());
+        assertEquals(new BigDecimal("5000"), response.getContent().get(0).getDiscountLimit());
+        assertEquals(20, response.getContent().get(0).getDiscountRatio());
+        assertTrue(response.getContent().get(0).isStackable());
+        assertEquals("ALL", response.getContent().get(0).getCouponScope());
+
         verify(memberCouponRepository, times(1)).findByMcMemberIdOrderByIdAsc(1L, pageable);
     }
 

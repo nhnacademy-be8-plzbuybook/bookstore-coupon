@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nhnacademy.boostorenginx.dto.membercoupon.*;
 import com.nhnacademy.boostorenginx.enums.Status;
 import com.nhnacademy.boostorenginx.service.MemberCouponService;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -52,6 +51,7 @@ class MemberCouponControllerTest {
                         Status.UNUSED,
                         LocalDateTime.now().minusDays(1),
                         LocalDateTime.now().plusDays(10),
+                        1L,
                         "할인쿠폰",
                         "RATIO",
                         BigDecimal.valueOf(10000),
@@ -71,7 +71,7 @@ class MemberCouponControllerTest {
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.memberCouponId").value(responseDto.memberCouponId()))
                 .andExpect(jsonPath("$.memberId").value(responseDto.memberId()))
-                .andExpect(jsonPath("$.coupon.id").value(responseDto.coupon().id()))
+                .andExpect(jsonPath("$.coupon.couponId").value(responseDto.coupon().couponId()))
                 .andExpect(jsonPath("$.coupon.code").value(responseDto.coupon().code()))
                 .andExpect(jsonPath("$.coupon.status").value(responseDto.coupon().status().toString()));
 
@@ -100,10 +100,9 @@ class MemberCouponControllerTest {
         Long memberId = 1L;
         Pageable pageable = PageRequest.of(0, 5);
 
-        MemberCouponResponseDto.CouponResponseDto mockCoupon = new MemberCouponResponseDto.CouponResponseDto(
-                100L,
+        MemberCouponGetResponseDto mockCoupon = new MemberCouponGetResponseDto(
                 "TESTCODE",
-                Status.UNUSED,
+                "UNUSED",
                 LocalDateTime.now().minusDays(1),
                 LocalDateTime.now().plusDays(10),
                 "Test Policy",
@@ -112,12 +111,11 @@ class MemberCouponControllerTest {
                 BigDecimal.valueOf(5000),
                 10,
                 true,
-                "BOOK",
-                true
+                "BOOK"
         );
 
-        Page<MemberCouponResponseDto> mockPage = new PageImpl<>(
-                List.of(new MemberCouponResponseDto(1L, memberId, mockCoupon)), pageable, 1
+        Page<MemberCouponGetResponseDto> mockPage = new PageImpl<>(
+                List.of(mockCoupon), pageable, 1
         );
 
         when(memberCouponService.getMemberCouponsByMemberId(any(MemberCouponFindByMemberIdRequestDto.class)))
@@ -125,10 +123,16 @@ class MemberCouponControllerTest {
 
         mockMvc.perform(get("/api/coupons/member-coupons/member/{memberId}", memberId)
                         .param("page", "0")
-                        .param("pageSize", "5"))
+                        .param("size", "5"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.content[0].memberCouponId").value(1L))
-                .andExpect(jsonPath("$.content[0].memberId").value(memberId));
+                .andExpect(jsonPath("$.content[0].code").value("TESTCODE"))
+                .andExpect(jsonPath("$.content[0].status").value("UNUSED"))
+                .andExpect(jsonPath("$.content[0].name").value("Test Policy"))
+                .andExpect(jsonPath("$.content[0].saleType").value("RATIO"))
+                .andExpect(jsonPath("$.content[0].minimumAmount").value(10000))
+                .andExpect(jsonPath("$.content[0].discountLimit").value(5000))
+                .andExpect(jsonPath("$.content[0].discountRatio").value(10))
+                .andExpect(jsonPath("$.content[0].couponScope").value("BOOK"));
 
         verify(memberCouponService, times(1)).getMemberCouponsByMemberId(any(MemberCouponFindByMemberIdRequestDto.class));
     }
@@ -145,6 +149,7 @@ class MemberCouponControllerTest {
                 Status.UNUSED,
                 LocalDateTime.now().minusDays(1),
                 LocalDateTime.now().plusDays(10),
+                1L,
                 "Test Policy",
                 "RATIO",
                 BigDecimal.valueOf(10000),
@@ -167,7 +172,7 @@ class MemberCouponControllerTest {
                         .param("pageSize", "5"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content[0].memberCouponId").value(1L))
-                .andExpect(jsonPath("$.content[0].coupon.id").value(couponId))
+                .andExpect(jsonPath("$.content[0].coupon.couponId").value(couponId))
                 .andExpect(jsonPath("$.content[0].coupon.code").value("TESTCODE"))
                 .andExpect(jsonPath("$.content[0].coupon.status").value("UNUSED"));
 

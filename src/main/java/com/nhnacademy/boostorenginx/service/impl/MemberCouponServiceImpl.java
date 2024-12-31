@@ -71,14 +71,6 @@ public class MemberCouponServiceImpl implements MemberCouponService {
 
     @Transactional(readOnly = true)
     @Override
-    public Page<MemberCouponResponseDto> getMemberCouponsByMemberId(MemberCouponFindByMemberIdRequestDto requestDto) {
-        Pageable pageable = PageRequest.of(requestDto.page(), requestDto.pageSize());
-        return memberCouponRepository.findByMcMemberIdOrderByIdAsc(requestDto.memberId(), pageable)
-                .map(MemberCouponResponseDto::fromEntity);
-    }
-
-    @Transactional(readOnly = true)
-    @Override
     public Page<MemberCouponResponseDto> getMemberCouponsByCouponId(MemberCouponFindByCouponIdRequestDto requestDto) {
         Pageable pageable = PageRequest.of(requestDto.page(), requestDto.pageSize());
         return memberCouponRepository.findByCoupon_IdOrderByIdAsc(requestDto.couponId(), pageable)
@@ -87,8 +79,47 @@ public class MemberCouponServiceImpl implements MemberCouponService {
 
     @Transactional(readOnly = true)
     @Override
-    public Page<MemberCouponResponseDto> getUnusedMemberCouponsByMemberId(MemberCouponFindByMemberIdRequestDto requestDto) {
+    public Page<MemberCouponGetResponseDto> getMemberCouponsByMemberId(MemberCouponFindByMemberIdRequestDto requestDto) {
         Pageable pageable = PageRequest.of(requestDto.page(), requestDto.pageSize());
-        return memberCouponRepository.findByMcMemberIdAndCoupon_Status(requestDto.memberId(), Status.UNUSED, pageable).map(MemberCouponResponseDto::fromEntity);
+        return memberCouponRepository.findByMcMemberIdOrderByIdAsc(requestDto.memberId(), pageable)
+                .map(memberCoupon -> {
+                    Coupon coupon = memberCoupon.getCoupon();
+                    return new MemberCouponGetResponseDto(
+                            coupon.getCode(),
+                            coupon.getStatus().name(),
+                            coupon.getIssuedAt(),
+                            coupon.getExpiredAt(),
+                            coupon.getCouponPolicy().getName(),
+                            coupon.getCouponPolicy().getSaleType().name(),
+                            coupon.getCouponPolicy().getMinimumAmount(),
+                            coupon.getCouponPolicy().getDiscountLimit(),
+                            coupon.getCouponPolicy().getDiscountRatio(),
+                            coupon.getCouponPolicy().isStackable(),
+                            coupon.getCouponPolicy().getCouponScope()
+                    );
+                });
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public Page<MemberCouponGetResponseDto> getUnusedMemberCouponsByMemberId(MemberCouponFindByMemberIdRequestDto requestDto) {
+        Pageable pageable = PageRequest.of(requestDto.page(), requestDto.pageSize());
+        return memberCouponRepository.findByMcMemberIdAndCoupon_Status(requestDto.memberId(), Status.UNUSED, pageable)
+                .map(memberCoupon -> {
+                    Coupon coupon = memberCoupon.getCoupon();
+                    return new MemberCouponGetResponseDto(
+                            coupon.getCode(),
+                            coupon.getStatus().name(),
+                            coupon.getIssuedAt(),
+                            coupon.getExpiredAt(),
+                            coupon.getCouponPolicy().getName(),
+                            coupon.getCouponPolicy().getSaleType().name(),
+                            coupon.getCouponPolicy().getMinimumAmount(),
+                            coupon.getCouponPolicy().getDiscountLimit(),
+                            coupon.getCouponPolicy().getDiscountRatio(),
+                            coupon.getCouponPolicy().isStackable(),
+                            coupon.getCouponPolicy().getCouponScope()
+                    );
+                });
     }
 }
