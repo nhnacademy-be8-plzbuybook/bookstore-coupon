@@ -1,13 +1,16 @@
 package com.nhnacademy.boostorenginx.entity;
 
 import com.nhnacademy.boostorenginx.enums.SaleType;
-import com.nhnacademy.boostorenginx.enums.Scopes;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,32 +19,58 @@ import java.util.List;
 @Entity
 public class CouponPolicy {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY) //auto_increment 사용
     @Column(name = "coupon_policy_id")
-    private Long id;
-    private String name;
-    private SaleType saleType;
-    private boolean isStackable;
-    private BigDecimal minimumAmount;
-    private BigDecimal threshold;
-    private Scopes couponScope;
-    private Integer ratioDiscount;
-    private BigDecimal amountDiscount;
+    private Long id; // 쿠폰정책 ID
 
-    @OneToMany(mappedBy = "couponPolicy", fetch = FetchType.EAGER)
-    private List<CouponTarget> couponTargetList;
+    @Column(nullable = false)
+    private String name; // 쿠폰이름
+
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private SaleType saleType; // 할인타입
+
+    @DecimalMin(value = "0.0", inclusive = false)
+    private BigDecimal minimumAmount; // 쿠폰적용최소금액
+
+    @DecimalMin(value = "0.0")
+    private BigDecimal discountLimit; // 최대할인금액
+
+    @Min(value = 0)
+    @Max(value = 100)
+    private Integer discountRatio; // 할인비율
+
+    private boolean isStackable; // 중복사용여부 (여러 쿠폰 간 중복적용여부)
+
+    @Column(nullable = false)
+    private String couponScope; // 쿠폰적용범위
+
+    @Column(nullable = false)
+    private LocalDateTime startDate; // 쿠폰사용시작일
+
+    @Column(nullable = false)
+    private LocalDateTime endDate; // 쿠폰사용종료일
+
+    private boolean couponActive; // 쿠폰정책활성화 여부
+
+    @OneToMany(mappedBy = "couponPolicy", cascade = CascadeType.ALL)
+    private List<CouponTarget> couponTargetList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "couponPolicy") // @OneToMany 는 빈 리스트로 초기화됨
+    private List<Coupon> couponList = new ArrayList<>();
 
     @Builder
-    public CouponPolicy(String name, SaleType saleType, boolean isStackable, BigDecimal minimumAmount, BigDecimal threshold, Scopes couponScope, Integer ratioDiscount, BigDecimal amountDiscount) {
+    public CouponPolicy(String name, SaleType saleType, BigDecimal minimumAmount, BigDecimal discountLimit, Integer discountRatio, boolean isStackable, String couponScope, LocalDateTime startDate, LocalDateTime endDate, boolean couponActive) {
         this.name = name;
         this.saleType = saleType;
-        this.isStackable = isStackable;
         this.minimumAmount = minimumAmount;
-        this.threshold = threshold;
+        this.discountLimit = discountLimit;
+        this.discountRatio = discountRatio;
+        this.isStackable = isStackable;
         this.couponScope = couponScope;
-        this.ratioDiscount = ratioDiscount;
-        this.amountDiscount = amountDiscount;
-        this.couponTargetList = new ArrayList<>();
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.couponActive = couponActive;
     }
 
     public void addCouponTarget(CouponTarget couponTarget) {
