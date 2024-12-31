@@ -57,7 +57,7 @@ public class WelcomeCouponService {
         // Welcome 쿠폰 생성
         CouponCreateRequestDto couponCreateRequestDto = new CouponCreateRequestDto(
                 couponPolicyId,
-                requestDto.registeredAt()
+                requestDto.registeredAt().plusDays(30)
         );
         CouponResponseDto couponResponseDto = couponService.createCoupon(couponCreateRequestDto);
 

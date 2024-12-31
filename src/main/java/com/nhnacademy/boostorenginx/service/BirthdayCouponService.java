@@ -62,7 +62,7 @@ public class BirthdayCouponService {
         // Birthday 쿠폰 생성
         CouponCreateRequestDto couponCreateRequestDto = new CouponCreateRequestDto(
                 couponPolicyId,
-                requestDto.registerAt()
+                requestDto.registerAt().plusDays(30)
         );
         CouponResponseDto couponResponseDto = couponService.createCoupon(couponCreateRequestDto);
         Long couponId = couponResponseDto.id();

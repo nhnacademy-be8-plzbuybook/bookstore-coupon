@@ -40,7 +40,7 @@ public class SellingBookCouponService {
             CouponTargetResponseDto couponTargetResponseDto = couponTargetService.createCouponTarget(couponTargetAddRequestDto);
 
             // 판매책별 쿠폰 생성
-            CouponCreateRequestDto couponCreateRequestDto = new CouponCreateRequestDto(couponPolicyId, LocalDateTime.now());
+            CouponCreateRequestDto couponCreateRequestDto = new CouponCreateRequestDto(couponPolicyId, couponPolicySaveRequestDto.endDate());
             CouponResponseDto couponResponseDto = couponService.createCoupon(couponCreateRequestDto);
             log.info("카테고리 쿠폰 발급 완료 CouponId = {}", couponResponseDto.id());
         }

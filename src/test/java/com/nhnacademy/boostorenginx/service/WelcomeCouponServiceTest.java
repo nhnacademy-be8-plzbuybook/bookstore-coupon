@@ -89,7 +89,7 @@ class WelcomeCouponServiceTest {
 
         verify(couponService).createCoupon(argThat(request -> {
             assertEquals(mockPolicyResponse.id(), request.couponPolicyId());
-            assertEquals(welcomeCouponRequestDto.registeredAt(), request.expiredAt());
+            assertEquals(welcomeCouponRequestDto.registeredAt().plusDays(30), request.expiredAt());
             return true;
         }));
 

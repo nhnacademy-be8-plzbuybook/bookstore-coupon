@@ -30,9 +30,10 @@
 //        Long couponId = couponCalculationRequestDto.couponId(); // 쿠폰 ID
 //        Long couponPolicyId = couponCalculationRequestDto.couponPolicy(); // 쿠폰정책 ID
 //
-//        BigDecimal originalPrice; // 할인 적용 전 가격
-//        BigDecimal calculationPrice; // 할인 적용 후 가격
-//
+//        BigDecimal originalPrice = null; // 할인 적용 전 가격
+//        BigDecimal calculationPrice = null; // 할인 적용 후 가격
+//        BigDecimal discountPrice = null;
+//        BigDecimal discountAmount = null;
 //        BigDecimal productPrice = couponCalculationRequestDto.productPrice(); // 주문상품가격(개당)
 //        Integer quantity = couponCalculationRequestDto.quantity(); // 주문상품수량
 //
@@ -40,6 +41,10 @@
 //
 //        // 쿠폰정책 조회
 //        CouponPolicyResponseDto couponPolicyResponseDto = couponPolicyService.findById(new CouponPolicyIdRequestDto(couponPolicyId));
+//        if (!couponPolicyResponseDto.couponActive()){
+//            throw new CouponCalculationExcption("사용 불가능한 쿠폰입니다");
+//        }
+//
 //
 //        BigDecimal minimumAmount = couponPolicyResponseDto.minimumAmount(); // 쿠폰적용 최소 금액
 //
@@ -56,7 +61,15 @@
 //        }
 //
 //        // 할인 적용 후 가격 계산
-//        calculationPrice =
+//        if (couponPolicyResponseDto.discountRatio().intValue() == 0 ) {
+//            log.debug("고정 할인 쿠폰입니다");
+//            originalPrice = totalPrice;
+//            discountAmount = discountLimit;
+//            calculationPrice = totalPrice.subtract(discountLimit);
+//
+//        } else {
+//
+//        }
 //
 //
 //        return null;
