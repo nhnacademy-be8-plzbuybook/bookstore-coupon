@@ -44,9 +44,9 @@ class CouponTargetControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(requestDto)))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.id").value(responseDto.couponTargetId()))
-                .andExpect(jsonPath("$.policyId").value(responseDto.couponPolicyId()))
-                .andExpect(jsonPath("$.targetId").value(responseDto.ctTargetId()));
+                .andExpect(jsonPath("$.couponTargetId").value(responseDto.couponTargetId()))
+                .andExpect(jsonPath("$.couponPolicyId").value(responseDto.couponPolicyId()))
+                .andExpect(jsonPath("$.ctTargetId").value(responseDto.ctTargetId()));
     }
 
     @DisplayName("쿠폰 대상 생성 - 서비스계층에서 예외가 발생할 경우")
