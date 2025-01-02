@@ -83,7 +83,6 @@ public class CouponPolicyServiceImpl implements CouponPolicyService {
                 () -> new NotFoundCouponPolicyException("ID 에 해당하는 CouponPolicy 를 찾을 수 없습니다: " + requestDto.policyId())
         );
 
-        // 쿠폰대상 생성 및 저장
         CouponTarget couponTarget = new CouponTarget();
         couponTarget.setCtTargetId(requestDto.ctTargetId());
         couponPolicy.addCouponTarget(couponTarget);

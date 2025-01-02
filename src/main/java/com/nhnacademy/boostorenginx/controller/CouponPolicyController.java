@@ -3,6 +3,7 @@ package com.nhnacademy.boostorenginx.controller;
 import com.nhnacademy.boostorenginx.dto.couponpolicy.*;
 import com.nhnacademy.boostorenginx.dto.coupontarget.CouponTargetAddRequestDto;
 import com.nhnacademy.boostorenginx.service.CouponPolicyService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -17,25 +18,23 @@ public class CouponPolicyController {
 
     // 쿠폰정책 등록
     @PostMapping("/policies")
-    public ResponseEntity<CouponPolicyResponseDto> createCouponPolicy(@RequestBody CouponPolicySaveRequestDto couponPolicySaveRequestDto) {
+    public ResponseEntity<CouponPolicyResponseDto> createCouponPolicy(@RequestBody @Valid CouponPolicySaveRequestDto couponPolicySaveRequestDto) {
         CouponPolicyResponseDto couponPolicyResponseDto = couponPolicyService.createCouponPolicy(couponPolicySaveRequestDto);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(couponPolicyResponseDto);
     }
 
     // 쿠폰정책 ID 로 쿠폰정책 검색
-    @GetMapping("/policies/{id}")
-    public ResponseEntity<CouponPolicyResponseDto> findById(@PathVariable("id") Long couponPolicyId) {
-        CouponPolicyIdRequestDto couponPolicyIdRequestDto = new CouponPolicyIdRequestDto(couponPolicyId);
+    @GetMapping("/policies")
+    public ResponseEntity<CouponPolicyResponseDto> findById(@Valid CouponPolicyIdRequestDto couponPolicyIdRequestDto) {
         CouponPolicyResponseDto couponPolicyResponseDto = couponPolicyService.findById(couponPolicyIdRequestDto);
 
         return ResponseEntity.status(HttpStatus.OK).body(couponPolicyResponseDto);
     }
 
     // 쿠폰정책 이름으로 쿠폰정책 검색
-    @GetMapping("/policies/name/{name}")
-    public ResponseEntity<CouponPolicyResponseDto> findByName(@PathVariable String name) {
-        CouponPolicyNameRequestDto couponPolicyNameRequestDto = new CouponPolicyNameRequestDto(name);
+    @GetMapping("/policies/name")
+    public ResponseEntity<CouponPolicyResponseDto> findByName(@Valid CouponPolicyNameRequestDto couponPolicyNameRequestDto) {
         CouponPolicyResponseDto couponPolicyResponseDto = couponPolicyService.findByName(couponPolicyNameRequestDto);
 
         return ResponseEntity.status(HttpStatus.OK).body(couponPolicyResponseDto);
@@ -43,7 +42,7 @@ public class CouponPolicyController {
 
     // 활성화된 쿠폰정책 목록 조회
     @GetMapping("/policies/active")
-    public ResponseEntity<Page<CouponPolicyResponseDto>> findActiveCouponPolicies(CouponPolicyActiveRequestDto couponPolicyActiveRequestDto) {
+    public ResponseEntity<Page<CouponPolicyResponseDto>> findActiveCouponPolicies(@Valid CouponPolicyActiveRequestDto couponPolicyActiveRequestDto) {
         Page<CouponPolicyResponseDto> activePolicies = couponPolicyService.findActiveCouponPolicy(couponPolicyActiveRequestDto);
 
         return ResponseEntity.status(HttpStatus.OK).body(activePolicies);
@@ -51,9 +50,9 @@ public class CouponPolicyController {
 
     // 쿠폰정책에 쿠폰대상 추가
     @PostMapping("/policies/addTargets")
-    public ResponseEntity<Void> addCouponTargets(@RequestBody CouponTargetAddRequestDto addRequest) {
+    public ResponseEntity<String> addCouponTargets(@RequestBody @Valid CouponTargetAddRequestDto addRequest) {
         couponPolicyService.addTargetToPolicy(addRequest);
 
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+        return ResponseEntity.status(HttpStatus.CREATED).body("쿠폰정책에 쿠폰대상이 성공적으로 추가되었습니다");
     }
 }
