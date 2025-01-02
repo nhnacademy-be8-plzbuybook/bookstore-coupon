@@ -21,6 +21,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -92,19 +93,25 @@ class CouponPolicyControllerTest {
     @DisplayName("쿠폰정책 생성 테스트")
     @Test
     void createCouponPolicy() throws Exception {
-        CouponPolicySaveResponseDto expectedResponse = new CouponPolicySaveResponseDto(responseDto.id());
-
-        Mockito.when(couponPolicyService.createCouponPolicy(any(CouponPolicySaveRequestDto.class)))
-                .thenReturn(responseDto);
+        when(couponPolicyService.createCouponPolicy(any(CouponPolicySaveRequestDto.class))).thenReturn(responseDto);
 
         mockMvc.perform(post("/api/coupons/policies")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(saveRequestDto)))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.couponPolicyId").value(expectedResponse.couponPolicyId()));
+                .andExpect(jsonPath("$.id").value(responseDto.id()))
+                .andExpect(jsonPath("$.name").value(responseDto.name()))
+                .andExpect(jsonPath("$.saleType").value(responseDto.saleType()))
+                .andExpect(jsonPath("$.minimumAmount").value(responseDto.minimumAmount()))
+                .andExpect(jsonPath("$.discountLimit").value(responseDto.discountLimit()))
+                .andExpect(jsonPath("$.discountRatio").value(responseDto.discountRatio()))
+                .andExpect(jsonPath("$.isStackable").value(responseDto.isStackable()))
+                .andExpect(jsonPath("$.couponScope").value(responseDto.couponScope()))
+                .andExpect(jsonPath("$.startDate").value(responseDto.startDate().toString()))
+                .andExpect(jsonPath("$.endDate").value(responseDto.endDate().toString()))
+                .andExpect(jsonPath("$.couponActive").value(responseDto.couponActive()));
 
-        Mockito.verify(couponPolicyService, Mockito.times(1))
-                .createCouponPolicy(any(CouponPolicySaveRequestDto.class));
+        verify(couponPolicyService, times(1)).createCouponPolicy(any(CouponPolicySaveRequestDto.class));
     }
 
     @DisplayName("쿠폰정책에 쿠폰대상 추가")

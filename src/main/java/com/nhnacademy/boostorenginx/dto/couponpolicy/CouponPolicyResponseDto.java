@@ -1,7 +1,6 @@
 package com.nhnacademy.boostorenginx.dto.couponpolicy;
 
 import com.nhnacademy.boostorenginx.entity.CouponPolicy;
-import com.nhnacademy.boostorenginx.enums.SaleType;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;

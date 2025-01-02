@@ -17,11 +17,10 @@ public class CouponPolicyController {
 
     // 쿠폰정책 등록
     @PostMapping("/policies")
-    public ResponseEntity<CouponPolicySaveResponseDto> createCouponPolicy(@RequestBody CouponPolicySaveRequestDto couponPolicySaveRequestDto) {
+    public ResponseEntity<CouponPolicyResponseDto> createCouponPolicy(@RequestBody CouponPolicySaveRequestDto couponPolicySaveRequestDto) {
         CouponPolicyResponseDto couponPolicyResponseDto = couponPolicyService.createCouponPolicy(couponPolicySaveRequestDto);
-        CouponPolicySaveResponseDto couponPolicySaveResponseDto = new CouponPolicySaveResponseDto(couponPolicyResponseDto.id());
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(couponPolicySaveResponseDto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(couponPolicyResponseDto);
     }
 
     // 쿠폰정책 ID 로 쿠폰정책 검색
