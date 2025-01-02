@@ -63,7 +63,7 @@ class CouponPolicyControllerTest {
         responseDto = new CouponPolicyResponseDto(
                 1L,
                 "test-policy",
-                SaleType.RATIO,
+                SaleType.RATIO.toString(),
                 new BigDecimal("1000"),
                 new BigDecimal("5000"),
                 10,
@@ -77,7 +77,7 @@ class CouponPolicyControllerTest {
         mockResponseDto = new CouponPolicyResponseDto(
                 1L,
                 "test-policy",
-                SaleType.RATIO,
+                SaleType.RATIO.toString(),
                 new BigDecimal("1000"),
                 new BigDecimal("5000"),
                 10,

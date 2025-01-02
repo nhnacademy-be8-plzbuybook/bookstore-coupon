@@ -1,9 +1,6 @@
 package com.nhnacademy.boostorenginx.service.impl;
 
-import com.nhnacademy.boostorenginx.dto.couponpolicy.CouponPolicyIdRequestDto;
-import com.nhnacademy.boostorenginx.dto.couponpolicy.CouponPolicyNameRequestDto;
-import com.nhnacademy.boostorenginx.dto.couponpolicy.CouponPolicyResponseDto;
-import com.nhnacademy.boostorenginx.dto.couponpolicy.CouponPolicySaveRequestDto;
+import com.nhnacademy.boostorenginx.dto.couponpolicy.*;
 import com.nhnacademy.boostorenginx.dto.coupontarget.CouponTargetAddRequestDto;
 import com.nhnacademy.boostorenginx.entity.CouponPolicy;
 import com.nhnacademy.boostorenginx.entity.CouponTarget;
@@ -22,6 +19,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
 import java.math.BigDecimal;
@@ -146,13 +144,15 @@ class CouponPolicyServiceImplTest {
     @Test
     void findActiveCouponPolicy() {
         Page<CouponPolicy> activePolicies = new PageImpl<>(Collections.singletonList(mockCouponPolicy));
-        Pageable pageable = mock(Pageable.class);
+        CouponPolicyActiveRequestDto couponPolicyActiveRequestDto = new CouponPolicyActiveRequestDto(true, 0, 10);
+        Pageable pageable = PageRequest.of(couponPolicyActiveRequestDto.page(), couponPolicyActiveRequestDto.pageSize());
 
         when(couponPolicyRepository.findByCouponActiveOrderByIdAsc(true, pageable)).thenReturn(activePolicies);
 
-        Page<CouponPolicyResponseDto> result = couponPolicyService.findActiveCouponPolicy(true, pageable);
+        Page<CouponPolicyResponseDto> result = couponPolicyService.findActiveCouponPolicy(couponPolicyActiveRequestDto);
 
         assertEquals(1, result.getTotalElements());
+        assertEquals("test", result.getContent().get(0).name());
         verify(couponPolicyRepository, times(1)).findByCouponActiveOrderByIdAsc(true, pageable);
     }
 
@@ -188,7 +188,8 @@ class CouponPolicyServiceImplTest {
         Assertions.assertAll(
                 () -> assertThrows(CouponPolicyException.class, () -> couponPolicyService.createCouponPolicy(null)),
                 () -> assertThrows(CouponPolicyException.class, () -> couponPolicyService.findByName(null)),
-                () -> assertThrows(CouponPolicyException.class, () -> couponPolicyService.findById(null))
+                () -> assertThrows(CouponPolicyException.class, () -> couponPolicyService.findById(null)),
+                () -> assertThrows(CouponPolicyException.class, () -> couponPolicyService.addTargetToPolicy(null))
         );
     }
 

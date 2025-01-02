@@ -1,9 +1,6 @@
 package com.nhnacademy.boostorenginx.service.impl;
 
-import com.nhnacademy.boostorenginx.dto.couponpolicy.CouponPolicyIdRequestDto;
-import com.nhnacademy.boostorenginx.dto.couponpolicy.CouponPolicyNameRequestDto;
-import com.nhnacademy.boostorenginx.dto.couponpolicy.CouponPolicyResponseDto;
-import com.nhnacademy.boostorenginx.dto.couponpolicy.CouponPolicySaveRequestDto;
+import com.nhnacademy.boostorenginx.dto.couponpolicy.*;
 import com.nhnacademy.boostorenginx.dto.coupontarget.CouponTargetAddRequestDto;
 import com.nhnacademy.boostorenginx.entity.CouponPolicy;
 import com.nhnacademy.boostorenginx.entity.CouponTarget;
@@ -15,6 +12,7 @@ import com.nhnacademy.boostorenginx.service.CouponPolicyService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,10 +33,11 @@ public class CouponPolicyServiceImpl implements CouponPolicyService {
 
         CouponPolicy couponPolicy = couponPolicyRepository.save(requestDto.toEntity());
         couponPolicyRepository.flush();
-        log.info("저장된 쿠폰정책 아이디: {}", couponPolicy.getId());
+
         return CouponPolicyResponseDto.fromCouponPolicy(couponPolicy);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public CouponPolicyResponseDto findByName(CouponPolicyNameRequestDto requestDto) {
         if (requestDto == null) {
@@ -52,6 +51,7 @@ public class CouponPolicyServiceImpl implements CouponPolicyService {
         return CouponPolicyResponseDto.fromCouponPolicy(couponPolicy);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public CouponPolicyResponseDto findById(CouponPolicyIdRequestDto requestDto) {
         if (requestDto == null) {
@@ -65,11 +65,14 @@ public class CouponPolicyServiceImpl implements CouponPolicyService {
         return CouponPolicyResponseDto.fromCouponPolicy(couponPolicy);
     }
 
+    @Transactional(readOnly = true)
     @Override
-    public Page<CouponPolicyResponseDto> findActiveCouponPolicy(boolean couponActive, Pageable pageable) {
-        return couponPolicyRepository.findByCouponActiveOrderByIdAsc(true, pageable).map(CouponPolicyResponseDto::fromCouponPolicy);
+    public Page<CouponPolicyResponseDto> findActiveCouponPolicy(CouponPolicyActiveRequestDto requestDto) {
+        Pageable pageable = PageRequest.of(requestDto.page(), requestDto.pageSize());
+        return couponPolicyRepository.findByCouponActiveOrderByIdAsc(requestDto.couponActive(), pageable).map(CouponPolicyResponseDto::fromCouponPolicy);
     }
 
+    @Transactional
     @Override
     public void addTargetToPolicy(CouponTargetAddRequestDto requestDto) {
         if (requestDto == null) {

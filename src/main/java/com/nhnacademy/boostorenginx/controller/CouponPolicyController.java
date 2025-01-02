@@ -5,7 +5,6 @@ import com.nhnacademy.boostorenginx.dto.coupontarget.CouponTargetAddRequestDto;
 import com.nhnacademy.boostorenginx.service.CouponPolicyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -34,7 +33,7 @@ public class CouponPolicyController {
         return ResponseEntity.status(HttpStatus.OK).body(couponPolicyResponseDto);
     }
 
-    // 쿠폰정책 이름으로 검색
+    // 쿠폰정책 이름으로 쿠폰정책 검색
     @GetMapping("/policies/name/{name}")
     public ResponseEntity<CouponPolicyResponseDto> findByName(@PathVariable String name) {
         CouponPolicyNameRequestDto couponPolicyNameRequestDto = new CouponPolicyNameRequestDto(name);
@@ -43,10 +42,10 @@ public class CouponPolicyController {
         return ResponseEntity.status(HttpStatus.OK).body(couponPolicyResponseDto);
     }
 
-    // 활성화된 쿠폰정책 조회
+    // 활성화된 쿠폰정책 목록 조회
     @GetMapping("/policies/active")
-    public ResponseEntity<Page<CouponPolicyResponseDto>> findActiveCouponPolicies(Pageable pageable) {
-        Page<CouponPolicyResponseDto> activePolicies = couponPolicyService.findActiveCouponPolicy(true, pageable);
+    public ResponseEntity<Page<CouponPolicyResponseDto>> findActiveCouponPolicies(CouponPolicyActiveRequestDto couponPolicyActiveRequestDto) {
+        Page<CouponPolicyResponseDto> activePolicies = couponPolicyService.findActiveCouponPolicy(couponPolicyActiveRequestDto);
 
         return ResponseEntity.status(HttpStatus.OK).body(activePolicies);
     }
