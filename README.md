@@ -1,1 +1,1 @@
-# bookstore-nginx
+# bookstore-coupon
