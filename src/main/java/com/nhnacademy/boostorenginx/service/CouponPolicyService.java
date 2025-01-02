@@ -16,7 +16,7 @@ public interface CouponPolicyService {
 
     CouponPolicyResponseDto findById(CouponPolicyIdRequestDto requestDto); // 쿠폰정책 ID 로 조회 기능
 
-    Page<CouponPolicyResponseDto> findActiveCouponPolicy(boolean couponActive,Pageable pageable); // 활성화된 쿠폰 정책 조회
+    Page<CouponPolicyResponseDto> findActiveCouponPolicy(boolean couponActive,Pageable pageable); // 활성화된 쿠폰 정책 목록 조회
 
     void addTargetToPolicy(CouponTargetAddRequestDto requestDto); // 쿠폰대상 연결 추가
 }

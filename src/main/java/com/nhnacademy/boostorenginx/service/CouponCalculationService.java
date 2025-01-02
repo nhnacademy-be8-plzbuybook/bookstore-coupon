@@ -5,6 +5,6 @@ import com.nhnacademy.boostorenginx.dto.calculation.CouponCalculationResponseDto
 
 public interface CouponCalculationService {
 
-    CouponCalculationResponseDto applyOrderProductCoupon(CouponCalculationRequestDto couponCalculationRequestDto);
+    CouponCalculationResponseDto applyOrderProductCoupon(CouponCalculationRequestDto couponCalculationRequestDto); // 회원이 쿠폰을 사용할때 가격 계산
 
 }

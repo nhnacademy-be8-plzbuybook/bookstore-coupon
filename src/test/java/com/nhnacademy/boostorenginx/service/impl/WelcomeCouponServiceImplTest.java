@@ -1,4 +1,4 @@
-package com.nhnacademy.boostorenginx.service;
+package com.nhnacademy.boostorenginx.service.impl;
 
 import com.nhnacademy.boostorenginx.dto.coupon.CouponCreateRequestDto;
 import com.nhnacademy.boostorenginx.dto.coupon.CouponResponseDto;
@@ -10,11 +10,14 @@ import com.nhnacademy.boostorenginx.dto.membercoupon.MemberCouponCreateRequestDt
 import com.nhnacademy.boostorenginx.dto.welcome.WelComeCouponRequestDto;
 import com.nhnacademy.boostorenginx.enums.SaleType;
 import com.nhnacademy.boostorenginx.enums.Status;
+import com.nhnacademy.boostorenginx.service.CouponPolicyService;
+import com.nhnacademy.boostorenginx.service.CouponService;
+import com.nhnacademy.boostorenginx.service.CouponTargetService;
+import com.nhnacademy.boostorenginx.service.MemberCouponService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -26,10 +29,10 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class WelcomeCouponServiceTest {
+class WelcomeCouponServiceImplTest {
 
     @InjectMocks
-    private WelcomeCouponService welcomeCouponService;
+    private WelcomeCouponServiceImpl welcomeCouponServiceImpl;
 
     @Mock
     private CouponPolicyService couponPolicyService;
@@ -72,7 +75,7 @@ class WelcomeCouponServiceTest {
         when(couponTargetService.createCouponTarget(any(CouponTargetAddRequestDto.class))).thenReturn(mockTargetResponse);
         when(couponService.createCoupon(any(CouponCreateRequestDto.class))).thenReturn(mockCouponResponse);
 
-        welcomeCouponService.issueWelcomeCoupon(welcomeCouponRequestDto);
+        welcomeCouponServiceImpl.issueWelcomeCoupon(welcomeCouponRequestDto);
 
         verify(couponPolicyService).createCouponPolicy(argThat(request -> {
             assertEquals("WELCOME_COUPON", request.name());
