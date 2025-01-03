@@ -11,37 +11,61 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDateTime;
 
 @RequiredArgsConstructor
-@RequestMapping("/api/coupons")
+@RequestMapping("/api/coupon-histories")
 @RestController
 public class CouponHistoryController {
     private final CouponHistoryService couponHistoryService;
 
-    // 쿠폰 ID 에 해당하는 쿠폰이력 목록 조회
-    @GetMapping("/histories")
-    public ResponseEntity<Page<CouponHistoryResponseDto>> getHistoryByCouponId(@Valid CouponHistoryFindRequestDto couponHistoryFindRequestDto) {
+    /**
+     * 쿠폰 ID에 해당하는 쿠폰 이력 목록 조회
+     * GET /api/coupon-histories/{coupon-id}
+     */
+    @GetMapping("/{coupon-id}")
+    public ResponseEntity<Page<CouponHistoryResponseDto>> getHistoryByCouponId(@PathVariable("coupon-id") Long couponId,
+                                                                               @RequestParam(defaultValue = "0") int page,
+                                                                               @RequestParam(defaultValue = "10") int pageSize) {
+        CouponHistoryFindRequestDto couponHistoryFindRequestDto = new CouponHistoryFindRequestDto(couponId, page, pageSize);
         Page<CouponHistory> history = couponHistoryService.getHistoryByCouponId(couponHistoryFindRequestDto);
         Page<CouponHistoryResponseDto> response = history.map(CouponHistoryResponseDto::fromEntity);
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    // 특정 상태인 쿠폰이력 목록 조회
-    @GetMapping("/histories/status")
-    public ResponseEntity<Page<CouponHistoryResponseDto>> getHistoryByStatus(@Valid CouponHistoryStatusRequestDto couponHistoryStatusRequestDto) {
+    /**
+     * 특정 상태의 쿠폰 이력 목록 조회
+     * GET /api/coupon-histories/status/{status}
+     */
+    @GetMapping("/status/{status}")
+    public ResponseEntity<Page<CouponHistoryResponseDto>> getHistoryByStatus(@PathVariable String status,
+                                                                             @RequestParam(defaultValue = "0") int page,
+                                                                             @RequestParam(defaultValue = "10") int pageSize) {
+        CouponHistoryStatusRequestDto couponHistoryStatusRequestDto = new CouponHistoryStatusRequestDto(status, page, pageSize);
         Page<CouponHistory> history = couponHistoryService.getHistoryByStatus(couponHistoryStatusRequestDto);
         Page<CouponHistoryResponseDto> response = history.map(CouponHistoryResponseDto::fromEntity);
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    // 특정 기간 쿠폰이력 목록 조회
-    @GetMapping("/histories/active")
-    public ResponseEntity<Page<CouponHistoryResponseDto>> getHistoryDate(CouponHistoryDuringRequestDto couponHistoryDuringRequestDto) {
+    /**
+     * 특정 기간의 쿠폰 이력 목록 조회
+     * GET /api/coupon-histories/period
+     */
+    @GetMapping("/period")
+    public ResponseEntity<Page<CouponHistoryResponseDto>> getHistoryDate(@RequestParam("start-date") String startDate,
+                                                                         @RequestParam("end-date") String endDate,
+                                                                         @RequestParam(defaultValue = "0") int page,
+                                                                         @RequestParam(defaultValue = "10") int pageSize) {
+        CouponHistoryDuringRequestDto couponHistoryDuringRequestDto = new CouponHistoryDuringRequestDto(
+                LocalDateTime.parse(startDate),
+                LocalDateTime.parse(endDate),
+                page,
+                pageSize
+        );
         Page<CouponHistory> history = couponHistoryService.getHistoryDate(couponHistoryDuringRequestDto);
         Page<CouponHistoryResponseDto> response = history.map(CouponHistoryResponseDto::fromEntity);
 
