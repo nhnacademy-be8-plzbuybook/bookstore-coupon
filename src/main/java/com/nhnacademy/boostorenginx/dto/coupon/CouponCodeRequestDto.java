@@ -4,6 +4,6 @@ import jakarta.validation.constraints.NotNull;
 
 public record CouponCodeRequestDto(
         @NotNull
-        String code // 쿠폰 코드
+        String code // 쿠폰코드
 ) {
 }

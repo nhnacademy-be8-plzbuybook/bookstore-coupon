@@ -3,12 +3,12 @@ package com.nhnacademy.boostorenginx.dto.coupontarget;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 
-public record CouponTargetGetRequestDto(
+public record CouponTargetSaveRequestDto(
         @NotNull
-        Long couponPolicyId, // 쿠폰정책 ID
         @Min(0)
-        int page,
-        @Min(1)
-        int pageSize
+        Long couponPolicyId, // 쿠폰대상 ID
+        @NotNull
+        @Min(0)
+        Long ctTargetId // 참조하는 대상의 ID
 ) {
 }

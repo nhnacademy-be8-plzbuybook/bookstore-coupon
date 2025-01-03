@@ -4,6 +4,6 @@ import jakarta.validation.constraints.NotNull;
 
 public record CouponPolicyNameRequestDto(
         @NotNull
-        String couponPolicyName // 쿠폰정책 이름
+        String name // 쿠폰정책 이름
 ) {
 }

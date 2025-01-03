@@ -58,6 +58,12 @@ public class CouponServiceImpl implements CouponService {
         return CouponResponseDto.fromCoupon(saveCoupon);
     }
 
+    @Override
+    public CouponPolicy findCouponPolicyByCouponId(Long couponId) {
+        return couponRepository.findCouponPolicyByCouponId(couponId)
+                .orElseThrow(() -> new NotFoundCouponException("쿠폰 ID에 해당하는 쿠폰정책을 찾을 수 없습니다: " + couponId));
+    }
+
     @Transactional(readOnly = true)
     @Override
     public Coupon getCouponByCode(CouponCodeRequestDto couponCodeRequestDto) {

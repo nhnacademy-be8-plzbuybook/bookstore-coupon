@@ -3,13 +3,16 @@ package com.nhnacademy.boostorenginx.service;
 import com.nhnacademy.boostorenginx.dto.coupon.*;
 import com.nhnacademy.boostorenginx.dto.membercoupon.MemberCouponUseRequestDto;
 import com.nhnacademy.boostorenginx.entity.Coupon;
+import com.nhnacademy.boostorenginx.entity.CouponPolicy;
 import org.springframework.data.domain.Page;
 
 public interface CouponService {
 
-    CouponResponseDto createCoupon(CouponCreateRequestDto dto); // 쿠폰 생성
-
     Coupon getCouponByCode(CouponCodeRequestDto dto); // 쿠폰 코드로 조회
+
+    CouponPolicy findCouponPolicyByCouponId(Long couponId); // 쿠폰 ID 로 쿠폰에 해당하는 쿠폰정책 조회
+
+    CouponResponseDto createCoupon(CouponCreateRequestDto dto); // 쿠폰 생성
 
     Page<CouponResponseDto> getExpiredCoupons(CouponExpiredRequestDto dto); // 현재시각 기준으로 만료된 쿠폰목록 조회
 

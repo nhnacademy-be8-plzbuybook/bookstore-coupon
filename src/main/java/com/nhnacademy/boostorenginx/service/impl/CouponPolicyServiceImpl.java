@@ -1,7 +1,6 @@
 package com.nhnacademy.boostorenginx.service.impl;
 
 import com.nhnacademy.boostorenginx.dto.couponpolicy.*;
-import com.nhnacademy.boostorenginx.dto.coupontarget.CouponTargetAddRequestDto;
 import com.nhnacademy.boostorenginx.entity.CouponPolicy;
 import com.nhnacademy.boostorenginx.entity.CouponTarget;
 import com.nhnacademy.boostorenginx.error.CouponPolicyException;
@@ -39,52 +38,47 @@ public class CouponPolicyServiceImpl implements CouponPolicyService {
 
     @Transactional(readOnly = true)
     @Override
-    public CouponPolicyResponseDto findByName(CouponPolicyNameRequestDto requestDto) {
-        if (requestDto == null) {
-            throw new CouponPolicyException("requestDto 가 null 입니다!");
-        }
-
-        CouponPolicy couponPolicy = couponPolicyRepository.findByName(requestDto.couponPolicyName()).orElseThrow(
-                () -> new NotFoundCouponPolicyException("이름에 해당하는 CouponPolicy 를 찾을 수 없습니다: " + requestDto.couponPolicyName())
-        );
-
-        return CouponPolicyResponseDto.fromCouponPolicy(couponPolicy);
-    }
-
-    @Transactional(readOnly = true)
-    @Override
-    public CouponPolicyResponseDto findById(CouponPolicyIdRequestDto requestDto) {
-        if (requestDto == null) {
-            throw new CouponPolicyException("requestDto 가 null 입니다!");
-        }
-
-        CouponPolicy couponPolicy = couponPolicyRepository.findById(requestDto.couponPolicyId()).orElseThrow(
-                () -> new NotFoundCouponPolicyException("ID 에 해당하는 CouponPolicy 를 찾을 수 없습니다: " + requestDto.couponPolicyId())
-        );
-
-        return CouponPolicyResponseDto.fromCouponPolicy(couponPolicy);
-    }
-
-    @Transactional(readOnly = true)
-    @Override
     public Page<CouponPolicyResponseDto> findActiveCouponPolicy(CouponPolicyActiveRequestDto requestDto) {
         Pageable pageable = PageRequest.of(requestDto.page(), requestDto.pageSize());
         return couponPolicyRepository.findByCouponActiveOrderByIdAsc(requestDto.couponActive(), pageable).map(CouponPolicyResponseDto::fromCouponPolicy);
     }
 
+    @Transactional(readOnly = true)
+    @Override
+    public CouponPolicyResponseDto findById(CouponPolicyIdRequestDto couponPolicyIdRequestDto) {
+        Long couponPolicyId = couponPolicyIdRequestDto.id();
+
+        CouponPolicy couponPolicy = couponPolicyRepository.findById(couponPolicyId).orElseThrow(
+                () -> new NotFoundCouponPolicyException("ID 에 해당하는 CouponPolicy 를 찾을 수 없습니다: " + couponPolicyId)
+        );
+
+        return CouponPolicyResponseDto.fromCouponPolicy(couponPolicy);
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public CouponPolicyResponseDto findByName(CouponPolicyNameRequestDto couponPolicyNameRequestDto) {
+        String couponPolicyName = couponPolicyNameRequestDto.name();
+
+        CouponPolicy couponPolicy = couponPolicyRepository.findByName(couponPolicyName).orElseThrow(
+                () -> new NotFoundCouponPolicyException("이름에 해당하는 CouponPolicy 를 찾을 수 없습니다: " + couponPolicyName)
+        );
+
+        return CouponPolicyResponseDto.fromCouponPolicy(couponPolicy);
+    }
+
     @Transactional
     @Override
-    public void addTargetToPolicy(CouponTargetAddRequestDto requestDto) {
-        if (requestDto == null) {
-            throw new CouponPolicyException("requestDto 가 null 입니다!");
-        }
+    public void addTargetToPolicy(CouponTargetAddRequestDto ctTargetAddRequestDto) {
+        Long policyId = ctTargetAddRequestDto.policyId();
+        Long ctTargetId = ctTargetAddRequestDto.ctTargetId();
 
-        CouponPolicy couponPolicy = couponPolicyRepository.findById(requestDto.policyId()).orElseThrow(
-                () -> new NotFoundCouponPolicyException("ID 에 해당하는 CouponPolicy 를 찾을 수 없습니다: " + requestDto.policyId())
+        CouponPolicy couponPolicy = couponPolicyRepository.findById(policyId).orElseThrow(
+                () -> new NotFoundCouponPolicyException("ID 에 해당하는 CouponPolicy 를 찾을 수 없습니다: " + policyId)
         );
 
         CouponTarget couponTarget = new CouponTarget();
-        couponTarget.setCtTargetId(requestDto.ctTargetId());
+        couponTarget.setCtTargetId(ctTargetId);
         couponPolicy.addCouponTarget(couponTarget);
 
         couponTargetRepository.save(couponTarget);
