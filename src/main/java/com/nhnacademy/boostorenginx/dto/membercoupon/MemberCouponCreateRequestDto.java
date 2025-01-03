@@ -9,10 +9,6 @@ public record MemberCouponCreateRequestDto(
         Long memberId, // 회원 ID
         @Min(0)
         @NotNull
-        Long couponId, // 쿠폰 ID
-        @Min(0)
-        int page,
-        @Min(1)
-        int pageSize
+        Long couponId // 쿠폰 ID
 ) {
 }
