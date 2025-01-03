@@ -1,6 +1,9 @@
 package com.nhnacademy.boostorenginx.dto.coupon;
 
+import jakarta.validation.constraints.NotNull;
+
 public record CouponCodeRequestDto(
-        String code
+        @NotNull
+        String code // 쿠폰 코드
 ) {
 }

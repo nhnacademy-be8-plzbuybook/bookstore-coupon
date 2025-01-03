@@ -4,13 +4,13 @@ import com.nhnacademy.boostorenginx.dto.coupon.*;
 import com.nhnacademy.boostorenginx.dto.membercoupon.MemberCouponUseRequestDto;
 import com.nhnacademy.boostorenginx.entity.Coupon;
 import com.nhnacademy.boostorenginx.service.CouponService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -22,74 +22,57 @@ public class CouponController {
 
     // 쿠폰생성
     @PostMapping
-    public ResponseEntity<CouponCreateResponseDto> createCoupon(@RequestBody CouponCreateRequestDto createRequest) {
+    public ResponseEntity<CouponCreateResponseDto> createCoupon(@RequestBody @Valid CouponCreateRequestDto createRequest) {
         CouponResponseDto createdCoupon = couponService.createCoupon(createRequest);
         CouponCreateResponseDto response = new CouponCreateResponseDto(createdCoupon.id());
+
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     // 쿠폰코드로 검색
-    @GetMapping("/code/{code}")
-    public ResponseEntity<CouponCodeResponseDto> getCouponByCode(@PathVariable("code") String code) {
-        CouponCodeRequestDto requestDto = new CouponCodeRequestDto(code);
-        Coupon coupon = couponService.getCouponByCode(requestDto);
+    @GetMapping("/code")
+    public ResponseEntity<CouponCodeResponseDto> getCouponByCode(@Valid CouponCodeRequestDto couponCodeRequestDto) {
+        Coupon coupon = couponService.getCouponByCode(couponCodeRequestDto);
         CouponCodeResponseDto couponCodeResponseDto = CouponCodeResponseDto.fromCoupon(coupon);
+
         return ResponseEntity.status(HttpStatus.OK).body(couponCodeResponseDto);
     }
 
-    // 만료된 쿠폰들 검색 -> 예: GET /api/coupons/expired?expiredAt=2023-12-31T23:59:59&page=0&pageSize=10
+    // 만료된 쿠폰들 검색
     @GetMapping("/expired")
-    public ResponseEntity<Page<CouponResponseDto>> getExpiredCoupons(@RequestParam("expiredAt") LocalDateTime expiredAt,
-                                                                            @RequestParam("page") int page,
-                                                                            @RequestParam("pageSize") int pageSize) {
-        CouponExpiredRequestDto couponExpiredRequestDto = new CouponExpiredRequestDto(expiredAt, page, pageSize);
-
+    public ResponseEntity<Page<CouponResponseDto>> getExpiredCoupons(@Valid CouponExpiredRequestDto couponExpiredRequestDto) {
         Page<CouponResponseDto> expiredCoupons = couponService.getExpiredCoupons(couponExpiredRequestDto);
 
         return ResponseEntity.status(HttpStatus.OK).body(expiredCoupons);
     }
 
-    // 활성화된 쿠폰들 검색 -> 예: GET /api/coupons/active?currentDateTime=2023-12-20T12:00:00&page=1&pageSize=3
+    // 활성화된 쿠폰들 검색
     @GetMapping("/active")
-    public ResponseEntity<Page<CouponResponseDto>> getActiveCoupons(@RequestParam("currentDateTime") LocalDateTime currentDateTime,
-                                                                          @RequestParam("page") int page,
-                                                                          @RequestParam("pageSize") int pageSize) {
-        CouponActiveRequestDto requestDto = new CouponActiveRequestDto(currentDateTime, page, pageSize);
-
-        Page<CouponResponseDto> activeCoupons = couponService.getActiveCoupons(requestDto);
+    public ResponseEntity<Page<CouponResponseDto>> getActiveCoupons(@Valid CouponActiveRequestDto couponActiveRequestDto) {
+        Page<CouponResponseDto> activeCoupons = couponService.getActiveCoupons(couponActiveRequestDto);
 
         return ResponseEntity.status(HttpStatus.OK).body(activeCoupons);
     }
 
-    // 쿠폰정책들로 검색 -> 예: GET /api/coupons/by-policy/123?page=0&pageSize=10
-    @GetMapping("/coupon-policies/{policy-id}")
-    public ResponseEntity<Page<CouponResponseDto>> getCouponsByPolicies(@PathVariable("policy-id") Long policyId,
-                                                                                          @RequestParam("page") int page,
-                                                                                          @RequestParam("pageSize") int pageSize) {
-        CouponFindCouponPolicyIdRequestDto requestDto = new CouponFindCouponPolicyIdRequestDto(policyId, page, pageSize);
-
-        Page<CouponResponseDto> couponsByPolicy = couponService.getCouponsByPolicy(requestDto);
+    // 쿠폰정책들로 검색
+    @GetMapping("/coupon-policies")
+    public ResponseEntity<Page<CouponResponseDto>> getCouponsByPolicies(@Valid CouponFindCouponPolicyIdRequestDto couponFindCouponPolicyIdRequestDto) {
+        Page<CouponResponseDto> couponsByPolicy = couponService.getCouponsByPolicy(couponFindCouponPolicyIdRequestDto);
 
         return ResponseEntity.status(HttpStatus.OK).body(couponsByPolicy);
     }
 
-    // 쿠폰 상태로 검색 -> 예: GET /api/coupons/status?status=UNUSED&page=0&pageSize=5
+    // 쿠폰 상태로 검색
     @GetMapping("/status")
-    public ResponseEntity<Page<CouponResponseDto>> getCouponsByStatus(
-            @RequestParam("status") String status,
-            @RequestParam("page") int page,
-            @RequestParam("pageSize") int pageSize
-    ) {
-        CouponFindStatusRequestDto requestDto = new CouponFindStatusRequestDto(status, page, pageSize);
-
-        Page<CouponResponseDto> couponsByStatus = couponService.getCouponsByStatus(requestDto);
+    public ResponseEntity<Page<CouponResponseDto>> getCouponsByStatus(@Valid CouponFindStatusRequestDto couponFindStatusRequestDto) {
+        Page<CouponResponseDto> couponsByStatus = couponService.getCouponsByStatus(couponFindStatusRequestDto);
 
         return ResponseEntity.status(HttpStatus.OK).body(couponsByStatus);
     }
 
-    // 만료되었는지 체크 -> 쿠폰 상태를 Expired 로 변경
+    // 만료된 쿠폰의 상태를 Expired 로 변경
     @PatchMapping("/update-expired")
-    public ResponseEntity<Page<CouponResponseDto>> updateExpiredCoupons(@RequestBody CouponUpdateExpiredRequestDto request) {
+    public ResponseEntity<Page<CouponResponseDto>> updateExpiredCoupons(@RequestBody @Valid CouponUpdateExpiredRequestDto request) {
         couponService.updateExpiredCoupon(request);
         Page<CouponResponseDto> expiredCoupons = couponService.getExpiredCoupons(
                 new CouponExpiredRequestDto(request.expiredDate(), request.page(), request.size())
@@ -97,9 +80,9 @@ public class CouponController {
         return ResponseEntity.status(HttpStatus.OK).body(expiredCoupons);
     }
 
-    // 쿠폰 사용 -> 쿠폰 상태를 USED 로 변경
+    // 사용가능한 쿠폰 상태(UNUSED)를 USED 로 변경
     @PatchMapping("/use")
-    public ResponseEntity<Map<String, String>> useCoupon(@RequestBody MemberCouponUseRequestDto request) {
+    public ResponseEntity<Map<String, String>> useCoupon(@RequestBody @Valid MemberCouponUseRequestDto request) {
         couponService.useCoupon(request);
         Map<String, String> response = new HashMap<>();
         response.put("message", "쿠폰이 성공적으로 사용되었습니다");

@@ -138,7 +138,8 @@ class CouponControllerTest {
     void getCouponByCode() throws Exception {
         when(couponService.getCouponByCode(any(CouponCodeRequestDto.class))).thenReturn(mockCoupon);
 
-        mockMvc.perform(get("/api/coupons/code/{code}", "ABC123")
+        mockMvc.perform(get("/api/coupons/code")
+                        .param("code", "CODE123")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(mockCoupon.getId()))
@@ -223,7 +224,8 @@ class CouponControllerTest {
         Mockito.when(couponService.getCouponsByPolicy(any(CouponFindCouponPolicyIdRequestDto.class)))
                 .thenReturn(mockActiveCoupons);
 
-        mockMvc.perform(get("/api/coupons/coupon-policies/{policy-id}", policyId)
+        mockMvc.perform(get("/api/coupons/coupon-policies")
+                        .param("policyId", String.valueOf(policyId))
                         .param("page", String.valueOf(page))
                         .param("pageSize", String.valueOf(pageSize))
                         .contentType(MediaType.APPLICATION_JSON))

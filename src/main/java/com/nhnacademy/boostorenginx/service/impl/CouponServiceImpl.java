@@ -47,7 +47,6 @@ public class CouponServiceImpl implements CouponService {
 
         Coupon saveCoupon = couponRepository.save(coupon);
 
-        // 쿠폰변경이력 저장
         CouponHistory couponHistory = CouponHistory.builder()
                 .status(Status.USED)
                 .changeDate(LocalDateTime.now())
@@ -73,10 +72,6 @@ public class CouponServiceImpl implements CouponService {
         Pageable pageable = PageRequest.of(couponExpiredRequestDto.page(), couponExpiredRequestDto.pageSize());
         LocalDateTime expiredAt = couponExpiredRequestDto.expiredAt();
 
-        if (expiredAt == null) {
-            throw new CouponException("입력받은 시간이 null 입니다");
-        }
-
         return couponRepository.findByExpiredAtBeforeOrderByExpiredAtAsc(expiredAt, pageable).map(CouponResponseDto::fromCoupon);
     }
 
@@ -85,10 +80,6 @@ public class CouponServiceImpl implements CouponService {
     public Page<CouponResponseDto> getActiveCoupons(CouponActiveRequestDto couponActiveRequestDto) {
         Pageable pageable = PageRequest.of(couponActiveRequestDto.page(), couponActiveRequestDto.pageSize());
         LocalDateTime currentDateTime = couponActiveRequestDto.currentDateTime();
-
-        if (currentDateTime == null) {
-            throw new CouponException("입력받은 currentDateTime 이 null 입니다");
-        }
 
         return couponRepository.findActiveCoupons(currentDateTime, pageable).map(CouponResponseDto::fromCoupon);
     }
@@ -109,11 +100,6 @@ public class CouponServiceImpl implements CouponService {
     @Override
     public Page<CouponResponseDto> getCouponsByStatus(CouponFindStatusRequestDto couponFindStatusRequestDto) {
         Pageable pageable = PageRequest.of(couponFindStatusRequestDto.page(), couponFindStatusRequestDto.pageSize());
-
-        if (couponFindStatusRequestDto.status() == null) {
-            throw new CouponException("Status 가 null 입니다");
-        }
-
         Status status = Status.valueOf(couponFindStatusRequestDto.status());
 
         return couponRepository.findByStatusOrderByStatusAsc(status, pageable).map(CouponResponseDto::fromCoupon);
@@ -145,13 +131,16 @@ public class CouponServiceImpl implements CouponService {
     @Transactional(readOnly = true)
     @Override
     public void useCoupon(MemberCouponUseRequestDto memberCouponUseRequestDto) {
-        Coupon coupon = couponRepository.findById(memberCouponUseRequestDto.couponId()).orElseThrow(() -> new NotFoundCouponException("해당 ID 의 쿠폰을 찾을 수 없습니다" + memberCouponUseRequestDto.couponId()));
+        Coupon coupon = couponRepository.findById(memberCouponUseRequestDto.couponId()).orElseThrow(
+                () -> new NotFoundCouponException("해당 ID 의 쿠폰을 찾을 수 없습니다" + memberCouponUseRequestDto.couponId())
+        );
         LocalDateTime useTime = LocalDateTime.now();
         Status status = coupon.getStatus();
 
         if (!status.equals(Status.UNUSED)) {
             throw new CouponException("현재 쿠폰 상태: " + status);
         }
+
         CouponHistory history = coupon.changeStatus(Status.USED, useTime, "USED");
         couponRepository.save(coupon);
         couponHistoryRepository.save(history);

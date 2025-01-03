@@ -156,16 +156,6 @@ class CouponServiceImplTest {
         verify(couponRepository, times(1)).findByExpiredAtBeforeOrderByExpiredAtAsc(expiredAt, pageable);
     }
 
-    @DisplayName("만료된 쿠폰을 조회할때 expiredAt 이 null 일 경우")
-    @Test
-    void getExpiredCoupons_NullExpiredAt() {
-        CouponExpiredRequestDto requestDto = new CouponExpiredRequestDto(null, 0, 10);
-        CouponException exception = assertThrows(CouponException.class,
-                () -> couponService.getExpiredCoupons(requestDto));
-        assertEquals("입력받은 시간이 null 입니다", exception.getMessage());
-        verifyNoInteractions(couponRepository);
-    }
-
     @DisplayName("활성화된 쿠폰 조회")
     @Test
     void getActiveCoupons() {
@@ -187,17 +177,6 @@ class CouponServiceImplTest {
         assertEquals(2, result.getTotalElements());
         assertEquals(activeCoupons.get(0).getStatus(), result.getContent().get(0).status());
         verify(couponRepository, times(1)).findActiveCoupons(now, pageable);
-    }
-
-    @DisplayName("활성화된 쿠폰을 조회할때 currentDateTime 이 null 인 경우")
-    @Test
-    void getActiveCoupons_NullCurrentDateTime() {
-        CouponActiveRequestDto requestDto = new CouponActiveRequestDto(null, 0, 10);
-        CouponException exception = assertThrows(CouponException.class,
-                () -> couponService.getActiveCoupons(requestDto));
-
-        assertEquals("입력받은 currentDateTime 이 null 입니다", exception.getMessage());
-        verifyNoInteractions(couponRepository);
     }
 
     @DisplayName("쿠폰정책으로 쿠폰조회")
@@ -330,6 +309,24 @@ class CouponServiceImplTest {
         verify(mockCoupon, times(1)).changeStatus(eq(Status.USED), any(LocalDateTime.class), eq("USED"));
         verify(couponRepository, times(1)).save(mockCoupon);
         verify(couponHistoryRepository, times(1)).save(mockHistory);
+    }
+
+    @DisplayName("쿠폰을 사용할때 해당 쿠폰을 찾지 못한 경우")
+    @Test
+    void useCoupon_NotFoundCouponException() {
+        Long couponId = 1L;
+        Long memberId = 100L;
+        MemberCouponUseRequestDto memberCouponUseRequestDto = new MemberCouponUseRequestDto(couponId, memberId);
+
+        when(couponRepository.findById(memberCouponUseRequestDto.couponId())).thenReturn(Optional.empty());
+
+        NotFoundCouponException exception = assertThrows(NotFoundCouponException.class,
+                () -> couponService.useCoupon(memberCouponUseRequestDto));
+
+        assertEquals("해당 ID 의 쿠폰을 찾을 수 없습니다" + couponId, exception.getMessage());
+
+        verify(couponRepository, times(1)).findById(memberCouponUseRequestDto.couponId());
+        verifyNoInteractions(couponHistoryRepository);
     }
 
     @DisplayName("쿠폰을 사용할때 쿠폰의 상태가 UNUSED 가 아닌 경우")
