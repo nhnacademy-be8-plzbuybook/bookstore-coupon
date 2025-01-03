@@ -4,8 +4,9 @@ import com.nhnacademy.boostorenginx.dto.coupon.CouponCreateRequestDto;
 import com.nhnacademy.boostorenginx.dto.coupon.CouponResponseDto;
 import com.nhnacademy.boostorenginx.dto.couponpolicy.CouponPolicyResponseDto;
 import com.nhnacademy.boostorenginx.dto.couponpolicy.CouponPolicySaveRequestDto;
-import com.nhnacademy.boostorenginx.dto.coupontarget.CouponTargetAddRequestDto;
+import com.nhnacademy.boostorenginx.dto.couponpolicy.CouponTargetAddRequestDto;
 import com.nhnacademy.boostorenginx.dto.coupontarget.CouponTargetResponseDto;
+import com.nhnacademy.boostorenginx.dto.coupontarget.CouponTargetSaveRequestDto;
 import com.nhnacademy.boostorenginx.dto.membercoupon.MemberCouponCreateRequestDto;
 import com.nhnacademy.boostorenginx.dto.welcome.WelComeCouponRequestDto;
 import com.nhnacademy.boostorenginx.enums.SaleType;
@@ -49,14 +50,15 @@ public class WelcomeCouponServiceImpl {
         CouponPolicyResponseDto couponPolicyResponseDto = couponPolicyService.createCouponPolicy(couponPolicySaveRequestDto);
 
         Long couponPolicyId = couponPolicyResponseDto.id();
-        log.debug("CouponPolicyId: {}, MemberId: {}", couponPolicyId, requestDto.memberId());
+
         // Welcome 쿠폰대상 생성
-        CouponTargetAddRequestDto couponTargetAddRequestDto = new CouponTargetAddRequestDto(
+        CouponTargetSaveRequestDto couponTargetAddRequestDto = new CouponTargetSaveRequestDto(
                 couponPolicyId, requestDto.memberId()
         );
-        CouponTargetResponseDto couponTargetResponseDto = couponTargetService.createCouponTarget(couponTargetAddRequestDto);
+        couponTargetService.createCouponTarget(couponTargetAddRequestDto);
 
-        Long couponTargetId = couponTargetResponseDto.couponTargetId();
+        // 유효기간 월 계산
+
 
         // Welcome 쿠폰 생성
         CouponCreateRequestDto couponCreateRequestDto = new CouponCreateRequestDto(
@@ -75,6 +77,10 @@ public class WelcomeCouponServiceImpl {
                 1
         );
         memberCouponService.createMemberCoupon(memberCouponCreateRequestDto);
+
+    }
+
+    private int calculatemonth() {
 
     }
 }
