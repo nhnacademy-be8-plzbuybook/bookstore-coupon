@@ -30,7 +30,7 @@ public class CouponHistory {
 
     @ManyToOne
     @JoinColumn(name = "coupon_id", nullable = false)
-    private Coupon coupon; // 외래키
+    private Coupon coupon; // 쿠폰 (1:1)
 
     @Builder
     public CouponHistory(Status status, LocalDateTime changeDate, String reason, Coupon coupon) {

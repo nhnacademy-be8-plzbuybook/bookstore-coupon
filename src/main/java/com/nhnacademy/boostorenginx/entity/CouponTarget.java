@@ -18,7 +18,7 @@ public class CouponTarget {
     @Setter
     @ManyToOne
     @JoinColumn(name = "coupon_policy_id", nullable = false)
-    private CouponPolicy couponPolicy; // 쿠폰정책
+    private CouponPolicy couponPolicy; // 쿠폰정책 (N:1)
 
     @Setter
     @Column(name = "ct_target_id", nullable = false, unique = true)

@@ -20,7 +20,7 @@ public class MemberCoupon {
 
     @OneToOne
     @JoinColumn(name = "coupon_id", nullable = false)
-    private Coupon coupon; // 쿠폰 (외래키)
+    private Coupon coupon; // 쿠폰 (1:1)
 
     public MemberCoupon(Long mcMemberId, Coupon coupon) {
         this.mcMemberId = mcMemberId;

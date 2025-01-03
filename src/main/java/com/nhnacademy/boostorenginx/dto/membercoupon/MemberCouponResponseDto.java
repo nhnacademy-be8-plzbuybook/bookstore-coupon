@@ -3,14 +3,21 @@ package com.nhnacademy.boostorenginx.dto.membercoupon;
 import com.nhnacademy.boostorenginx.entity.Coupon;
 import com.nhnacademy.boostorenginx.entity.MemberCoupon;
 import com.nhnacademy.boostorenginx.enums.Status;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 public record MemberCouponResponseDto(
-        Long memberCouponId,
-        Long memberId,
-        CouponResponseDto coupon
+        @Min(0)
+        @NotNull
+        Long memberCouponId, // 회원쿠폰 ID
+        @Min(0)
+        @NotNull
+        Long memberId, // 회원 ID
+        @NotNull
+        CouponResponseDto coupon // 반환될 쿠폰관련 정보들
 ) {
     public static MemberCouponResponseDto fromEntity(MemberCoupon memberCoupon) {
         return new MemberCouponResponseDto(

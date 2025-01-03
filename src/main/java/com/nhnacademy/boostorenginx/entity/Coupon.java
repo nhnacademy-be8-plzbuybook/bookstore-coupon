@@ -35,13 +35,13 @@ public class Coupon {
 
     @ManyToOne
     @JoinColumn(name = "coupon_policy_id", nullable = false)
-    private CouponPolicy couponPolicy; // 쿠폰정책(N:1)
+    private CouponPolicy couponPolicy; // 쿠폰정책 (N:1)
 
     @OneToMany(mappedBy = "coupon", cascade = CascadeType.ALL, orphanRemoval = true)
-    private final List<CouponHistory> couponHistoryList = new ArrayList<>(); // 쿠폰변경이력(1:N, 복합키)
+    private final List<CouponHistory> couponHistoryList = new ArrayList<>(); // 쿠폰변경이력(1:N)
 
     @OneToOne(mappedBy = "coupon")
-    private MemberCoupon memberCoupon; // 회원쿠폰(1:1)
+    private MemberCoupon memberCoupon; // 회원쿠폰 (1:1)
 
     public Coupon(Status status, LocalDateTime issuedAt, LocalDateTime expiredAt, CouponPolicy couponPolicy) {
         this.code = UUID.randomUUID().toString();

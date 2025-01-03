@@ -1,60 +1,75 @@
 package com.nhnacademy.boostorenginx.controller;
 
-import com.nhnacademy.boostorenginx.dto.couponhistory.*;
-import com.nhnacademy.boostorenginx.entity.Coupon;
+import com.nhnacademy.boostorenginx.dto.couponhistory.CouponHistoryDuringRequestDto;
+import com.nhnacademy.boostorenginx.dto.couponhistory.CouponHistoryFindRequestDto;
+import com.nhnacademy.boostorenginx.dto.couponhistory.CouponHistoryResponseDto;
+import com.nhnacademy.boostorenginx.dto.couponhistory.CouponHistoryStatusRequestDto;
 import com.nhnacademy.boostorenginx.entity.CouponHistory;
 import com.nhnacademy.boostorenginx.service.CouponHistoryService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 
 @RequiredArgsConstructor
-@RequestMapping("/api/coupons")
+@RequestMapping("/api/coupon-histories")
 @RestController
 public class CouponHistoryController {
     private final CouponHistoryService couponHistoryService;
 
-    // 쿠폰이력 조회 -> 예: GET /api/coupon-histories/1?page=1&size=3
-    @GetMapping("/histories/{coupon-id}")
-    public ResponseEntity<Page<CouponHistoryFindResponseDto>> getHistoryByCouponId(
-            @PathVariable("coupon-id") Long couponId,
-            @RequestParam int page,
-            @RequestParam int size
-    ) {
-        CouponHistoryFindRequestDto request = new CouponHistoryFindRequestDto(couponId, page, size);
-        Page<CouponHistory> history = couponHistoryService.getHistoryByCouponId(request);
-        Page<CouponHistoryFindResponseDto> response = history.map(CouponHistoryFindResponseDto::fromEntity);
-        return ResponseEntity.ok(response);
+    /**
+     * 쿠폰 ID에 해당하는 쿠폰 이력 목록 조회
+     * GET /api/coupon-histories/{coupon-id}
+     */
+    @GetMapping("/{coupon-id}")
+    public ResponseEntity<Page<CouponHistoryResponseDto>> getHistoryByCouponId(@PathVariable("coupon-id") Long couponId,
+                                                                               @RequestParam(defaultValue = "0") int page,
+                                                                               @RequestParam(defaultValue = "10") int pageSize) {
+        CouponHistoryFindRequestDto couponHistoryFindRequestDto = new CouponHistoryFindRequestDto(couponId, page, pageSize);
+        Page<CouponHistory> history = couponHistoryService.getHistoryByCouponId(couponHistoryFindRequestDto);
+        Page<CouponHistoryResponseDto> response = history.map(CouponHistoryResponseDto::fromEntity);
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    // 특정 상태인 쿠폰이력 조회
-    @GetMapping("/histories/status")
-    public ResponseEntity<Page<CouponHistoryStatusResponseDto>> getHistoryByStatus(
-            @RequestParam String status,
-            @RequestParam int page,
-            @RequestParam int size
-    ) {
-        CouponHistoryStatusRequestDto request = new CouponHistoryStatusRequestDto(status, page, size);
-        Page<CouponHistory> history = couponHistoryService.getHistoryByStatus(request);
-        Page<CouponHistoryStatusResponseDto> response = history.map(CouponHistoryStatusResponseDto::fromEntity);
-        return ResponseEntity.ok(response);
+    /**
+     * 특정 상태의 쿠폰 이력 목록 조회
+     * GET /api/coupon-histories/status/{status}
+     */
+    @GetMapping("/status/{status}")
+    public ResponseEntity<Page<CouponHistoryResponseDto>> getHistoryByStatus(@PathVariable String status,
+                                                                             @RequestParam(defaultValue = "0") int page,
+                                                                             @RequestParam(defaultValue = "10") int pageSize) {
+        CouponHistoryStatusRequestDto couponHistoryStatusRequestDto = new CouponHistoryStatusRequestDto(status, page, pageSize);
+        Page<CouponHistory> history = couponHistoryService.getHistoryByStatus(couponHistoryStatusRequestDto);
+        Page<CouponHistoryResponseDto> response = history.map(CouponHistoryResponseDto::fromEntity);
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    // 특정 기간(활성화 기간인) 쿠폰이력 조회
-    @GetMapping("/histories/active")
-    public ResponseEntity<Page<CouponHistoryDuringResponseDto>> getHistoryDate(
-            @RequestParam("start") LocalDateTime start,
-            @RequestParam("end") LocalDateTime end,
-            @RequestParam("page") int page,
-            @RequestParam("size") int size
-    ) {
-        CouponHistoryDuringRequestDto request = new CouponHistoryDuringRequestDto(start, end, page, size);
-        Page<CouponHistory> history = couponHistoryService.getHistoryDate(request);
-        Page<CouponHistoryDuringResponseDto> response = history.map(CouponHistoryDuringResponseDto::fromEntity);
-        return ResponseEntity.ok(response);
+    /**
+     * 특정 기간의 쿠폰 이력 목록 조회
+     * GET /api/coupon-histories/period
+     */
+    @GetMapping("/period")
+    public ResponseEntity<Page<CouponHistoryResponseDto>> getHistoryDate(@RequestParam("start-date") String startDate,
+                                                                         @RequestParam("end-date") String endDate,
+                                                                         @RequestParam(defaultValue = "0") int page,
+                                                                         @RequestParam(defaultValue = "10") int pageSize) {
+        CouponHistoryDuringRequestDto couponHistoryDuringRequestDto = new CouponHistoryDuringRequestDto(
+                LocalDateTime.parse(startDate),
+                LocalDateTime.parse(endDate),
+                page,
+                pageSize
+        );
+        Page<CouponHistory> history = couponHistoryService.getHistoryDate(couponHistoryDuringRequestDto);
+        Page<CouponHistoryResponseDto> response = history.map(CouponHistoryResponseDto::fromEntity);
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
 }

@@ -4,15 +4,15 @@ import com.nhnacademy.boostorenginx.entity.CouponHistory;
 
 import java.time.LocalDateTime;
 
-public record CouponHistoryFindResponseDto(
+public record CouponHistoryResponseDto(
         Long historyId,
         String status,
         LocalDateTime changeDate,
         String reason,
         Long couponId
 ) {
-    public static CouponHistoryFindResponseDto fromEntity(CouponHistory couponHistory) {
-        return new CouponHistoryFindResponseDto(
+    public static CouponHistoryResponseDto fromEntity(CouponHistory couponHistory) {
+        return new CouponHistoryResponseDto(
                 couponHistory.getId(),
                 couponHistory.getStatus().toString(),
                 couponHistory.getChangeDate(),

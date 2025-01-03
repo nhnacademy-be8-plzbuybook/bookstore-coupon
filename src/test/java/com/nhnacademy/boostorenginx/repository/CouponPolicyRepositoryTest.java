@@ -14,7 +14,9 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.when;
 
 @DataJpaTest
 class CouponPolicyRepositoryTest {
@@ -86,11 +88,9 @@ class CouponPolicyRepositoryTest {
 
         System.out.println("(couponActive = true)인 CouponPolicy: ");
 
-        results.forEach(couponPolicy -> System.out.println(
-                String.format("Name: %s, SaleType: %s",
-                        couponPolicy.getName(),
-                        couponPolicy.getSaleType())
-        ));
+        results.forEach(couponPolicy -> System.out.printf("Name: %s, SaleType: %s%n",
+                couponPolicy.getName(),
+                couponPolicy.getSaleType()));
 
         assertEquals(2, results.size());
         assertEquals("test1", results.get(0).getName());
