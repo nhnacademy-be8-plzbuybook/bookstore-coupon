@@ -4,6 +4,7 @@
 //import com.nhnacademy.boostorenginx.dto.coupon.CouponResponseDto;
 //import com.nhnacademy.boostorenginx.dto.couponpolicy.CouponPolicyResponseDto;
 //import com.nhnacademy.boostorenginx.dto.couponpolicy.CouponPolicySaveRequestDto;
+//import com.nhnacademy.boostorenginx.dto.couponpolicy.CouponTargetAddRequestDto;
 //import com.nhnacademy.boostorenginx.dto.coupontarget.CouponTargetResponseDto;
 //import com.nhnacademy.boostorenginx.dto.sellingbook.BookSearchResponseDto;
 //import com.nhnacademy.boostorenginx.feign.ShoppingMallClient;
