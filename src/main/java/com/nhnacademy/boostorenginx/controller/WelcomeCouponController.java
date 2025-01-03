@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 
 @RequiredArgsConstructor
-@RequestMapping("/api/welcome-coupons")
+@RequestMapping("/api/coupons/welcome")
 @RestController
 public class WelcomeCouponController {
     private final WelcomeCouponServiceImpl welcomeCouponServiceImpl;
