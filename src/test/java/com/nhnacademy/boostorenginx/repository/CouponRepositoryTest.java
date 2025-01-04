@@ -5,18 +5,16 @@ import com.nhnacademy.boostorenginx.entity.Coupon;
 import com.nhnacademy.boostorenginx.entity.CouponPolicy;
 import com.nhnacademy.boostorenginx.enums.SaleType;
 import com.nhnacademy.boostorenginx.enums.Status;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
-import jakarta.persistence.TypedQuery;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -24,18 +22,16 @@ import static org.junit.jupiter.api.Assertions.*;
 @DataJpaTest
 class CouponRepositoryTest {
 
-    @PersistenceContext
-    private EntityManager entityManager;
-
+    @Autowired
     private CouponRepository couponRepository;
+
+    @Autowired
+    private CouponPolicyRepository couponPolicyRepository;
 
     private CouponPolicy couponPolicy;
     private Coupon coupon1;
     private Coupon coupon2;
     private Coupon coupon3;
-    private String code1;
-    private String code2;
-    private String code3;
 
     @BeforeEach
     void setUp() {
@@ -52,7 +48,7 @@ class CouponRepositoryTest {
                 .endDate(LocalDateTime.now().plusDays(5))
                 .couponActive(true)
                 .build();
-        entityManager.persist(couponPolicy);
+        couponPolicyRepository.save(couponPolicy);
 
         coupon1 = new Coupon(
                 Status.UNUSED,
@@ -61,9 +57,6 @@ class CouponRepositoryTest {
                 couponPolicy
         );
 
-        code1 = coupon1.getCode();
-        entityManager.persist(coupon1);
-
         coupon2 = new Coupon(
                 Status.EXPIRED,
                 LocalDateTime.now().minusDays(10),
@@ -71,149 +64,82 @@ class CouponRepositoryTest {
                 couponPolicy
         );
 
-        code2 = coupon2.getCode();
-        entityManager.persist(coupon2);
-
         coupon3 = new Coupon(
                 Status.UNUSED,
                 LocalDateTime.now().minusDays(10),
                 LocalDateTime.now().minusDays(3),
                 couponPolicy
         );
-        code3 = coupon3.getCode();
-        entityManager.persist(coupon3);
 
-        entityManager.flush();
+        couponRepository.save(coupon1);
+        couponRepository.save(coupon2);
+        couponRepository.save(coupon3);
     }
 
-    @DisplayName("쿠폰의 코드로 쿠폰객체 조회 테스트")
+    @DisplayName("쿠폰 ID 로 쿠폰에 해당하는 쿠폰정책 객체 찾기")
+    @Test
+    void findCouponPolicyByCouponId() {
+        Optional<CouponPolicy> result = couponRepository.findCouponPolicyByCouponId(coupon1.getId());
+
+        assertTrue(result.isPresent());
+        assertInstanceOf(CouponPolicy.class, result.get());
+        assertEquals(coupon1.getId(), result.get().getId());
+    }
+
+    @DisplayName("쿠폰의 코드로 쿠폰 조회")
     @Test
     void findByCode() {
-        String jpql = "SELECT c FROM Coupon c WHERE c.code = :code";
-        TypedQuery<Coupon> query = entityManager.createQuery(jpql, Coupon.class);
-        query.setParameter("code", code1);
+        Optional<Coupon> result = couponRepository.findByCode(coupon1.getCode());
 
-        Coupon result = query.getSingleResult();
-
-        assertEquals(code1, result.getCode());
-        assertEquals(Status.UNUSED, result.getStatus());
-        assertEquals(couponPolicy, result.getCouponPolicy());
+        assertTrue(result.isPresent());
+        assertEquals(coupon1.getId(), result.get().getId());
     }
 
-    @DisplayName("만료된 쿠폰들 조회")
+    @DisplayName("현재 시간을 기준으로 만료된 쿠폰 목록 조회")
     @Test
     void findByExpiredAtBeforeOrderByExpiredAtAsc() {
-        String jpql = "SELECT c FROM Coupon c WHERE c.expiredAt < :expiredAt";
-        TypedQuery<Coupon> query = entityManager.createQuery(jpql, Coupon.class);
-        query.setParameter("expiredAt", LocalDateTime.now());
+        Page<Coupon> result = couponRepository.findByExpiredAtBeforeOrderByExpiredAtAsc(LocalDateTime.now(), PageRequest.of(0, 10));
 
-        List<Coupon> results = query.getResultList();
-
-        results.forEach(coupon -> System.out.println(
-                String.format("Code: %s, Status: %s",
-                        coupon.getCode(),
-                        coupon.getStatus())
-        ));
-
-        assertEquals(2, results.size());
-        assertEquals(code2, results.get(0).getCode());
-        assertEquals(code3, results.get(1).getCode());
+        assertEquals(2, result.getTotalElements());
+        assertEquals(coupon2.getId(), result.getContent().getFirst().getId());
     }
 
-    @DisplayName("사용가능한 기간인 쿠폰들 조회")
+    @DisplayName("기간이 유효한 쿠폰 목록 조회")
     @Test
     void findActiveCoupons() {
-        LocalDateTime currentDateTime = LocalDateTime.now();
-        Pageable pageable = PageRequest.of(0, 10);
+        Page<Coupon> result = couponRepository.findActiveCoupons(LocalDateTime.now(), PageRequest.of(0, 10));
 
-        String jpql = "SELECT c FROM Coupon c WHERE :currentDateTime BETWEEN c.issuedAt AND c.expiredAt ORDER BY c.issuedAt ASC";
-        TypedQuery<Coupon> query = entityManager.createQuery(jpql, Coupon.class);
-
-        query.setParameter("currentDateTime", LocalDateTime.now().minusDays(1));
-
-        List<Coupon> results = query.getResultList();
-
-        System.out.println("Active Coupon:");
-        results.forEach(coupon -> System.out.println(
-                String.format("Code: %s, IssuedAt: %s, ExpiredAt: %s, Status: %s",
-                        coupon.getCode(),
-                        coupon.getIssuedAt(),
-                        coupon.getExpiredAt(),
-                        coupon.getStatus())
-        ));
-
-        assertEquals(1, results.size());
-        assertEquals(code1, results.get(0).getCode());
+        assertEquals(1, result.getTotalElements());
+        assertEquals(coupon1.getId(), result.getContent().getFirst().getId());
     }
 
-    @DisplayName("쿠폰정책으로 쿠폰들 조회")
+    @DisplayName("쿠폰정책으로 쿠폰 목록 조회")
     @Test
     void findByCouponPolicyOrderByIdAsc() {
-        String jpql = "SELECT c FROM Coupon c WHERE c.couponPolicy = :couponPolicy ORDER BY c.id ASC";
+        Page<Coupon> result = couponRepository.findByCouponPolicyOrderByIdAsc(couponPolicy, PageRequest.of(0, 10));
 
-        TypedQuery<Coupon> query = entityManager.createQuery(jpql, Coupon.class);
-        query.setParameter("couponPolicy", couponPolicy);
-
-        List<Coupon> results = query.getResultList();
-
-        System.out.println("Coupon Policy: ");
-        results.forEach(coupon -> System.out.println(
-                String.format("Code: %s, IssuedAt: %s, ExpiredAt: %s, Status: %s",
-                        coupon.getCode(),
-                        coupon.getIssuedAt(),
-                        coupon.getExpiredAt(),
-                        coupon.getStatus())
-        ));
-
-        assertEquals(3, results.size());
-        assertEquals(code1, results.get(0).getCode());
-        assertEquals(code2, results.get(1).getCode());
-        assertEquals(code3, results.get(2).getCode());
+        assertEquals(3, result.getTotalElements());
+        assertEquals(coupon1.getId(), result.getContent().get(0).getId());
+        assertEquals(coupon2.getId(), result.getContent().get(1).getId());
+        assertEquals(coupon3.getId(), result.getContent().get(2).getId());
     }
 
-    @DisplayName("상태로 쿠폰조회")
+    @DisplayName("쿠폰 상태로 쿠폰 목록 조회")
     @Test
     void findByStatusOrderByStatusAsc() {
-        String jpql = "SELECT c FROM Coupon c WHERE c.status = :status ORDER BY c.status ASC";
+        Page<Coupon> result = couponRepository.findByStatusOrderByStatusAsc(Status.UNUSED, PageRequest.of(0, 10));
 
-        TypedQuery<Coupon> query = entityManager.createQuery(jpql, Coupon.class);
-        query.setParameter("status", Status.UNUSED);
-
-        List<Coupon> results = query.getResultList();
-
-        System.out.println("Coupon Status: ");
-        results.forEach(coupon -> System.out.println(
-                String.format("Code: %s, Status: %s",
-                        coupon.getCode(),
-                        coupon.getStatus())
-        ));
-
-        assertEquals(2, results.size());
-        assertEquals(code1, results.get(0).getCode());
-        assertEquals(code3, results.get(1).getCode());
+        assertEquals(2, result.getTotalElements());
+        assertEquals(coupon1.getId(), result.getContent().get(0).getId());
+        assertEquals(coupon3.getId(), result.getContent().get(1).getId());
     }
 
-    @DisplayName("만료된 쿠폰의 상태 쿠폰 조회")
+    @DisplayName("기한이 만료되고 쿠폰의 상태가 UNUSED 인 쿠폰 목록 조회")
     @Test
     void findByExpiredAtBeforeAndStatusOrderByExpiredAtAsc() {
-        String jpql = "SELECT c FROM Coupon c WHERE c.expiredAt < :expiredAt AND c.status = :status ORDER BY c.expiredAt ASC";
+        Page<Coupon> result = couponRepository.findByExpiredAtBeforeAndStatusOrderByExpiredAtAsc(LocalDateTime.now(), Status.UNUSED, PageRequest.of(0, 10));
 
-        TypedQuery<Coupon> query = entityManager.createQuery(jpql, Coupon.class);
-        query.setParameter("expiredAt", LocalDateTime.now());
-        query.setParameter("status", Status.UNUSED);
-
-        List<Coupon> results = query.getResultList();
-
-        System.out.println("Coupon Status: ");
-        results.forEach(coupon -> System.out.println(
-                String.format("Code: %s, IssuedAt: %s, ExpiredAt: %s, Status: %s",
-                        coupon.getCode(),
-                        coupon.getIssuedAt(),
-                        coupon.getExpiredAt(),
-                        coupon.getStatus())
-        ));
-
-        assertEquals(1, results.size());
-        assertEquals(code3, results.get(0).getCode());
+        assertEquals(1, result.getTotalElements());
+        assertEquals(coupon3.getId(), result.getContent().getFirst().getId());
     }
 }
