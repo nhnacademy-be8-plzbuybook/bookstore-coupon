@@ -23,15 +23,11 @@ class CouponPolicyRepositoryTest {
     @Autowired
     private CouponPolicyRepository couponPolicyRepository;
 
-    private CouponPolicy policy1;
-    private CouponPolicy policy2;
-    private CouponPolicy policy3;
-
     @BeforeEach
     void setUp() {
         LocalDateTime now = LocalDateTime.now();
 
-        policy1 = CouponPolicy.builder()
+        CouponPolicy policy1 = CouponPolicy.builder()
                 .name("test1")
                 .saleType(SaleType.RATIO)
                 .minimumAmount(new BigDecimal("1000"))
@@ -44,7 +40,7 @@ class CouponPolicyRepositoryTest {
                 .couponActive(true)
                 .build();
 
-        policy2 = CouponPolicy.builder()
+        CouponPolicy policy2 = CouponPolicy.builder()
                 .name("test2")
                 .saleType(SaleType.AMOUNT)
                 .minimumAmount(new BigDecimal("1000"))
@@ -57,7 +53,7 @@ class CouponPolicyRepositoryTest {
                 .couponActive(true)
                 .build();
 
-        policy3 = CouponPolicy.builder()
+        CouponPolicy policy3 = CouponPolicy.builder()
                 .name("test3")
                 .saleType(SaleType.AMOUNT)
                 .minimumAmount(new BigDecimal("1000"))
