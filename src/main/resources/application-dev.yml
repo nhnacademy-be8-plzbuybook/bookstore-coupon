@@ -26,7 +26,7 @@ spring:
     properties:
       hibernate:
         format_sql: true
-#        ddl-auto: update # 애플리케이션 실행 시 DB 스키마 자동 업데이트
+        ddl-auto: none # 애플리케이션 실행 시 DB 스키마 자동 업데이트
 
   h2:
     console:
