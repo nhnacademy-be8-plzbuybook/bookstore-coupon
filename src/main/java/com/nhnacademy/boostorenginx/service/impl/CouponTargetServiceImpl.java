@@ -3,7 +3,7 @@ package com.nhnacademy.boostorenginx.service.impl;
 import com.nhnacademy.boostorenginx.dto.coupontarget.CouponTargetGetResponseDto;
 import com.nhnacademy.boostorenginx.dto.coupontarget.CouponTargetResponseDto;
 import com.nhnacademy.boostorenginx.dto.coupontarget.CouponTargetSaveRequestDto;
-import com.nhnacademy.boostorenginx.dto.coupontarget.CouponTargetSeearchReqeustDto;
+import com.nhnacademy.boostorenginx.dto.coupontarget.CouponTargetSearchRequestDto;
 import com.nhnacademy.boostorenginx.entity.CouponPolicy;
 import com.nhnacademy.boostorenginx.entity.CouponTarget;
 import com.nhnacademy.boostorenginx.error.CouponTargetException;
@@ -56,7 +56,7 @@ public class CouponTargetServiceImpl implements CouponTargetService {
 
     @Transactional
     @Override
-    public Page<CouponTargetGetResponseDto> getCouponTargetsByPolicyId(CouponTargetSeearchReqeustDto couponTargetSeearchReqeustDto) {
+    public Page<CouponTargetGetResponseDto> getCouponTargetsByPolicyId(CouponTargetSearchRequestDto couponTargetSeearchReqeustDto) {
         Long policyId = couponTargetSeearchReqeustDto.policyId();
         int page = couponTargetSeearchReqeustDto.page();
         int pageSize = couponTargetSeearchReqeustDto.pageSize();

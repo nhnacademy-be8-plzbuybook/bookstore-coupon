@@ -1,10 +1,9 @@
 package com.nhnacademy.boostorenginx.service.impl;
 
-import com.nhnacademy.boostorenginx.dto.couponpolicy.CouponTargetAddRequestDto;
 import com.nhnacademy.boostorenginx.dto.coupontarget.CouponTargetGetResponseDto;
 import com.nhnacademy.boostorenginx.dto.coupontarget.CouponTargetResponseDto;
 import com.nhnacademy.boostorenginx.dto.coupontarget.CouponTargetSaveRequestDto;
-import com.nhnacademy.boostorenginx.dto.coupontarget.CouponTargetSeearchReqeustDto;
+import com.nhnacademy.boostorenginx.dto.coupontarget.CouponTargetSearchRequestDto;
 import com.nhnacademy.boostorenginx.entity.CouponPolicy;
 import com.nhnacademy.boostorenginx.entity.CouponTarget;
 import com.nhnacademy.boostorenginx.error.CouponTargetException;
@@ -119,7 +118,7 @@ class CouponTargetServiceImplTest {
 
         Long policyId = 1L;
         Pageable pageable = PageRequest.of(0, 10, Sort.by("id").ascending());
-        CouponTargetSeearchReqeustDto requestDto = new CouponTargetSeearchReqeustDto(policyId, 0, 10);
+        CouponTargetSearchRequestDto requestDto = new CouponTargetSearchRequestDto(policyId, 0, 10);
 
         Page<CouponTarget> mockPage = new PageImpl<>(Collections.singletonList(mockTarget));
         when(couponTargetRepository.findByCouponPolicy_IdOrderByIdAsc(policyId, pageable)).thenReturn(mockPage);
