@@ -38,10 +38,6 @@ public class CouponTargetServiceImpl implements CouponTargetService {
                 () -> new NotFoundCouponPolicyException("ID 에 해당하는 CouponPolicy 를 찾을 수 없습니다: " + couponPolicyId)
         );
 
-        if (couponTargetRepository.existsByCtTargetId(ctTargetId)) {
-            throw new CouponTargetException("이미 등록된 쿠폰 대상 입니다");
-        }
-
         CouponTarget couponTarget = CouponTarget.builder()
                 .couponPolicy(couponPolicy)
                 .ctTargetId(ctTargetId)

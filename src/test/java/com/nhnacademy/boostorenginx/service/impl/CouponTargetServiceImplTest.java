@@ -89,25 +89,6 @@ class CouponTargetServiceImplTest {
         assertEquals("ID 에 해당하는 CouponPolicy 를 찾을 수 없습니다: " + policyId, exception.getMessage());
     }
 
-    @DisplayName("쿠폰대상 ID 가 이미 존재하는 경우")
-    @Test
-    void createCouponTarget_AlreadyExistTarget() {
-        Long policyId = 1L;
-        Long targetId = 1L;
-        CouponTargetSaveRequestDto requestDto = new CouponTargetSaveRequestDto(policyId, targetId);
-
-        when(couponPolicyRepository.findById(policyId)).thenReturn(Optional.of(mockPolicy));
-        when(couponTargetRepository.existsByCtTargetId(targetId)).thenReturn(true);
-
-        CouponTargetException exception = assertThrows(CouponTargetException.class,
-                () -> couponTargetService.createCouponTarget(requestDto));
-
-        assertEquals("이미 등록된 쿠폰 대상 입니다", exception.getMessage());
-
-        verify(couponPolicyRepository, times(1)).findById(policyId);
-        verify(couponTargetRepository, times(1)).existsByCtTargetId(targetId);
-    }
-
     @DisplayName("쿠폰정책 ID 로 쿠폰대상 목록 조회 ")
     @Test
     void getCouponTargetsByPolicyId() {

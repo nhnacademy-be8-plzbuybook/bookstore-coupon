@@ -36,6 +36,23 @@ Content-Type: application/json
   "couponActive": true
 }
 
+### 쿠폰 정책 등록 3
+POST http://localhost:8083/api/coupon-policies
+Content-Type: application/json
+
+{
+  "name": "EXPIRED_COUPON_RATIO",
+  "saleType": "RATIO",
+  "minimumAmount": 100.0,
+  "discountLimit": 5000.0,
+  "discountRatio": 10,
+  "isStackable": true,
+  "couponScope": "BOOK",
+  "startDate": "2024-12-01T00:00:00",
+  "endDate": "2024-12-31T23:59:59",
+  "couponActive": true
+}
+
 ### 유효한 쿠폰 정책 조회
 GET http://localhost:8083/api/coupon-policies?couponActive=true&page=0&pageSize=10
 Content-Type: application/json

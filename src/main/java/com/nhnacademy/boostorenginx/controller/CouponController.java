@@ -94,7 +94,8 @@ public class CouponController {
      * GET /api/coupons/status
      */
     @GetMapping("/status")
-    public ResponseEntity<Page<CouponResponseDto>> getCouponsByStatus(@Valid CouponFindStatusRequestDto couponFindStatusRequestDto) {
+    public ResponseEntity<Page<CouponResponseDto>> getCouponsByStatus(@RequestParam @NotNull String status, @Min(0) int page, @Min(1) int pageSize) {
+        CouponFindStatusRequestDto couponFindStatusRequestDto = new CouponFindStatusRequestDto(status, page, pageSize);
         Page<CouponResponseDto> couponsByStatus = couponService.getCouponsByStatus(couponFindStatusRequestDto);
 
         return ResponseEntity.status(HttpStatus.OK).body(couponsByStatus);
@@ -118,7 +119,7 @@ public class CouponController {
      * PATCH /api/coupons/{coupon-id}/use
      */
     @PatchMapping("/{coupon-id}/use")
-    public ResponseEntity<String> useCoupon(@PathVariable("coupon-id") @Min(0) Long couponId, @RequestBody @Min(0) Long memberId) {
+    public ResponseEntity<String> useCoupon(@PathVariable("coupon-id") @Min(0) Long couponId, @RequestParam @Min(0) Long memberId) {
         MemberCouponUseRequestDto memberCouponUseRequestDto = new MemberCouponUseRequestDto(couponId, memberId);
         couponService.useCoupon(memberCouponUseRequestDto);
 
