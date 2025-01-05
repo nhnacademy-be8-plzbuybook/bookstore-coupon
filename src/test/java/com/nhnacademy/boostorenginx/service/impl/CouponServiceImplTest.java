@@ -109,6 +109,36 @@ class CouponServiceImplTest {
 
     }
 
+    @DisplayName("쿠폰 ID 로 쿠폰정책 찾기")
+    @Test
+    void findCouponPolicyByCouponId() {
+        Long couponId = 1L;
+
+        when(couponRepository.findCouponPolicyByCouponId(couponId)).thenReturn(Optional.of(mockPolicy));
+        CouponPolicy result = couponService.findCouponPolicyByCouponId(couponId);
+
+        assertEquals(mockPolicy, result);
+        verify(couponRepository, times(1)).findCouponPolicyByCouponId(couponId);
+    }
+
+    @DisplayName("쿠폰 ID 로 쿠폰정책 찾을때 해당 쿠폰정책이 없을경우")
+    @Test
+    void findCouponPolicyByCouponId_ThrowNotFoundCouponException() {
+        Long couponId = 1L;
+
+        when(couponRepository.findCouponPolicyByCouponId(couponId)).thenReturn(Optional.empty());
+        NotFoundCouponException exception = assertThrows(
+                NotFoundCouponException.class,
+                () -> couponService.findCouponPolicyByCouponId(couponId)
+        );
+
+        assertEquals(
+                "쿠폰 ID에 해당하는 쿠폰정책을 찾을 수 없습니다: " + couponId,
+                exception.getMessage()
+        );
+        verify(couponRepository, times(1)).findCouponPolicyByCouponId(couponId);
+    }
+
     @DisplayName("쿠폰코드로 쿠폰조회")
     @Test
     void getCouponByCode() {
