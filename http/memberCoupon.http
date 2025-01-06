@@ -1,0 +1,13 @@
+### GET request to example server
+GET https://examples.http-client.intellij.net/get
+    ?generated-in=IntelliJ IDEA
+
+### 회원에게 쿠폰 발급 -
+POST http://localhost:8083/api/member-coupons
+Content-Type: application/json
+
+{
+  "mcMemberId": 108,
+  "couponId": 56
+}
+
