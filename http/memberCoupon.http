@@ -11,3 +11,8 @@ Content-Type: application/json
   "couponId": 57
 }
 
+### 회원 ID로 회원 쿠폰 조회
+GET http://localhost:8083/api/member-coupons/member/108
+
+### 회원이 사용 가능한 쿠폰 목록 조회
+GET http://localhost:8083/api/member-coupons/member/108/unused
