@@ -1,8 +1,14 @@
 package com.nhnacademy.boostorenginx.dto.couponhistory;
 
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
+
 public record CouponHistoryStatusRequestDto(
-        String status,
+        @NotNull
+        String status, // 쿠폰상태
+        @Min(0)
         int page,
+        @Min(1)
         int pageSize
 ) {
 }

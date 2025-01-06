@@ -3,7 +3,7 @@ GET https://examples.http-client.intellij.net/get
     ?generated-in=IntelliJ IDEA
 
 ### 멤버쿠폰조회 테스트
-GET /api/coupons/member-coupon/member/81?page=0&size=10
+GET /api/coupons/member-coupons/member/24?page=0&size=10
 
 ### 카테고리 조회 테스트
 POST http://localhost:8083/api/coupons/category/%EC%98%81%EB%AF%B8%EC%86%8C%EC%84%A4
