@@ -2,12 +2,12 @@
 GET https://examples.http-client.intellij.net/get
     ?generated-in=IntelliJ IDEA
 
-### 회원에게 쿠폰 발급 -
-POST http://localhost:8083/api/member-coupons
+### 테스트
+
+POST http://localhost:8083/api/member-coupons/member/108/coupon/57/calculate
 Content-Type: application/json
 
 {
-  "mcMemberId": 108,
-  "couponId": 57
+  "productPrice": 25000.00,
+  "quantity": 2
 }
-
