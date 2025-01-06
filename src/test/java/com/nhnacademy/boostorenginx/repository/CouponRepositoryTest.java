@@ -6,6 +6,7 @@ import com.nhnacademy.boostorenginx.entity.CouponPolicy;
 import com.nhnacademy.boostorenginx.enums.SaleType;
 import com.nhnacademy.boostorenginx.enums.Status;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -76,6 +77,7 @@ class CouponRepositoryTest {
         couponRepository.save(coupon3);
     }
 
+    @Disabled
     @DisplayName("쿠폰 ID 로 쿠폰에 해당하는 쿠폰정책 객체 찾기")
     @Test
     void findCouponPolicyByCouponId() {

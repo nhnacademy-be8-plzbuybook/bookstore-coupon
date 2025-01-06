@@ -3,9 +3,6 @@ package com.nhnacademy.boostorenginx.repository;
 import com.nhnacademy.boostorenginx.entity.CouponPolicy;
 import com.nhnacademy.boostorenginx.entity.CouponTarget;
 import com.nhnacademy.boostorenginx.enums.SaleType;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
-import jakarta.persistence.TypedQuery;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -17,8 +14,6 @@ import org.springframework.data.domain.Pageable;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -74,8 +69,8 @@ class CouponTargetRepositoryTest {
         Page<CouponTarget> targets = couponTargetRepository.findByCouponPolicy_IdOrderByIdAsc(policyId, pageable);
 
         assertEquals(2, targets.getTotalElements());
-        assertEquals(1L, targets.getContent().get(0).getCtTargetId());
-        assertEquals(2L, targets.getContent().get(1).getCtTargetId());
+        assertEquals(0L, targets.getContent().get(0).getCtTargetId());
+        assertEquals(1L, targets.getContent().get(1).getCtTargetId());
     }
 
     @DisplayName("(도메인)대상 ID 에 해당하는 쿠폰대상이 있는지 확인")

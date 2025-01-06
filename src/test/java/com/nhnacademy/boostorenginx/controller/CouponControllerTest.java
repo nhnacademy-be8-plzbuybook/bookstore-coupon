@@ -295,13 +295,14 @@ class CouponControllerTest {
     void useCoupon() throws Exception {
         Long couponId = 1L;
         Long memberId = 1L;
+        MemberCouponUseRequestDto memberCouponUseRequestDto = new MemberCouponUseRequestDto(memberId, couponId);
 
         mockMvc.perform(patch("/api/coupons/{coupon-id}/use", couponId)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(String.valueOf(memberId)))
+                        .param("memberId", String.valueOf(memberId)))
                 .andExpect(status().isOk())
                 .andExpect(content().string("쿠폰 상태가 변경되었습니다"));
 
-        verify(couponService, times(1)).useCoupon(any(MemberCouponUseRequestDto.class));
+        verify(couponService, times(1)).useCoupon(memberCouponUseRequestDto);
     }
 }
