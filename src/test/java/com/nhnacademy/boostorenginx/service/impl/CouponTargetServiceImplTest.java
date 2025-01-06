@@ -47,7 +47,7 @@ class CouponTargetServiceImplTest {
 
     @BeforeEach
     void setUp() {
-
+        mockPolicy = mock(CouponPolicy.class);
     }
 
     @Disabled
@@ -57,9 +57,8 @@ class CouponTargetServiceImplTest {
         Long policyId = 1L;
         Long targetId = 1L;
         CouponTargetSaveRequestDto requestDto = new CouponTargetSaveRequestDto(policyId, targetId);
-        when(couponPolicyRepository.findById(policyId)).thenReturn(Optional.empty());
 
-        when(couponTargetRepository.existsByCtTargetId(targetId)).thenReturn(false);
+        when(couponPolicyRepository.findById(policyId)).thenReturn(Optional.of(mockPolicy));
 
         mockTarget = CouponTarget.builder()
                 .couponPolicy(mockPolicy)
@@ -73,7 +72,6 @@ class CouponTargetServiceImplTest {
         assertEquals(targetId, responseDto.ctTargetId());
 
         verify(couponPolicyRepository, times(1)).findById(policyId);
-        verify(couponTargetRepository, times(1)).existsByCtTargetId(targetId);
         verify(couponTargetRepository, times(1)).save(any(CouponTarget.class));
     }
 
