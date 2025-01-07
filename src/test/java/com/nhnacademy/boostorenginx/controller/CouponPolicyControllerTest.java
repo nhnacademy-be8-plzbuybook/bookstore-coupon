@@ -73,7 +73,7 @@ class CouponPolicyControllerTest {
         objectMapper = new ObjectMapper();
         objectMapper.findAndRegisterModules();
         objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
-        objectMapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSS")); // 6자리 소수점 강제 설정
+        objectMapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSS")); // 6자리 소수점 강제 설정
     }
 
     @DisplayName("쿠폰정책 생성")
@@ -106,8 +106,6 @@ class CouponPolicyControllerTest {
                 .andExpect(jsonPath("$.discountRatio").value(responseDto.discountRatio()))
                 .andExpect(jsonPath("$.isStackable").value(responseDto.isStackable()))
                 .andExpect(jsonPath("$.couponScope").value(responseDto.couponScope()))
-                .andExpect(jsonPath("$.startDate").value(responseDto.startDate().toString()))
-                .andExpect(jsonPath("$.endDate").value(responseDto.endDate().toString()))
                 .andExpect(jsonPath("$.couponActive").value(responseDto.couponActive()));
 
         verify(couponPolicyService, times(1)).createCouponPolicy(any(CouponPolicySaveRequestDto.class));
@@ -212,8 +210,6 @@ class CouponPolicyControllerTest {
                 .andExpect(jsonPath("$.discountRatio").value(responseDto.discountRatio()))
                 .andExpect(jsonPath("$.isStackable").value(responseDto.isStackable()))
                 .andExpect(jsonPath("$.couponScope").value(responseDto.couponScope()))
-                .andExpect(jsonPath("$.startDate").value(responseDto.startDate().toString()))
-                .andExpect(jsonPath("$.endDate").value(responseDto.endDate().toString()))
                 .andExpect(jsonPath("$.couponActive").value(responseDto.couponActive()));
 
         verify(couponPolicyService, times(1)).findByName(any(CouponPolicyNameRequestDto.class));

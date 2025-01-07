@@ -103,6 +103,7 @@ class MemberCouponControllerTest {
         Pageable pageable = PageRequest.of(0, 5);
 
         MemberCouponGetResponseDto mockCoupon = new MemberCouponGetResponseDto(
+                1L,
                 "TESTCODE",
                 "UNUSED",
                 LocalDateTime.now().minusDays(1),
@@ -197,6 +198,7 @@ class MemberCouponControllerTest {
         int pageSize = 10;
 
         MemberCouponGetResponseDto mockCoupon = new MemberCouponGetResponseDto(
+                1L,
                 "TESTCODE",
                 "UNUSED",
                 LocalDateTime.now().minusDays(1),

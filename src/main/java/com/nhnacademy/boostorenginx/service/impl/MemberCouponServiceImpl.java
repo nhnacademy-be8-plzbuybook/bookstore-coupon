@@ -77,6 +77,7 @@ public class MemberCouponServiceImpl implements MemberCouponService {
         CouponPolicy couponPolicy = coupon.getCouponPolicy();
 
         return new MemberCouponGetResponseDto(
+                coupon.getId(),
                 coupon.getCode(),
                 coupon.getStatus().name(),
                 coupon.getIssuedAt(),
