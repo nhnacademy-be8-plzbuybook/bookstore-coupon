@@ -73,7 +73,7 @@ class CouponPolicyControllerTest {
         objectMapper = new ObjectMapper();
         objectMapper.findAndRegisterModules();
         objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
-        objectMapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSS")); // 6자리 소수점 강제 설정
+        objectMapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSS")); // 6자리 소수점 강제 설정
     }
 
     @DisplayName("쿠폰정책 생성")

@@ -50,7 +50,7 @@ class CouponTargetServiceImplTest {
         mockPolicy = mock(CouponPolicy.class);
     }
 
-    @Disabled
+
     @DisplayName("쿠폰대상 생성")
     @Test
     void createCouponTarget() {
