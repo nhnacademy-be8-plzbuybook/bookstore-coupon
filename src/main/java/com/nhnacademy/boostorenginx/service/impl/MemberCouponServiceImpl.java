@@ -29,18 +29,18 @@ public class MemberCouponServiceImpl implements MemberCouponService {
     @Transactional
     @Override
     public MemberCouponResponseDto createMemberCoupon(MemberCouponCreateRequestDto dto) {
-        Long memberId = dto.memberId();
+        Long mcMemberId = dto.mcMemberId();
         Long couponId = dto.couponId();
 
         Coupon coupon = couponRepository.findById(couponId).orElseThrow(
                 () -> new NotFoundCouponException("ID 에 해당하는 쿠폰이 존재하지 않습니다: " + couponId)
         );
 
-        if (memberCouponRepository.existsByMcMemberIdAndId(memberId, couponId)) {
+        if (memberCouponRepository.existsByMcMemberIdAndId(mcMemberId, couponId)) {
             throw new MemberCouponException("회원에게 이미 발급된 쿠폰입니다");
         }
 
-        MemberCoupon memberCoupon = new MemberCoupon(memberId, coupon);
+        MemberCoupon memberCoupon = new MemberCoupon(mcMemberId, coupon);
         MemberCoupon saveMemberCoupon = memberCouponRepository.save(memberCoupon);
 
         return MemberCouponResponseDto.fromEntity(saveMemberCoupon);
@@ -77,6 +77,7 @@ public class MemberCouponServiceImpl implements MemberCouponService {
         CouponPolicy couponPolicy = coupon.getCouponPolicy();
 
         return new MemberCouponGetResponseDto(
+                coupon.getId(),
                 coupon.getCode(),
                 coupon.getStatus().name(),
                 coupon.getIssuedAt(),

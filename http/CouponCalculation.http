@@ -1,0 +1,13 @@
+### GET request to example server
+GET https://examples.http-client.intellij.net/get
+    ?generated-in=IntelliJ IDEA
+
+### 테스트
+
+POST http://localhost:8083/api/member-coupons/member/108/coupon/57/calculate
+Content-Type: application/json
+
+{
+  "productPrice": 25000.00,
+  "quantity": 2
+}

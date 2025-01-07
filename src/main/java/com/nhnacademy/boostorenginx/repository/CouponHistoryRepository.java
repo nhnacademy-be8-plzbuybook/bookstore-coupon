@@ -13,8 +13,8 @@ public interface CouponHistoryRepository extends JpaRepository<CouponHistory, Lo
 
     Page<CouponHistory> findByCoupon_idOrderByCouponIdAsc(Long couponId, Pageable pageable); // 쿠폰 ID 로 쿠폰변경이력 목록 조회
 
-    Page<CouponHistory> findByStatusOrderByChangeDateAsc(Status status, Pageable pageable); // Status 에 해당하는 쿠폰변견이력 목록 조회(오름차순)
+    Page<CouponHistory> findByStatusOrderByChangeDateAsc(Status status, Pageable pageable); // Status 에 해당하는 쿠폰변경이력 목록 조회(오름차순)
 
-    @Query("SELECT ch FROM CouponHistory ch WHERE ch.changeDate BETWEEN :start AND :end ORDER BY ch.changeDate ASC")
+    @Query("SELECT ch FROM CouponHistory ch WHERE ch.changeDate >= :start AND ch.changeDate <=:end ORDER BY ch.changeDate ASC")
     Page<CouponHistory> findChangeDate(LocalDateTime start, LocalDateTime end, Pageable pageable); // 특정 기간 사이 쿠폰변경이력 목록 조회
 }

@@ -3,7 +3,7 @@ package com.nhnacademy.boostorenginx.service.impl;
 import com.nhnacademy.boostorenginx.dto.coupontarget.CouponTargetGetResponseDto;
 import com.nhnacademy.boostorenginx.dto.coupontarget.CouponTargetResponseDto;
 import com.nhnacademy.boostorenginx.dto.coupontarget.CouponTargetSaveRequestDto;
-import com.nhnacademy.boostorenginx.dto.coupontarget.CouponTargetSeearchReqeustDto;
+import com.nhnacademy.boostorenginx.dto.coupontarget.CouponTargetSearchRequestDto;
 import com.nhnacademy.boostorenginx.entity.CouponPolicy;
 import com.nhnacademy.boostorenginx.entity.CouponTarget;
 import com.nhnacademy.boostorenginx.error.CouponTargetException;
@@ -38,10 +38,6 @@ public class CouponTargetServiceImpl implements CouponTargetService {
                 () -> new NotFoundCouponPolicyException("ID 에 해당하는 CouponPolicy 를 찾을 수 없습니다: " + couponPolicyId)
         );
 
-        if (couponTargetRepository.existsByCtTargetId(ctTargetId)) {
-            throw new CouponTargetException("이미 등록된 쿠폰 대상 입니다");
-        }
-
         CouponTarget couponTarget = CouponTarget.builder()
                 .couponPolicy(couponPolicy)
                 .ctTargetId(ctTargetId)
@@ -56,7 +52,7 @@ public class CouponTargetServiceImpl implements CouponTargetService {
 
     @Transactional
     @Override
-    public Page<CouponTargetGetResponseDto> getCouponTargetsByPolicyId(CouponTargetSeearchReqeustDto couponTargetSeearchReqeustDto) {
+    public Page<CouponTargetGetResponseDto> getCouponTargetsByPolicyId(CouponTargetSearchRequestDto couponTargetSeearchReqeustDto) {
         Long policyId = couponTargetSeearchReqeustDto.policyId();
         int page = couponTargetSeearchReqeustDto.page();
         int pageSize = couponTargetSeearchReqeustDto.pageSize();

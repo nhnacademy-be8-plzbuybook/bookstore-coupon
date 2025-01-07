@@ -6,7 +6,6 @@ import com.nhnacademy.boostorenginx.dto.couponhistory.CouponHistoryResponseDto;
 import com.nhnacademy.boostorenginx.dto.couponhistory.CouponHistoryStatusRequestDto;
 import com.nhnacademy.boostorenginx.entity.CouponHistory;
 import com.nhnacademy.boostorenginx.service.CouponHistoryService;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;

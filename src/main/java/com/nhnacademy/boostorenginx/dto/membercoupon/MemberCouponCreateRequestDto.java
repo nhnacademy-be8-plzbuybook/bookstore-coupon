@@ -6,7 +6,7 @@ import jakarta.validation.constraints.NotNull;
 public record MemberCouponCreateRequestDto(
         @Min(0)
         @NotNull
-        Long memberId, // 회원 ID
+        Long mcMemberId, // 회원 ID
         @Min(0)
         @NotNull
         Long couponId // 쿠폰 ID
