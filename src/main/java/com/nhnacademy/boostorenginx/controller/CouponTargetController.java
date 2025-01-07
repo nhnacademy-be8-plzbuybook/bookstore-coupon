@@ -3,7 +3,7 @@ package com.nhnacademy.boostorenginx.controller;
 import com.nhnacademy.boostorenginx.dto.coupontarget.CouponTargetGetResponseDto;
 import com.nhnacademy.boostorenginx.dto.coupontarget.CouponTargetResponseDto;
 import com.nhnacademy.boostorenginx.dto.coupontarget.CouponTargetSaveRequestDto;
-import com.nhnacademy.boostorenginx.dto.coupontarget.CouponTargetSeearchReqeustDto;
+import com.nhnacademy.boostorenginx.dto.coupontarget.CouponTargetSearchRequestDto;
 import com.nhnacademy.boostorenginx.service.CouponTargetService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
@@ -38,8 +38,8 @@ public class CouponTargetController {
     public ResponseEntity<Page<CouponTargetGetResponseDto>> getCouponTargetsByPolicy(@RequestParam("policy-id") @Min(0) Long policyId,
                                                                                      @RequestParam(defaultValue = "0") @Min(0) int page,
                                                                                      @RequestParam(defaultValue = "10") @Min(1) int pageSize) {
-        CouponTargetSeearchReqeustDto couponTargetSeearchReqeustDto = new CouponTargetSeearchReqeustDto(policyId, page, pageSize);
-        Page<CouponTargetGetResponseDto> responseDto = couponTargetService.getCouponTargetsByPolicyId(couponTargetSeearchReqeustDto);
+        CouponTargetSearchRequestDto couponTargetSearchRequestDto = new CouponTargetSearchRequestDto(policyId, page, pageSize);
+        Page<CouponTargetGetResponseDto> responseDto = couponTargetService.getCouponTargetsByPolicyId(couponTargetSearchRequestDto);
 
         return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }

@@ -5,12 +5,11 @@ import com.nhnacademy.boostorenginx.entity.CouponPolicy;
 import com.nhnacademy.boostorenginx.entity.MemberCoupon;
 import com.nhnacademy.boostorenginx.enums.SaleType;
 import com.nhnacademy.boostorenginx.enums.Status;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -20,14 +19,21 @@ import org.springframework.data.domain.Pageable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
 class MemberCouponRepositoryTest {
 
-    @PersistenceContext
-    private EntityManager entityManager;
+    @Autowired
+    private MemberCouponRepository memberCouponRepository;
+
+    @Autowired
+    private CouponRepository couponRepository;
+
+    @Autowired
+    private CouponPolicyRepository couponPolicyRepository;
 
     private CouponPolicy policy;
     private Coupon coupon1;
@@ -51,7 +57,7 @@ class MemberCouponRepositoryTest {
                 .endDate(now.plusDays(10))
                 .couponActive(true)
                 .build();
-        entityManager.persist(policy);
+        couponPolicyRepository.save(policy);
 
         coupon1 = new Coupon(
                 Status.UNUSED,
@@ -59,7 +65,7 @@ class MemberCouponRepositoryTest {
                 LocalDateTime.now().plusDays(5),
                 policy
         );
-        entityManager.persist(coupon1);
+        couponRepository.save(coupon1);
 
         coupon2 = new Coupon(
                 Status.USED,
@@ -67,72 +73,64 @@ class MemberCouponRepositoryTest {
                 LocalDateTime.now().plusDays(1),
                 policy
         );
-        entityManager.persist(coupon2);
+        couponRepository.save(coupon2);
 
-        memberCoupon1 = new MemberCoupon(
-                1L,
-                coupon1
-        );
-        entityManager.persist(memberCoupon1);
+        memberCoupon1 = new MemberCoupon(1L, coupon1);
+        memberCoupon2 = new MemberCoupon(2L, coupon2);
 
-        memberCoupon2 = new MemberCoupon(
-                2L,
-                coupon2
-        );
-        entityManager.persist(memberCoupon2);
-
-        entityManager.flush();
+        memberCouponRepository.save(memberCoupon1);
+        memberCouponRepository.save(memberCoupon2);
     }
 
-    @DisplayName("ID 로 회원쿠폰 조회")
+    @DisplayName("회원 ID 와 쿠폰 ID 로 회원쿠폰 조회")
     @Test
-    void findByMcMemberIdOrderByIdAsc() {
-        Pageable pageable = PageRequest.of(0, 10);
-
-        String jpql = "SELECT mc FROM MemberCoupon mc WHERE mc.mcMemberId = :memberId ORDER BY mc.id ASC";
-        TypedQuery<MemberCoupon> query = entityManager.createQuery(jpql, MemberCoupon.class);
-        query.setParameter("memberId", 1L);
-        List<MemberCoupon> results = query.getResultList();
-
-        Page<MemberCoupon> page = new PageImpl<>(results, pageable, results.size());
-
-        assertNotNull(page);
-        assertEquals(1, page.getContent().size());
-        assertEquals(memberCoupon1.getMcMemberId(), page.getContent().get(0).getMcMemberId());
+    void findByMcMemberIdAndCoupon_Id() {
+        Optional<MemberCoupon> result = memberCouponRepository.findByMcMemberIdAndCoupon_Id(1L, coupon1.getId());
+        assertTrue(result.isPresent());
+        assertEquals(memberCoupon1.getId(), result.get().getId());
     }
 
-    @DisplayName("회원 ID 에 발급된 쿠폰들을 조회")
+    @DisplayName("쿠폰의 ID에 해당되는 회원쿠폰 목록 조회")
     @Test
     void findByCoupon_IdOrderByIdAsc() {
         Pageable pageable = PageRequest.of(0, 10);
+        Page<MemberCoupon> result = memberCouponRepository.findByCoupon_IdOrderByIdAsc(coupon1.getId(), pageable);
 
-        String jpql = "SELECT mc FROM MemberCoupon mc WHERE mc.coupon.id = :couponId ORDER BY mc.id ASC";
-        TypedQuery<MemberCoupon> query = entityManager.createQuery(jpql, MemberCoupon.class);
-        query.setParameter("couponId", coupon1.getId());
-        List<MemberCoupon> results = query.getResultList();
+        assertEquals(1, result.getTotalElements());
+        assertEquals(memberCoupon1.getId(), result.getContent().getFirst().getId());
+    }
 
-        Page<MemberCoupon> page = new PageImpl<>(results, pageable, results.size());
+    @DisplayName("회원 ID에 해당되는 회원쿠폰 목록 조회")
+    @Test
+    void findByMcMemberIdOrderByIdAsc() {
+        Long mcMemberId = 1L;
+        Pageable pageable = PageRequest.of(0, 10);
+        Page<MemberCoupon> result = memberCouponRepository.findByMcMemberIdOrderByIdAsc(mcMemberId, pageable);
 
-        assertNotNull(page);
-        assertEquals(1, page.getContent().size());
-        assertEquals(memberCoupon1.getCoupon().getId(), page.getContent().get(0).getCoupon().getId());
+        assertEquals(1, result.getTotalElements());
+        assertEquals(memberCoupon1.getId(), result.getContent().getFirst().getId());
+    }
+
+    @DisplayName("회원 ID 와 쿠폰의 Status 로 회원쿠폰 목록 조회")
+    @Test
+    void findByMcMemberIdAndCoupon_StatusOrderByIdAsc() {
+        Long mcMemberId = 1L;
+        Pageable pageable = PageRequest.of(0, 10);
+
+        Page<MemberCoupon> result = memberCouponRepository.findByMcMemberIdAndCoupon_StatusOrderByIdAsc(mcMemberId, Status.UNUSED, pageable);
+        assertEquals(1, result.getTotalElements());
+        assertEquals(memberCoupon1.getId(), result.getContent().getFirst().getId());
     }
 
     @DisplayName("회원 ID 와 회원쿠폰 ID 가 존재하는지 확인")
     @Test
     void existsByMcMemberIdAndId() {
-        String jpql = "SELECT COUNT(mc) FROM MemberCoupon mc WHERE mc.mcMemberId = :memberId AND mc.id = :memberCouponId";
-        TypedQuery<Long> query = entityManager.createQuery(jpql, Long.class);
-        query.setParameter("memberId", 1L);
-        query.setParameter("memberCouponId", memberCoupon1.getId());
-        Long count = query.getSingleResult();
+        Long mcMemberId = 1L;
 
-        assertTrue(count > 0);
+        boolean exists = memberCouponRepository.existsByMcMemberIdAndId(mcMemberId, memberCoupon1.getId());
+        assertTrue(exists);
 
-        query.setParameter("memberId", 3L);
-        query.setParameter("memberCouponId", memberCoupon1.getId());
-        count = query.getSingleResult();
-
-        assertFalse(count > 0);
+        exists = memberCouponRepository.existsByMcMemberIdAndId(1L, memberCoupon2.getId());
+        assertFalse(exists);
     }
 }

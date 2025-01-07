@@ -1,0 +1,51 @@
+### GET request to example server
+GET https://examples.http-client.intellij.net/get
+    ?generated-in=IntelliJ IDEA
+
+### 쿠폰생성 1
+POST http://localhost:8083/api/coupons
+Content-Type: application/json
+
+{
+  "couponPolicyId": 65,
+  "expiredAt": "2025-01-31T23:59:59"
+}
+
+### 쿠폰생성 2
+POST http://localhost:8083/api/coupons
+Content-Type: application/json
+
+{
+  "couponPolicyId": 69,
+  "expiredAt": "2024-12-31T23:59:59"
+}
+
+### 쿠폰코드로 조회
+GET http://localhost:8083/api/coupons/3750a578-5eec-489b-a8c9-5d6f1dbc1067
+
+### 만료된 쿠폰 조회
+GET http://localhost:8083/api/coupons/expired?expiredAt=2025-01-01T00:00:00&page=0&pageSize=10
+
+### 활성중인 쿠폰 조회
+GET http://localhost:8083/api/coupons/active?currentDateTime=2025-01-05T00:00:00&page=0&pageSize=10
+
+### 특정 쿠폰정책에 속한 쿠폰 조회
+GET http://localhost:8083/api/coupons/policies/65
+
+### 쿠폰 상태별 조회
+GET http://localhost:8083/api/coupons/status?status=UNUSED&page=1&pageSize=10
+
+### 만료된 쿠폰상태 변경
+PATCH http://localhost:8083/api/coupons/expired
+Content-Type: application/json
+
+{
+  "expiredDate": "2025-01-31T00:00:00",
+  "status": "UNUSED",
+  "page": 0,
+  "size": 10
+}
+
+### 쿠폰의 사용으로 인한 상태 변경: UNUSED -> USED
+PATCH http://localhost:8083/api/coupons/38/use?memberId=117
+Content-Type: application/json

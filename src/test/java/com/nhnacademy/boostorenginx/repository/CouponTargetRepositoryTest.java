@@ -3,31 +3,30 @@ package com.nhnacademy.boostorenginx.repository;
 import com.nhnacademy.boostorenginx.entity.CouponPolicy;
 import com.nhnacademy.boostorenginx.entity.CouponTarget;
 import com.nhnacademy.boostorenginx.enums.SaleType;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
-import jakarta.persistence.TypedQuery;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
 class CouponTargetRepositoryTest {
 
-    @PersistenceContext
-    private EntityManager entityManager;
+    @Autowired
+    private CouponTargetRepository couponTargetRepository;
+
+    @Autowired
+    private CouponPolicyRepository couponPolicyRepository;
 
     private CouponPolicy couponPolicy;
-
-    private CouponTarget couponTarget1;
-    private CouponTarget couponTarget2;
 
     @BeforeEach
     void setUp() {
@@ -45,81 +44,41 @@ class CouponTargetRepositoryTest {
                 .endDate(now.plusDays(1))
                 .couponActive(true)
                 .build();
-        entityManager.persist(couponPolicy);
+        couponPolicyRepository.save(couponPolicy);
 
-        couponTarget1 = CouponTarget.builder()
+        CouponTarget couponTarget1 = CouponTarget.builder()
                 .ctTargetId(0L)
+                .couponPolicy(couponPolicy)
                 .build();
-        couponTarget1.setCouponPolicy(couponPolicy);
 
-        couponTarget2 = CouponTarget.builder()
+        CouponTarget couponTarget2 = CouponTarget.builder()
                 .ctTargetId(1L)
+                .couponPolicy(couponPolicy)
                 .build();
-        couponTarget2.setCouponPolicy(couponPolicy);
 
-        entityManager.persist(couponTarget1);
-        entityManager.persist(couponTarget2);
-        entityManager.flush();
+        couponTargetRepository.save(couponTarget1);
+        couponTargetRepository.save(couponTarget2);
     }
 
-    @DisplayName("쿠폰대상 ID 로 쿠폰대상 조회")
+    @DisplayName("쿠폰정책 ID 로 특정 쿠폰정책에 속한 쿠폰대상 목록 조회")
     @Test
-    void findByctTargetId() {
-        String jpql = "SELECT c FROM CouponTarget c WHERE c.ctTargetId = :targetId";
+    void findByCouponPolicy_IdOrderByIdAsc() {
+        Long policyId = couponPolicy.getId();
+        Pageable pageable = PageRequest.of(0, 10);
 
-        TypedQuery<CouponTarget> query = entityManager.createQuery(jpql, CouponTarget.class);
-        query.setParameter("targetId", 1L);
+        Page<CouponTarget> targets = couponTargetRepository.findByCouponPolicy_IdOrderByIdAsc(policyId, pageable);
 
-        Optional<CouponTarget> result = query.getResultList().stream().findFirst();
-
-        System.out.println("CouponTarget: ");
-        result.ifPresent(couponTarget -> System.out.println(couponTarget.getCtTargetId()));
-
-        assertTrue(result.isPresent());
-        assertEquals(1L, result.get().getCtTargetId());
+        assertEquals(2, targets.getTotalElements());
+        assertEquals(0L, targets.getContent().get(0).getCtTargetId());
+        assertEquals(1L, targets.getContent().get(1).getCtTargetId());
     }
 
-    @DisplayName("쿠폰정책 ID 에 연결된 쿠폰대상 조회")
+    @DisplayName("(도메인)대상 ID 에 해당하는 쿠폰대상이 있는지 확인")
     @Test
-    void findByCouponPolicy_Id() {
-        String jpql = "SELECT c FROM CouponTarget c WHERE c.couponPolicy.id = :id";
-
-        TypedQuery<CouponTarget> query = entityManager.createQuery(jpql, CouponTarget.class);
-        query.setParameter("id", couponPolicy.getId());
-
-        List<CouponTarget> results = query.getResultList();
-
-        System.out.println("CouponTarget: ");
-        results.forEach(couponTarget -> System.out.println(
-                String.format("CouponPolicy: %s, CouponTarget: %d",
-                        couponPolicy.getName(),
-                        couponTarget.getCtTargetId())
-        ));
-
-        assertEquals(2, results.size());
-        assertEquals(0L, results.get(0).getCtTargetId());
-        assertEquals(1L, results.get(1).getCtTargetId());
-    }
-
-    @DisplayName("특정 쿠폰정책을 속하는 쿠폰대상 조회")
-    @Test
-    void findByCouponPolicy() {
-        String jpql = "SELECT c FROM CouponTarget c WHERE c.couponPolicy = :couponPolicy";
-        TypedQuery<CouponTarget> query = entityManager.createQuery(jpql, CouponTarget.class);
-        query.setParameter("couponPolicy", couponPolicy);
-
-        int page = 0;
-        int size = 2;
-        query.setFirstResult(page * size);
-        query.setMaxResults(size);
-
-        List<CouponTarget> results = query.getResultList();
-        results.forEach(couponTarget -> System.out.printf(
-                "CouponPolicy: %s, CouponTarget: %d%n",
-                couponPolicy.getName(),
-                couponTarget.getCtTargetId()
-        ));
-
-        assertEquals(2, results.size());
+    void existsByCtTargetId() {
+        boolean exists = couponTargetRepository.existsByCtTargetId(1L);
+        boolean notExists = couponTargetRepository.existsByCtTargetId(3L);
+        assertTrue(exists);
+        assertFalse(notExists);
     }
 }

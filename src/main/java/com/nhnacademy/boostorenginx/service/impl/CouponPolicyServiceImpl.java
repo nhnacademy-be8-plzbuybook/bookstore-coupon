@@ -8,6 +8,7 @@ import com.nhnacademy.boostorenginx.error.NotFoundCouponPolicyException;
 import com.nhnacademy.boostorenginx.repository.CouponPolicyRepository;
 import com.nhnacademy.boostorenginx.repository.CouponTargetRepository;
 import com.nhnacademy.boostorenginx.service.CouponPolicyService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -25,11 +26,7 @@ public class CouponPolicyServiceImpl implements CouponPolicyService {
 
     @Transactional
     @Override
-    public CouponPolicyResponseDto createCouponPolicy(CouponPolicySaveRequestDto requestDto) {
-        if (requestDto == null) {
-            throw new CouponPolicyException("requestDto 가 null 입니다!");
-        }
-
+    public CouponPolicyResponseDto createCouponPolicy(@Valid CouponPolicySaveRequestDto requestDto) {
         CouponPolicy couponPolicy = couponPolicyRepository.save(requestDto.toEntity());
         couponPolicyRepository.flush();
 
@@ -40,6 +37,7 @@ public class CouponPolicyServiceImpl implements CouponPolicyService {
     @Override
     public Page<CouponPolicyResponseDto> findActiveCouponPolicy(CouponPolicyActiveRequestDto requestDto) {
         Pageable pageable = PageRequest.of(requestDto.page(), requestDto.pageSize());
+
         return couponPolicyRepository.findByCouponActiveOrderByIdAsc(requestDto.couponActive(), pageable).map(CouponPolicyResponseDto::fromCouponPolicy);
     }
 
