@@ -5,6 +5,7 @@ import com.nhnacademy.boostorenginx.dto.membercoupon.MemberCouponUseRequestDto;
 import com.nhnacademy.boostorenginx.entity.Coupon;
 import com.nhnacademy.boostorenginx.entity.CouponPolicy;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 public interface CouponService {
 
@@ -26,4 +27,5 @@ public interface CouponService {
 
     void useCoupon(MemberCouponUseRequestDto dto); // 회원이 쿠폰을 사용할 경우 쿠폰 상태 업데이트
 
+    Page<CouponResponseDto> getAllCoupons(Pageable pageable); // 모든 쿠폰 조회
 }

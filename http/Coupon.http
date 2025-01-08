@@ -49,3 +49,6 @@ Content-Type: application/json
 ### 쿠폰의 사용으로 인한 상태 변경: UNUSED -> USED
 PATCH http://localhost:8083/api/coupons/38/use?memberId=117
 Content-Type: application/json
+
+### 모든 쿠폰 조회
+GET http://localhost:8083/api/coupons?page=0&pageSize=10
