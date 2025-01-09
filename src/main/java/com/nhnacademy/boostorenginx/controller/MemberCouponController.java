@@ -88,7 +88,7 @@ public class MemberCouponController {
      * @return 회원쿠폰 ID, 회원 ID, 쿠폰 정보 페이지네이션
      */
     @GetMapping
-    public ResponseEntity<Page<MemberCouponResponseDto>> getAllMemberCoupons(@NotNull @Min(0) int page, @NotNull @Min(1) int pageSize) {
+    public ResponseEntity<Page<MemberCouponResponseDto>> getAllMemberCoupons(@RequestParam @NotNull @Min(0) int page, @RequestParam @NotNull @Min(1) int pageSize) {
         Pageable pageable = PageRequest.of(page, pageSize);
         Page<MemberCouponResponseDto> responseDto = memberCouponService.getAllMemberCoupons(pageable);
 

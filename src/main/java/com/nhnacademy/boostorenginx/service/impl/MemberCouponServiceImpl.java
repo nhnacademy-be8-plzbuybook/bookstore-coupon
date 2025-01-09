@@ -113,7 +113,7 @@ public class MemberCouponServiceImpl implements MemberCouponService {
         memberCouponRepository.save(memberCoupon);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     @Override
     public Page<MemberCouponResponseDto> getAllMemberCoupons(Pageable pageable) {
         Page<MemberCoupon> memberCoupons = memberCouponRepository.findAll(pageable);
