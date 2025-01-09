@@ -4,8 +4,10 @@ import com.nhnacademy.boostorenginx.dto.membercoupon.*;
 import com.nhnacademy.boostorenginx.service.MemberCouponService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -74,6 +76,21 @@ public class MemberCouponController {
     public ResponseEntity<Page<MemberCouponGetResponseDto>> getUnusedMemberCouponsByMemberId(@PathVariable("member-id") Long memberId, Pageable pageable) {
         MemberCouponFindByMemberIdRequestDto requestDto = new MemberCouponFindByMemberIdRequestDto(memberId, pageable.getPageNumber(), pageable.getPageSize());
         Page<MemberCouponGetResponseDto> responseDto = memberCouponService.getUnusedMemberCouponsByMemberId(requestDto);
+
+        return ResponseEntity.status(HttpStatus.OK).body(responseDto);
+    }
+
+    /**
+     * 회원쿠폰 목록 조회
+     * GET /api/member-coupons
+     * @param page 페이지 번호 (최소 0)
+     * @param pageSize 페이지 크기 (최소 1)
+     * @return 회원쿠폰 ID, 회원 ID, 쿠폰 정보 페이지네이션
+     */
+    @GetMapping
+    public ResponseEntity<Page<MemberCouponResponseDto>> getAllMemberCoupons(@NotNull @Min(0) int page, @NotNull @Min(1) int pageSize) {
+        Pageable pageable = PageRequest.of(page, pageSize);
+        Page<MemberCouponResponseDto> responseDto = memberCouponService.getAllMemberCoupons(pageable);
 
         return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }
