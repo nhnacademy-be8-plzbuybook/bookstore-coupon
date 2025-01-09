@@ -19,6 +19,8 @@ public interface CouponRepository extends JpaRepository<Coupon, Long> {
 
     Optional<Coupon> findByCode(String code); // 코드로 쿠폰 객체 찾기
 
+    Page<Coupon> findAll(Pageable pageable);
+
     Page<Coupon> findByExpiredAtBeforeOrderByExpiredAtAsc(LocalDateTime currentDateTime, Pageable pageable); // 현재 시간 기준으로 만료된 쿠폰 목록 조회
 
     @Query("SELECT coupon FROM Coupon coupon WHERE :currentDateTime BETWEEN coupon.issuedAt AND coupon.expiredAt ORDER BY coupon.issuedAt ASC ")

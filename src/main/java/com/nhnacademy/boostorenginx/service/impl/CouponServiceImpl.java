@@ -152,4 +152,10 @@ public class CouponServiceImpl implements CouponService {
         couponHistoryRepository.save(history);
     }
 
+    @Transactional(readOnly = true)
+    public Page<CouponResponseDto> getAllCoupons(Pageable pageable) {
+        Page<CouponResponseDto> coupons = couponRepository.findAll(pageable).map(CouponResponseDto::fromCoupon);
+
+        return coupons;
+    }
 }
