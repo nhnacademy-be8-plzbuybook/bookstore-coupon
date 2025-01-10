@@ -9,6 +9,8 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -124,5 +126,20 @@ public class CouponController {
         couponService.useCoupon(memberCouponUseRequestDto);
 
         return ResponseEntity.status(HttpStatus.OK).body("쿠폰 상태가 변경되었습니다");
+    }
+
+    /**
+     * 모든 쿠폰 조회
+     * GET /api/coupons
+     * @param page     페이지 번호 (최소 0)
+     * @param pageSize 페이지 크기 (최소 1)
+     * @return 쿠폰 목록 페이지네이션
+     */
+    @GetMapping
+    public ResponseEntity<Page<CouponResponseDto>> getAllCoupons(@RequestParam @Min(0) int page, @RequestParam @Min(1)int pageSize) {
+        Pageable pageable = PageRequest.of(page, pageSize);
+        Page<CouponResponseDto> coupons = couponService.getAllCoupons(pageable);
+
+        return ResponseEntity.status(HttpStatus.OK).body(coupons);
     }
 }

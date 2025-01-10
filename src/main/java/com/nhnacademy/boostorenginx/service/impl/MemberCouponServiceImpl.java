@@ -112,4 +112,12 @@ public class MemberCouponServiceImpl implements MemberCouponService {
         couponService.useCoupon(dto);
         memberCouponRepository.save(memberCoupon);
     }
+
+    @Transactional(readOnly = true)
+    @Override
+    public Page<MemberCouponResponseDto> getAllMemberCoupons(Pageable pageable) {
+        Page<MemberCoupon> memberCoupons = memberCouponRepository.findAll(pageable);
+
+        return memberCoupons.map(MemberCouponResponseDto::fromEntity);
+    }
 }
