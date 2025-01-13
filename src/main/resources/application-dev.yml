@@ -35,9 +35,9 @@ spring:
 
 logging:
   level:
-    root: DEBUG
-    org.hibernate.SQL: DEBUG         # SQL 쿼리를 출력
-    org.hibernate.type.descriptor.sql: TRACE # SQL 파라미터 바인딩도 확인
+    root: info
+    org.hibernate.SQL: info         # SQL 쿼리를 출력
+    org.hibernate.type.descriptor.sql: info # SQL 파라미터 바인딩도 확인
 
 
 eureka:
@@ -57,3 +57,4 @@ app:
       url: 1117490ed9294c8798e83f2cb162982d
       username: 7f2f713f0a6c4d82acb64ed3aa831cee
       password: 7ac2c65487d34a7fa73997fada11d730
+
