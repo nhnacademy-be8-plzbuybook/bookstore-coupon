@@ -50,4 +50,4 @@ jobs:
             sudo docker build -t coupon-image .
             sudo docker stop coupon || true
             sudo docker rm coupon || true
-            sudo docker run -d -p 8083:8083 --name coupon --network front_network -e "SPRING_PROFILES_ACTIVE=prod" coupon-image
+            sudo docker run -d -p 8083:8083 --name coupon --network front_network -e "SPRING_PROFILES_ACTIVE=prod" -e "TZ=Asia/Seoul" coupon-image
