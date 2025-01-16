@@ -66,7 +66,7 @@ public class CouponServiceImpl implements CouponService {
         Coupon saveCoupon = couponRepository.save(coupon);
 
         CouponHistory couponHistory = CouponHistory.builder()
-                .status(Status.USED)
+                .status(Status.UNUSED)
                 .changeDate(LocalDateTime.now())
                 .reason("CREATE")
                 .coupon(saveCoupon)
