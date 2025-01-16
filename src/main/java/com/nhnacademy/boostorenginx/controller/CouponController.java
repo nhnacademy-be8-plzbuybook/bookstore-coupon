@@ -24,6 +24,17 @@ public class CouponController {
     private final CouponService couponService;
 
     /**
+     * 쿠폰 ID 로 쿠폰 객체 조회
+     * GET /api/coupons/id/{coupon-id}
+     */
+    @GetMapping("/id/{coupon-id}")
+    public ResponseEntity<CouponResponseDto> getCouponById(@PathVariable("coupon-id") Long couponId) {
+        CouponResponseDto couponResponseDto = couponService.findCouponById(couponId);
+
+        return ResponseEntity.status(HttpStatus.OK).body(couponResponseDto);
+    }
+
+    /**
      * 쿠폰 생성
      * POST /api/coupons
      */
@@ -121,9 +132,8 @@ public class CouponController {
      * PATCH /api/coupons/{coupon-id}/use
      */
     @PatchMapping("/{coupon-id}/use")
-    public ResponseEntity<String> useCoupon(@PathVariable("coupon-id") @Min(0) Long couponId, @RequestParam @Min(0) Long memberId) {
-        MemberCouponUseRequestDto memberCouponUseRequestDto = new MemberCouponUseRequestDto(couponId, memberId);
-        couponService.useCoupon(memberCouponUseRequestDto);
+    public ResponseEntity<String> useCoupon(@PathVariable("coupon-id") @Min(0) Long couponId) {
+        couponService.useCoupon(couponId);
 
         return ResponseEntity.status(HttpStatus.OK).body("쿠폰 상태가 변경되었습니다");
     }

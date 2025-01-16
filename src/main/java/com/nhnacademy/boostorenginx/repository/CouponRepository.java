@@ -17,6 +17,8 @@ public interface CouponRepository extends JpaRepository<Coupon, Long> {
     @Query("SELECT c.couponPolicy FROM Coupon c WHERE c.id = :couponId")
     Optional<CouponPolicy> findCouponPolicyByCouponId(@Param("couponId") Long couponId); // 쿠폰 ID 로 쿠폰에 해당하는 쿠폰정책 객체 찾기
 
+    Optional<Coupon> findCouponById(Long couponId); // 쿠폰 ID 로 쿠폰 객체 조회
+
     Optional<Coupon> findByCode(String code); // 코드로 쿠폰 객체 찾기
 
     Page<Coupon> findAll(Pageable pageable);
@@ -31,5 +33,7 @@ public interface CouponRepository extends JpaRepository<Coupon, Long> {
     Page<Coupon> findByStatusOrderByStatusAsc(Status status, Pageable pageable); // 쿠폰 상태로 쿠폰 목록 조회
 
     Page<Coupon> findByExpiredAtBeforeAndStatusOrderByExpiredAtAsc(LocalDateTime expiredAt, Status status, Pageable pageable); // 기한이 만료되고 쿠폰의 상태가 UNUSED 인 쿠폰 목록 조회
+
+    boolean existsById(Long couponId); // 쿠폰 id 에 해당하는 쿠폰 객체가 존재하는지 확인
 }
 

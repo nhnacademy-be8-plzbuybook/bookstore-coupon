@@ -1,8 +1,11 @@
 package com.nhnacademy.boostorenginx.service;
 
 import com.nhnacademy.boostorenginx.dto.membercoupon.*;
+import com.nhnacademy.boostorenginx.entity.MemberCoupon;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+
+import java.util.Optional;
 
 public interface MemberCouponService {
 
@@ -17,5 +20,7 @@ public interface MemberCouponService {
     void useMemberCoupon(MemberCouponUseRequestDto dto); // 회원이 자신이 보유한 쿠폰 사용
 
     Page<MemberCouponResponseDto> getAllMemberCoupons(Pageable pageable); // 모든 회원쿠폰 목록 조회
+
+    Optional<MemberCoupon> findByMcMemberIdAndCoupon_Id(Long mcMemberId, Long couponId);
 }
 

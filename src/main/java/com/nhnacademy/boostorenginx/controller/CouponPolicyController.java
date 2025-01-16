@@ -77,4 +77,15 @@ public class CouponPolicyController {
 
         return ResponseEntity.status(HttpStatus.CREATED).body("쿠폰정책에 쿠폰대상이 성공적으로 추가되었습니다");
     }
+
+    /**
+     * 쿠폰 ID 로 쿠폰정책 조회
+     * GET /api/coupon-policies/coupon/{coupon-id}
+     */
+    @GetMapping("/coupon/{coupon-id}")
+    public ResponseEntity<CouponPolicyResponseDto> findCouponPolicyByCouponId(@PathVariable("coupon-id") @Min(0) Long couponId) {
+        CouponPolicyResponseDto couponPolicyResponseDto = couponPolicyService.findCouponPolicyById(couponId);
+
+        return ResponseEntity.status(HttpStatus.OK).body(couponPolicyResponseDto);
+    }
 }

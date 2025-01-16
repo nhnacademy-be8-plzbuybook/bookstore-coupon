@@ -31,6 +31,24 @@ public class CouponServiceImpl implements CouponService {
     private final CouponPolicyRepository couponPolicyRepository;
     private final CouponHistoryRepository couponHistoryRepository;
 
+    @Transactional(readOnly = true)
+    @Override
+    public Coupon getCouponById(Long couponId) {
+        return couponRepository.findCouponById(couponId).orElseThrow(
+                () -> new NotFoundCouponException("ID 에 해당하는 Coupon 를 찾을 수 없습니다: " + couponId)
+        );
+    }
+
+    @Transactional
+    @Override
+    public CouponResponseDto findCouponById(Long couponId) {
+        Coupon coupon = couponRepository.findCouponById(couponId).orElseThrow(
+                () -> new NotFoundCouponException("ID 에 해당하는 Coupon 를 찾을 수 없습니다: " + couponId)
+        );
+
+        return CouponResponseDto.fromCoupon(coupon);
+    }
+
     @Transactional
     @Override
     public CouponResponseDto createCoupon(CouponCreateRequestDto couponCreateRequestDto) {
@@ -48,7 +66,7 @@ public class CouponServiceImpl implements CouponService {
         Coupon saveCoupon = couponRepository.save(coupon);
 
         CouponHistory couponHistory = CouponHistory.builder()
-                .status(Status.USED)
+                .status(Status.UNUSED)
                 .changeDate(LocalDateTime.now())
                 .reason("CREATE")
                 .coupon(saveCoupon)
@@ -134,11 +152,11 @@ public class CouponServiceImpl implements CouponService {
         couponHistoryRepository.saveAll(couponHistories);
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     @Override
-    public void useCoupon(MemberCouponUseRequestDto memberCouponUseRequestDto) {
-        Coupon coupon = couponRepository.findById(memberCouponUseRequestDto.couponId()).orElseThrow(
-                () -> new NotFoundCouponException("해당 ID 의 쿠폰을 찾을 수 없습니다" + memberCouponUseRequestDto.couponId())
+    public void useCoupon(Long couponId) {
+        Coupon coupon = couponRepository.findById(couponId).orElseThrow(
+                () -> new NotFoundCouponException("해당 ID 의 쿠폰을 찾을 수 없습니다" + couponId)
         );
         LocalDateTime useTime = LocalDateTime.now();
         Status status = coupon.getStatus();
@@ -157,5 +175,11 @@ public class CouponServiceImpl implements CouponService {
         Page<CouponResponseDto> coupons = couponRepository.findAll(pageable).map(CouponResponseDto::fromCoupon);
 
         return coupons;
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public boolean existsById(Long couponId) {
+        return couponRepository.existsById(couponId);
     }
 }

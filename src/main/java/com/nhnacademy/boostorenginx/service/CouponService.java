@@ -9,6 +9,10 @@ import org.springframework.data.domain.Pageable;
 
 public interface CouponService {
 
+    Coupon getCouponById(Long couponId); // 쿠폰 ID 로 쿠폰 객체 조회
+
+    CouponResponseDto findCouponById(Long couponId);
+
     Coupon getCouponByCode(CouponCodeRequestDto dto); // 쿠폰 코드로 조회
 
     CouponPolicy findCouponPolicyByCouponId(Long couponId); // 쿠폰 ID 로 쿠폰에 해당하는 쿠폰정책 조회
@@ -25,7 +29,9 @@ public interface CouponService {
 
     void updateExpiredCoupon(CouponUpdateExpiredRequestDto dto); // 만료된 쿠폰 상태 업데이트
 
-    void useCoupon(MemberCouponUseRequestDto dto); // 회원이 쿠폰을 사용할 경우 쿠폰 상태 업데이트
+    void useCoupon(Long couponId); // 회원이 쿠폰을 사용할 경우 쿠폰 상태 업데이트
 
     Page<CouponResponseDto> getAllCoupons(Pageable pageable); // 모든 쿠폰 조회
+
+    boolean existsById(Long couponId); // 쿠폰 ID 에 해당하는 쿠폰정책이 존재 여부 판별
 }

@@ -86,7 +86,7 @@
 //
 //        verify(couponTargetService).createCouponTarget(argThat(request -> {
 //            assertEquals(mockPolicyResponse.id(), request.policyId());
-//            assertEquals(welcomeCouponRequestDto.memberId(), request.ctTargetId());
+//            assertEquals(welcomeCouponRequestDto.mcMemberId(), request.ctTargetId());
 //            return true;
 //        }));
 //
@@ -98,7 +98,7 @@
 //
 //        verify(memberCouponService).createMemberCoupon(argThat(request -> {
 //            assertEquals(mockCouponResponse.id(), request.couponId());
-//            assertEquals(welcomeCouponRequestDto.memberId(), request.memberId());
+//            assertEquals(welcomeCouponRequestDto.mcMemberId(), request.mcMemberId());
 //            return true;
 //        }));
 //

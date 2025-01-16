@@ -9,6 +9,7 @@ import com.nhnacademy.boostorenginx.enums.SaleType;
 import com.nhnacademy.boostorenginx.enums.Status;
 import com.nhnacademy.boostorenginx.service.CouponService;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -290,19 +291,19 @@ class CouponControllerTest {
         verify(couponService, times(1)).getExpiredCoupons(any(CouponExpiredRequestDto.class));
     }
 
+
     @DisplayName("쿠폰 상태가 변경되었습니다")
     @Test
     void useCoupon() throws Exception {
         Long couponId = 1L;
-        Long memberId = 1L;
-        MemberCouponUseRequestDto memberCouponUseRequestDto = new MemberCouponUseRequestDto(memberId, couponId);
+        Long mcMemberId = 1L;
 
         mockMvc.perform(patch("/api/coupons/{coupon-id}/use", couponId)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .param("memberId", String.valueOf(memberId)))
+                        .param("mcMemberId", String.valueOf(mcMemberId)))
                 .andExpect(status().isOk())
                 .andExpect(content().string("쿠폰 상태가 변경되었습니다"));
 
-        verify(couponService, times(1)).useCoupon(memberCouponUseRequestDto);
+        verify(couponService, times(1)).useCoupon(couponId);
     }
 }

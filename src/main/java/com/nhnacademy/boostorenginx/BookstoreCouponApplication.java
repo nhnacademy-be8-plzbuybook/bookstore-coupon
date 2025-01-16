@@ -7,7 +7,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 
 @SpringBootApplication
 @EnableDiscoveryClient
-@EnableFeignClients // 페인클라이언트
+@EnableFeignClients
 public class BookstoreCouponApplication {
 
     public static void main(String[] args) {
