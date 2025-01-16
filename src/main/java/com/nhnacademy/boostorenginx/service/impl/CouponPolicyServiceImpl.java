@@ -81,4 +81,14 @@ public class CouponPolicyServiceImpl implements CouponPolicyService {
 
         couponTargetRepository.save(couponTarget);
     }
+
+    @Transactional
+    @Override
+    public CouponPolicyResponseDto findCouponPolicyById(Long couponId) {
+        CouponPolicy couponPolicy = couponPolicyRepository.findCouponPolicyByCouponId(couponId).orElseThrow(
+                () -> new NotFoundCouponPolicyException("ID 에 해당하는 CouponPolicy 를 찾을 수 없습니다: " + couponId)
+        );
+
+        return CouponPolicyResponseDto.fromCouponPolicy(couponPolicy);
+    }
 }

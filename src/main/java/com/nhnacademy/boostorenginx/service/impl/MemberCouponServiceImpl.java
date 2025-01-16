@@ -19,6 +19,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 @RequiredArgsConstructor
 @Service
 public class MemberCouponServiceImpl implements MemberCouponService {
@@ -96,7 +98,7 @@ public class MemberCouponServiceImpl implements MemberCouponService {
     @Override
     public void useMemberCoupon(MemberCouponUseRequestDto dto) {
         Long couponId = dto.couponId();
-        Long memberId = dto.memberId();
+        Long memberId = dto.mcMemberId();
 
         MemberCoupon memberCoupon = memberCouponRepository.findByMcMemberIdAndCoupon_Id(memberId, couponId).orElseThrow(
                 () -> new MemberCouponException("회원쿠폰 ID 에 해당되는 것을 찾을 수 없습니다: " + memberId)
@@ -119,5 +121,10 @@ public class MemberCouponServiceImpl implements MemberCouponService {
         Page<MemberCoupon> memberCoupons = memberCouponRepository.findAll(pageable);
 
         return memberCoupons.map(MemberCouponResponseDto::fromEntity);
+    }
+
+    @Transactional
+    public Optional<MemberCoupon> findByMcMemberIdAndCoupon_Id(Long mcMemberId, Long couponId) {
+        return memberCouponRepository.findByMcMemberIdAndCoupon_Id(mcMemberId, couponId);
     }
 }

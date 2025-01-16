@@ -9,6 +9,8 @@ import org.springframework.data.domain.Pageable;
 
 public interface CouponService {
 
+    CouponResponseDto findCouponById(Long couponId);
+
     Coupon getCouponByCode(CouponCodeRequestDto dto); // 쿠폰 코드로 조회
 
     CouponPolicy findCouponPolicyByCouponId(Long couponId); // 쿠폰 ID 로 쿠폰에 해당하는 쿠폰정책 조회

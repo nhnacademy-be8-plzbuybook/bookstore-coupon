@@ -17,6 +17,8 @@ public interface CouponRepository extends JpaRepository<Coupon, Long> {
     @Query("SELECT c.couponPolicy FROM Coupon c WHERE c.id = :couponId")
     Optional<CouponPolicy> findCouponPolicyByCouponId(@Param("couponId") Long couponId); // 쿠폰 ID 로 쿠폰에 해당하는 쿠폰정책 객체 찾기
 
+    Optional<Coupon> findCouponById(Long couponId); // 쿠폰 ID 로 쿠폰 객체 조회
+
     Optional<Coupon> findByCode(String code); // 코드로 쿠폰 객체 찾기
 
     Page<Coupon> findAll(Pageable pageable);

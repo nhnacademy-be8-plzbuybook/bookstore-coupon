@@ -299,7 +299,7 @@ class CouponControllerTest {
 
         mockMvc.perform(patch("/api/coupons/{coupon-id}/use", couponId)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .param("memberId", String.valueOf(memberId)))
+                        .param("mcMemberId", String.valueOf(memberId)))
                 .andExpect(status().isOk())
                 .andExpect(content().string("쿠폰 상태가 변경되었습니다"));
 

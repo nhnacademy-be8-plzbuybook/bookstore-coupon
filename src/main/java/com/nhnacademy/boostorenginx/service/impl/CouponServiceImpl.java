@@ -33,6 +33,16 @@ public class CouponServiceImpl implements CouponService {
 
     @Transactional
     @Override
+    public CouponResponseDto findCouponById(Long couponId) {
+        Coupon coupon = couponRepository.findCouponById(couponId).orElseThrow(
+                () -> new NotFoundCouponException("ID 에 해당하는 Coupon 를 찾을 수 없습니다: " + couponId)
+        );
+
+        return CouponResponseDto.fromCoupon(coupon);
+    }
+
+    @Transactional
+    @Override
     public CouponResponseDto createCoupon(CouponCreateRequestDto couponCreateRequestDto) {
         CouponPolicy couponPolicy = couponPolicyRepository.findById(couponCreateRequestDto.couponPolicyId()).orElseThrow(
                 () -> new NotFoundCouponPolicyException("ID 에 해당하는 CouponPolicy 를 찾을 수 없습니다: " + couponCreateRequestDto.couponPolicyId())
@@ -134,7 +144,7 @@ public class CouponServiceImpl implements CouponService {
         couponHistoryRepository.saveAll(couponHistories);
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     @Override
     public void useCoupon(MemberCouponUseRequestDto memberCouponUseRequestDto) {
         Coupon coupon = couponRepository.findById(memberCouponUseRequestDto.couponId()).orElseThrow(
@@ -158,4 +168,5 @@ public class CouponServiceImpl implements CouponService {
 
         return coupons;
     }
+
 }

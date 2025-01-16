@@ -1,6 +1,7 @@
 package com.nhnacademy.boostorenginx.service;
 
 import com.nhnacademy.boostorenginx.dto.couponpolicy.*;
+import com.nhnacademy.boostorenginx.entity.CouponPolicy;
 import org.springframework.data.domain.Page;
 
 public interface CouponPolicyService {
@@ -14,5 +15,7 @@ public interface CouponPolicyService {
     Page<CouponPolicyResponseDto> findActiveCouponPolicy(CouponPolicyActiveRequestDto requestDto); // 활성화된 쿠폰 정책 목록 조회
 
     void addTargetToPolicy(CouponTargetAddRequestDto ctTargetAddRequestDto); // 쿠폰대상 연결 추가
+
+    CouponPolicyResponseDto findCouponPolicyById(Long couponId);
 }
 

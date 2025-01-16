@@ -7,7 +7,7 @@ POST http://localhost:8083/api/coupons
 Content-Type: application/json
 
 {
-  "couponPolicyId": 65,
+  "couponPolicyId": 107,
   "expiredAt": "2025-01-31T23:59:59"
 }
 
@@ -52,3 +52,5 @@ Content-Type: application/json
 
 ### 모든 쿠폰 조회
 GET http://localhost:8083/api/coupons?page=0&pageSize=10
+
+### 쿠폰 상태변경 (USED -> UNUSED)
