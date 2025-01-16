@@ -319,7 +319,7 @@ class CouponServiceImplTest {
         assertEquals("입력받은 Status 가 null 입니다", exception.getMessage());
     }
 
-    @Disabled
+
     @DisplayName("쿠폰을 사용할 경우")
     @Test
     void useCoupon() {
@@ -343,7 +343,7 @@ class CouponServiceImplTest {
         verify(couponHistoryRepository, times(1)).save(mockHistory);
     }
 
-    @Disabled
+
     @DisplayName("쿠폰을 사용할때 해당 쿠폰을 찾지 못한 경우")
     @Test
     void useCoupon_NotFoundCouponException() {
@@ -360,7 +360,7 @@ class CouponServiceImplTest {
         verifyNoInteractions(couponHistoryRepository);
     }
 
-    @Disabled
+
     @DisplayName("쿠폰을 사용할때 쿠폰의 상태가 UNUSED 가 아닌 경우")
     @Test
     void useCoupon_ThrowsCouponException_WhenStatusIsNotUnused() {

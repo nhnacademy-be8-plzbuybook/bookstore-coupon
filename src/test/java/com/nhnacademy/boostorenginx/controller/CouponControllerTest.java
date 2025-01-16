@@ -291,13 +291,12 @@ class CouponControllerTest {
         verify(couponService, times(1)).getExpiredCoupons(any(CouponExpiredRequestDto.class));
     }
 
-    @Disabled
+
     @DisplayName("쿠폰 상태가 변경되었습니다")
     @Test
     void useCoupon() throws Exception {
         Long couponId = 1L;
         Long mcMemberId = 1L;
-        MemberCouponUseRequestDto memberCouponUseRequestDto = new MemberCouponUseRequestDto(mcMemberId, couponId);
 
         mockMvc.perform(patch("/api/coupons/{coupon-id}/use", couponId)
                         .contentType(MediaType.APPLICATION_JSON)
