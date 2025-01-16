@@ -154,9 +154,9 @@ public class CouponServiceImpl implements CouponService {
 
     @Transactional
     @Override
-    public void useCoupon(MemberCouponUseRequestDto memberCouponUseRequestDto) {
-        Coupon coupon = couponRepository.findById(memberCouponUseRequestDto.couponId()).orElseThrow(
-                () -> new NotFoundCouponException("해당 ID 의 쿠폰을 찾을 수 없습니다" + memberCouponUseRequestDto.couponId())
+    public void useCoupon(Long couponId) {
+        Coupon coupon = couponRepository.findById(couponId).orElseThrow(
+                () -> new NotFoundCouponException("해당 ID 의 쿠폰을 찾을 수 없습니다" + couponId)
         );
         LocalDateTime useTime = LocalDateTime.now();
         Status status = coupon.getStatus();

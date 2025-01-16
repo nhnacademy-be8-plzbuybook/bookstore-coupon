@@ -66,7 +66,7 @@ public class CouponCalculationServiceImpl implements CouponCalculationService {
                 price,
                 calculationPrice);
 
-        // 회원이 쿠폰 사용 -> 회원쿠폰 서비스에서 쿠폰사용 로직 호출 -> 내부에서 쿠폰의 상태 변경하는 로직 호출
+        // 회원이 쿠폰 사용 -> 회원쿠폰 서비스에서 쿠폰사용 로직 호출 -> 내부에서 쿠폰의 상태 변경하는 로직 호출 -> 쿠폰 상태 변경 로직 분리필요
         MemberCouponUseRequestDto memberCouponUseRequestDto = new MemberCouponUseRequestDto(mcMemberId, couponId);
         memberCouponService.useMemberCoupon(memberCouponUseRequestDto);
 

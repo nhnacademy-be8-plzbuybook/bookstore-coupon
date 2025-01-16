@@ -18,6 +18,7 @@ public class RefundCouponController {
     private final RefundCouponService refundCouponService;
 
     /**
+     * POST /api/coupons/refund
      * @param refundCouponRequestDto : Long couponId (쿠폰식별키), Long mcMemberId (회원 식별키)
      * @return "환불이 완료되었습니다"
      */

@@ -111,7 +111,7 @@ public class MemberCouponServiceImpl implements MemberCouponService {
         }
 
 
-        couponService.useCoupon(dto);
+        couponService.useCoupon(couponId);
         memberCouponRepository.save(memberCoupon);
     }
 

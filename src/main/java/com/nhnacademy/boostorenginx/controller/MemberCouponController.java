@@ -46,7 +46,7 @@ public class MemberCouponController {
 
     /**
      * 회원이 보유한 쿠폰 사용
-     * PATCH /api/member-coupons/member/{member-id}/coupons/{coupon-id}/use
+     * PATCH /api/member-coupons/members/{member-id}/coupons/{coupon-id}/use
      */
     @PatchMapping("/members/{member-id}/coupons/{coupon-id}/use")
     public ResponseEntity<String> useMemberCoupon(@PathVariable("member-id") Long memberId, @PathVariable("coupon-id") Long couponId) {

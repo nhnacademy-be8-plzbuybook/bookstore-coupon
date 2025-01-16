@@ -29,7 +29,7 @@ public interface CouponService {
 
     void updateExpiredCoupon(CouponUpdateExpiredRequestDto dto); // 만료된 쿠폰 상태 업데이트
 
-    void useCoupon(MemberCouponUseRequestDto dto); // 회원이 쿠폰을 사용할 경우 쿠폰 상태 업데이트
+    void useCoupon(Long couponId); // 회원이 쿠폰을 사용할 경우 쿠폰 상태 업데이트
 
     Page<CouponResponseDto> getAllCoupons(Pageable pageable); // 모든 쿠폰 조회
 
