@@ -38,7 +38,7 @@ eureka:
     register-with-eureka: true
     fetch-registry: true
     service-url:
-      defaultZone: http://localhost:8761/eureka  # Eureka 서버 URL
+      defaultZone: http://localhost:8761/eureka  # Eureka 로컬 서버 URL
 
 app:
   skm:
