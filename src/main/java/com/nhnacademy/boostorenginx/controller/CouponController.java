@@ -132,8 +132,8 @@ public class CouponController {
      * PATCH /api/coupons/{coupon-id}/use
      */
     @PatchMapping("/{coupon-id}/use")
-    public ResponseEntity<String> useCoupon(@PathVariable("coupon-id") @Min(0) Long couponId, @RequestParam @Min(0) Long memberId) {
-        MemberCouponUseRequestDto memberCouponUseRequestDto = new MemberCouponUseRequestDto(couponId, memberId);
+    public ResponseEntity<String> useCoupon(@PathVariable("coupon-id") @Min(0) Long couponId, @RequestParam @Min(0) Long mcMemberId) {
+        MemberCouponUseRequestDto memberCouponUseRequestDto = new MemberCouponUseRequestDto(mcMemberId, couponId);
         couponService.useCoupon(memberCouponUseRequestDto);
 
         return ResponseEntity.status(HttpStatus.OK).body("쿠폰 상태가 변경되었습니다");
