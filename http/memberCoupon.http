@@ -8,7 +8,7 @@ Content-Type: application/json
 
 {
   "mcMemberId": 108,
-  "couponId": 57
+  "couponId": 204
 }
 
 ### 회원 ID로 회원 쿠폰 조회
