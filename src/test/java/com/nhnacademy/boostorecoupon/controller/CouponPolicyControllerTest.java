@@ -148,7 +148,7 @@ class CouponPolicyControllerTest {
         when(couponPolicyService.findActiveCouponPolicy(any(CouponPolicyActiveRequestDto.class)))
                 .thenReturn(mockPage);
 
-        mockMvc.perform(get("/api/coupon-policies")
+        mockMvc.perform(get("/api/coupon-policies/active")
                         .param("couponActive", String.valueOf(couponActive))
                         .param("page", String.valueOf(page))
                         .param("pageSize", String.valueOf(pageSize)))

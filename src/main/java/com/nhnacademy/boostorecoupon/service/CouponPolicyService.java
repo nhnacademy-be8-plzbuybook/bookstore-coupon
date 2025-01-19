@@ -1,11 +1,20 @@
 package com.nhnacademy.boostorecoupon.service;
 
 import com.nhnacademy.boostorecoupon.dto.couponpolicy.*;
+import com.nhnacademy.boostorecoupon.entity.CouponPolicy;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.repository.query.Param;
+
+import java.time.LocalDateTime;
 
 public interface CouponPolicyService {
 
     CouponPolicyResponseDto createCouponPolicy(CouponPolicySaveRequestDto requestDto); // 쿠폰정책 생성
+
+    Page<CouponPolicy> findAllCouponPolicies(Pageable pageable); // 쿠폰정책 전체 조회
+
+    void findExpiredCouponPolicies(); // 기한이 만료되었지만 활성중인 쿠폰정책 목록 조회
 
     CouponPolicyResponseDto findByName(CouponPolicyNameRequestDto couponPolicyNameRequestDto); // 쿠폰정책 이름으로 쿠폰정책 조회
 

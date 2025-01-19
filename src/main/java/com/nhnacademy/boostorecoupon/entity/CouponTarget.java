@@ -21,7 +21,7 @@ public class CouponTarget {
     private CouponPolicy couponPolicy; // 쿠폰정책 (N:1)
 
     @Setter
-    @Column(name = "ct_target_id", nullable = false, unique = true)
+    @Column(name = "ct_target_id", nullable = false)
     private Long ctTargetId; // 참조하는 대상의 ID
 
     @Builder

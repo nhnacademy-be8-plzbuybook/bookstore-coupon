@@ -28,11 +28,19 @@ public class CouponPolicyController {
         return ResponseEntity.status(HttpStatus.CREATED).body(couponPolicyResponseDto);
     }
 
+    // 쿠폰정책 전체 조회
+//    @GetMapping
+//    public ResponseEntity<Page<CouponPolicyResponseDto>> findAllCouponPolicies(@RequestParam int page, @RequestParam int size) {
+//        Page<CouponPolicyResponseDto> couponPolicyResponseDto = couponPolicyService.findAllCouponPolicies()
+//
+//        return ResponseEntity.status(HttpStatus.OK).body(couponPolicyResponseDto);
+//    }
+
     /**
      * 활성화된 쿠폰정책 목록 조회
-     * GET /api/coupon-policies
+     * GET /api/coupon-policies/active
      */
-    @GetMapping
+    @GetMapping("active")
     public ResponseEntity<Page<CouponPolicyResponseDto>> findActiveCouponPolicies(@RequestParam(defaultValue = "true") boolean couponActive,
                                                                                   @RequestParam(defaultValue = "0") @Min(0) int page,
                                                                                   @RequestParam(defaultValue = "10") @Min(1) int pageSize) {

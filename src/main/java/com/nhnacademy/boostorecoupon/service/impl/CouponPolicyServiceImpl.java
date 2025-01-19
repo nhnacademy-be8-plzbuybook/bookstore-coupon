@@ -16,6 +16,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+
 @Slf4j
 @RequiredArgsConstructor
 @Service
@@ -31,6 +33,33 @@ public class CouponPolicyServiceImpl implements CouponPolicyService {
 
         return CouponPolicyResponseDto.fromCouponPolicy(couponPolicy);
     }
+
+    @Override
+    public Page<CouponPolicy> findAllCouponPolicies(Pageable pageable) {
+        return null;
+    }
+
+    @Transactional(readOnly = true)
+    public void findExpiredCouponPolicies() {
+        boolean couponActive = true;
+        LocalDateTime now = LocalDateTime.now();
+        int page = 0;
+        int pageSize = 100;
+
+        Pageable pageable = PageRequest.of(page, pageSize);
+        Page<CouponPolicy> expiredPolicies;
+
+        do {
+            expiredPolicies = couponPolicyRepository.findExpiredCouponPolicies(couponActive, now, pageable);
+
+            expiredPolicies.forEach(policy -> {
+                log.info("조회된 쿠폰정책 ID: {}", policy.getId());
+            });
+
+            pageable = pageable.next();
+        } while (!expiredPolicies.isLast());
+    }
+
 
     @Transactional(readOnly = true)
     @Override
