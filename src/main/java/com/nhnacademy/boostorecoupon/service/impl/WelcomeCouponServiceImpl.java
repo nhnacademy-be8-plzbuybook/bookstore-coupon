@@ -8,10 +8,7 @@ import com.nhnacademy.boostorecoupon.dto.couponpolicy.CouponTargetAddRequestDto;
 import com.nhnacademy.boostorecoupon.dto.membercoupon.MemberCouponCreateRequestDto;
 import com.nhnacademy.boostorecoupon.dto.welcome.WelcomeCouponRequestDto;
 import com.nhnacademy.boostorecoupon.enums.SaleType;
-import com.nhnacademy.boostorecoupon.service.CouponPolicyService;
-import com.nhnacademy.boostorecoupon.service.CouponService;
-import com.nhnacademy.boostorecoupon.service.CouponTargetService;
-import com.nhnacademy.boostorecoupon.service.MemberCouponService;
+import com.nhnacademy.boostorecoupon.service.*;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,9 +21,8 @@ import java.time.YearMonth;
 @Slf4j
 @RequiredArgsConstructor
 @Service
-public class WelcomeCouponServiceImpl {
+public class WelcomeCouponServiceImpl implements WelcomeCouponService {
     private final CouponPolicyService couponPolicyService;
-    private final CouponTargetService couponTargetService;
     private final CouponService couponService;
     private final MemberCouponService memberCouponService;
 
