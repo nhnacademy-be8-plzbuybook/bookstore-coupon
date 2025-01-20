@@ -6,7 +6,6 @@ import com.nhnacademy.boostorecoupon.entity.CouponPolicy;
 import com.nhnacademy.boostorecoupon.enums.SaleType;
 import com.nhnacademy.boostorecoupon.enums.Status;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +18,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@Disabled
+
 @DataJpaTest
 class CouponRepositoryTest {
 
@@ -36,6 +35,7 @@ class CouponRepositoryTest {
 
     @BeforeEach
     void setUp() {
+        LocalDateTime now = LocalDateTime.now();
 
         couponPolicy = CouponPolicy.builder()
                 .name("policy")
@@ -45,30 +45,30 @@ class CouponRepositoryTest {
                 .discountRatio(0)
                 .isStackable(true)
                 .couponScope("book")
-                .startDate(LocalDateTime.now().minusDays(5))
-                .endDate(LocalDateTime.now().plusDays(5))
+                .startDate(now.minusDays(5))
+                .endDate(now.plusDays(5))
                 .couponActive(true)
                 .build();
         couponPolicyRepository.save(couponPolicy);
 
         coupon1 = new Coupon(
                 Status.UNUSED,
-                LocalDateTime.now().minusDays(2),
-                LocalDateTime.now().plusDays(3),
+                now.minusDays(2),
+                now.plusDays(3),
                 couponPolicy
         );
 
         coupon2 = new Coupon(
                 Status.EXPIRED,
-                LocalDateTime.now().minusDays(10),
-                LocalDateTime.now().minusDays(3),
+                now.minusDays(10),
+                now.minusDays(3),
                 couponPolicy
         );
 
         coupon3 = new Coupon(
                 Status.UNUSED,
-                LocalDateTime.now().minusDays(10),
-                LocalDateTime.now().minusDays(3),
+                now.minusDays(10),
+                now.minusDays(3),
                 couponPolicy
         );
 
@@ -76,6 +76,27 @@ class CouponRepositoryTest {
         couponRepository.save(coupon2);
         couponRepository.save(coupon3);
     }
+
+    @DisplayName("쿠폰 ID 로 쿠폰 객체 조회")
+    @Test
+    void findCouponById() {
+        Optional<Coupon> result = couponRepository.findCouponById(coupon1.getId());
+
+        assertTrue(result.isPresent());
+        assertEquals(coupon1.getId(), result.get().getId());
+    }
+
+    @DisplayName("쿠폰 정책 ID 로 쿠폰 목록 조회")
+    @Test
+    void findByCouponPolicy_Id() {
+        Page<Coupon> result = couponRepository.findByCouponPolicy_Id(couponPolicy.getId(), PageRequest.of(0, 10));
+
+        assertEquals(3, result.getTotalElements());
+        assertEquals(coupon1.getId(), result.getContent().get(0).getId());
+        assertEquals(coupon2.getId(), result.getContent().get(1).getId());
+        assertEquals(coupon3.getId(), result.getContent().get(2).getId());
+    }
+
 
     @DisplayName("쿠폰 ID 로 쿠폰에 해당하는 쿠폰정책 객체 찾기")
     @Test
