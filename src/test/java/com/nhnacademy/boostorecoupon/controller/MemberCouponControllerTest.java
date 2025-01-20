@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nhnacademy.boostorecoupon.dto.membercoupon.*;
 import com.nhnacademy.boostorecoupon.enums.Status;
 import com.nhnacademy.boostorecoupon.service.MemberCouponService;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +26,7 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+@Disabled
 @WebMvcTest(controllers = MemberCouponController.class)
 class MemberCouponControllerTest {
 

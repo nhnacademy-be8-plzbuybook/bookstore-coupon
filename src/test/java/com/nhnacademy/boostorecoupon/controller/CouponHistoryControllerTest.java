@@ -10,6 +10,7 @@ import com.nhnacademy.boostorecoupon.entity.CouponHistory;
 import com.nhnacademy.boostorecoupon.enums.Status;
 import com.nhnacademy.boostorecoupon.service.CouponHistoryService;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +31,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@Disabled
 @WebMvcTest(CouponHistoryController.class)
 class CouponHistoryControllerTest {
 

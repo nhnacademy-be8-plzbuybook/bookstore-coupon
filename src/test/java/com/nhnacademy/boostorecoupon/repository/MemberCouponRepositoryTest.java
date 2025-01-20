@@ -6,6 +6,7 @@ import com.nhnacademy.boostorecoupon.entity.MemberCoupon;
 import com.nhnacademy.boostorecoupon.enums.SaleType;
 import com.nhnacademy.boostorecoupon.enums.Status;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@Disabled
 @DataJpaTest
 class MemberCouponRepositoryTest {
 

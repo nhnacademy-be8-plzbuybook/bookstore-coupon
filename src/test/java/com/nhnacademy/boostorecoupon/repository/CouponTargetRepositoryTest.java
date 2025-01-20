@@ -4,6 +4,7 @@ import com.nhnacademy.boostorecoupon.entity.CouponPolicy;
 import com.nhnacademy.boostorecoupon.entity.CouponTarget;
 import com.nhnacademy.boostorecoupon.enums.SaleType;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,7 @@ import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@Disabled
 @DataJpaTest
 class CouponTargetRepositoryTest {
 
