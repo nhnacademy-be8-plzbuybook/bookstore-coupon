@@ -6,8 +6,8 @@ import com.nhnacademy.boostorecoupon.dto.coupon.CouponCreateRequestDto;
 import com.nhnacademy.boostorecoupon.dto.coupon.CouponResponseDto;
 import com.nhnacademy.boostorecoupon.dto.couponpolicy.CouponPolicyResponseDto;
 import com.nhnacademy.boostorecoupon.dto.couponpolicy.CouponPolicySaveRequestDto;
+import com.nhnacademy.boostorecoupon.dto.couponpolicy.CouponTargetAddRequestDto;
 import com.nhnacademy.boostorecoupon.dto.coupontarget.CouponTargetResponseDto;
-import com.nhnacademy.boostorecoupon.dto.coupontarget.CouponTargetSaveRequestDto;
 import com.nhnacademy.boostorecoupon.dto.membercoupon.MemberCouponCreateRequestDto;
 import com.nhnacademy.boostorecoupon.enums.SaleType;
 import com.nhnacademy.boostorecoupon.service.CouponPolicyService;
@@ -55,11 +55,11 @@ public class BirthdayCouponServiceImpl {
         log.debug("CouponPolicyId: {}, MemberId: {}", couponPolicyId, requestDto.memberId());
 
         // Birthday 쿠폰대상 생성
-        CouponTargetSaveRequestDto couponTargetAddRequestDto = new CouponTargetSaveRequestDto(
+        CouponTargetAddRequestDto couponTargetAddRequestDto = new CouponTargetAddRequestDto(
                 couponPolicyId,
                 requestDto.memberId()
         );
-        CouponTargetResponseDto couponTargetResponseDto = couponTargetService.createCouponTarget(couponTargetAddRequestDto);
+        CouponTargetResponseDto couponTargetResponseDto = couponPolicyService.addTargetToPolicy(couponTargetAddRequestDto);
         Long couponTargetId = couponTargetResponseDto.couponTargetId();
         log.debug("CouponTargetId: {}", couponTargetId);
 

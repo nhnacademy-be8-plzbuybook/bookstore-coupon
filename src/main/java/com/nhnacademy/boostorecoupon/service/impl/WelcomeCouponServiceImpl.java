@@ -4,7 +4,7 @@ import com.nhnacademy.boostorecoupon.dto.coupon.CouponCreateRequestDto;
 import com.nhnacademy.boostorecoupon.dto.coupon.CouponResponseDto;
 import com.nhnacademy.boostorecoupon.dto.couponpolicy.CouponPolicyResponseDto;
 import com.nhnacademy.boostorecoupon.dto.couponpolicy.CouponPolicySaveRequestDto;
-import com.nhnacademy.boostorecoupon.dto.coupontarget.CouponTargetSaveRequestDto;
+import com.nhnacademy.boostorecoupon.dto.couponpolicy.CouponTargetAddRequestDto;
 import com.nhnacademy.boostorecoupon.dto.membercoupon.MemberCouponCreateRequestDto;
 import com.nhnacademy.boostorecoupon.dto.welcome.WelcomeCouponRequestDto;
 import com.nhnacademy.boostorecoupon.enums.SaleType;
@@ -82,9 +82,7 @@ public class WelcomeCouponServiceImpl {
 
     // Welcome 쿠폰대상 생성
     private void createWelcomeCouponTarget(Long couponPolicyId, Long memberId) {
-        couponTargetService.createCouponTarget(
-                new CouponTargetSaveRequestDto(couponPolicyId, memberId)
-        );
+        couponPolicyService.addTargetToPolicy(new CouponTargetAddRequestDto(couponPolicyId, memberId));
     }
 
     // 유효기간 월 계산
