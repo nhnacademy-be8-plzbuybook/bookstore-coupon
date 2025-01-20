@@ -9,7 +9,6 @@ import com.nhnacademy.boostorecoupon.enums.Status;
 import com.nhnacademy.boostorecoupon.error.CouponHistoryException;
 import com.nhnacademy.boostorecoupon.repository.CouponHistoryRepository;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -24,10 +23,11 @@ import org.springframework.data.domain.Pageable;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
-@Disabled
+
 @ExtendWith(MockitoExtension.class)
 class CouponHistoryServiceImplTest {
 
