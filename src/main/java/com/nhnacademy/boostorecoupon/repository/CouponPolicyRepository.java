@@ -12,8 +12,6 @@ import java.util.Optional;
 
 public interface CouponPolicyRepository extends JpaRepository<CouponPolicy, Long> {
 
-    Page<CouponPolicy> findAll(Pageable pageable); // 쿠폰정책 전체 조회
-
     Page<CouponPolicy> findByCouponActiveOrderByIdAsc(boolean couponActive, Pageable pageable); // 활성화 된 쿠폰정책 목록
 
     @Query("SELECT c FROM CouponPolicy c WHERE c.couponActive = :couponActive AND c.endDate < :now ORDER BY c.id ASC")
