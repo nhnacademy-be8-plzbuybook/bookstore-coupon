@@ -1,11 +1,8 @@
 package com.nhnacademy.boostorecoupon.service;
 
 import com.nhnacademy.boostorecoupon.dto.membercoupon.*;
-import com.nhnacademy.boostorecoupon.entity.MemberCoupon;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-
-import java.util.Optional;
 
 public interface MemberCouponService {
 
