@@ -89,6 +89,12 @@ public class CouponServiceImpl implements CouponService {
                 .orElseThrow(() -> new NotFoundCouponException("쿠폰 ID에 해당하는 쿠폰정책을 찾을 수 없습니다: " + couponId));
     }
 
+    @Override
+    public Page<Coupon> getCouponsByPolicyId(CouponFindCouponPolicyIdRequestDto couponFindCouponPolicyIdRequestDto) {
+        Pageable pageable = PageRequest.of(couponFindCouponPolicyIdRequestDto.page(), couponFindCouponPolicyIdRequestDto.pageSize());
+        return couponRepository.findByCouponPolicy_Id(couponFindCouponPolicyIdRequestDto.policyId(), pageable);
+    }
+
     @Transactional(readOnly = true)
     @Override
     public Page<CouponResponseDto> getCouponsByPolicy(CouponFindCouponPolicyIdRequestDto couponFindCouponPolicyIdRequestDto) {

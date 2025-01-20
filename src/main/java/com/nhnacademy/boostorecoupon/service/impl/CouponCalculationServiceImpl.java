@@ -3,6 +3,7 @@ package com.nhnacademy.boostorecoupon.service.impl;
 import com.nhnacademy.boostorecoupon.dto.calculation.CouponCalculationRequestDto;
 import com.nhnacademy.boostorecoupon.dto.calculation.CouponCalculationResponseDto;
 import com.nhnacademy.boostorecoupon.dto.calculation.ValidationCouponCalculation;
+import com.nhnacademy.boostorecoupon.dto.membercoupon.MemberCouponUseRequestDto;
 import com.nhnacademy.boostorecoupon.entity.CouponPolicy;
 import com.nhnacademy.boostorecoupon.error.CouponCalculationExcption;
 import com.nhnacademy.boostorecoupon.service.CouponCalculationService;
@@ -22,7 +23,7 @@ import java.math.RoundingMode;
 @RequiredArgsConstructor
 @Service
 public class CouponCalculationServiceImpl implements CouponCalculationService {
-    private final MemberCouponService memberCouponService;
+//    private final MemberCouponService memberCouponService;
     private final CouponService couponService;
 
     public CouponCalculationResponseDto applyOrderProductCoupon(Long couponId, CouponCalculationRequestDto couponCalculationRequestDto) {

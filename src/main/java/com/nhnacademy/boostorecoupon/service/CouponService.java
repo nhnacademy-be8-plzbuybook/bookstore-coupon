@@ -18,6 +18,8 @@ public interface CouponService {
 
     CouponPolicy findCouponPolicyByCouponId(Long couponId); // 쿠폰 ID 로 쿠폰에 해당하는 쿠폰정책 조회
 
+    Page<Coupon> getCouponsByPolicyId(CouponFindCouponPolicyIdRequestDto dto);
+
     Page<CouponResponseDto> getCouponsByPolicy(CouponFindCouponPolicyIdRequestDto dto); // 쿠폰정책 ID 로 쿠폰목록 조회
 
     Page<CouponResponseDto> getCouponsByStatus(CouponFindStatusRequestDto dto); // 쿠폰상태로 쿠폰목록 조회
