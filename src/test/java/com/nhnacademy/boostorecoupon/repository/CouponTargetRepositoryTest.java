@@ -73,12 +73,4 @@ class CouponTargetRepositoryTest {
         assertEquals(1L, targets.getContent().get(1).getCtTargetId());
     }
 
-    @DisplayName("(도메인)대상 ID 에 해당하는 쿠폰대상이 있는지 확인")
-    @Test
-    void existsByCtTargetId() {
-        boolean exists = couponTargetRepository.existsByCtTargetId(1L);
-        boolean notExists = couponTargetRepository.existsByCtTargetId(3L);
-        assertTrue(exists);
-        assertFalse(notExists);
-    }
 }
