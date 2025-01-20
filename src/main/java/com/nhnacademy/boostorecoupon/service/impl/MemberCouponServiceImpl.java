@@ -123,8 +123,4 @@ public class MemberCouponServiceImpl implements MemberCouponService {
         return memberCoupons.map(MemberCouponResponseDto::fromEntity);
     }
 
-    @Transactional(readOnly = true)
-    public Optional<MemberCoupon> findByMcMemberIdAndCoupon_Id(Long mcMemberId, Long couponId) {
-        return memberCouponRepository.findByMcMemberIdAndCoupon_Id(mcMemberId, couponId);
-    }
 }

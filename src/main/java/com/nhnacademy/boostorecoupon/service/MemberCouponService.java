@@ -21,6 +21,5 @@ public interface MemberCouponService {
 
     Page<MemberCouponGetResponseDto> getUnusedMemberCouponsByMemberId(MemberCouponFindByMemberIdRequestDto requestDto); // 회원 ID 와 Status 로 회원쿠폰 조회
 
-    Optional<MemberCoupon> findByMcMemberIdAndCoupon_Id(Long mcMemberId, Long couponId);
 }
 
