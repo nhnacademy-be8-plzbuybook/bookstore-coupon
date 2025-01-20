@@ -1,6 +1,7 @@
 package com.nhnacademy.boostorecoupon.service;
 
 import com.nhnacademy.boostorecoupon.dto.couponpolicy.*;
+import com.nhnacademy.boostorecoupon.dto.coupontarget.CouponTargetResponseDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -20,7 +21,7 @@ public interface CouponPolicyService {
 
     CouponPolicyResponseDto findCouponPolicyById(Long couponId); // 쿠폰 ID 로 쿠폰정책 조회
 
-    void addTargetToPolicy(CouponTargetAddRequestDto ctTargetAddRequestDto); // 쿠폰정책에 쿠폰대상 연결 추가
+    CouponTargetResponseDto addTargetToPolicy(CouponTargetAddRequestDto ctTargetAddRequestDto); // 쿠폰정책에 쿠폰대상 연결 추가
 
     List<Long> findExpiredCouponPolicies(); // 기한이 만료되었지만 활성중인 쿠폰정책 목록
 

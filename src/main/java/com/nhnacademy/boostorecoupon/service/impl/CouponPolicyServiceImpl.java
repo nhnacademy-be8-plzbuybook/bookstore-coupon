@@ -1,6 +1,7 @@
 package com.nhnacademy.boostorecoupon.service.impl;
 
 import com.nhnacademy.boostorecoupon.dto.couponpolicy.*;
+import com.nhnacademy.boostorecoupon.dto.coupontarget.CouponTargetResponseDto;
 import com.nhnacademy.boostorecoupon.entity.CouponPolicy;
 import com.nhnacademy.boostorecoupon.entity.CouponTarget;
 import com.nhnacademy.boostorecoupon.error.NotFoundCouponPolicyException;
@@ -92,7 +93,7 @@ public class CouponPolicyServiceImpl implements CouponPolicyService {
 
     @Transactional
     @Override
-    public void addTargetToPolicy(CouponTargetAddRequestDto ctTargetAddRequestDto) {
+    public CouponTargetResponseDto addTargetToPolicy(CouponTargetAddRequestDto ctTargetAddRequestDto) {
         Long policyId = ctTargetAddRequestDto.policyId();
         Long ctTargetId = ctTargetAddRequestDto.ctTargetId();
 
@@ -105,6 +106,8 @@ public class CouponPolicyServiceImpl implements CouponPolicyService {
         couponPolicy.addCouponTarget(couponTarget);
 
         couponTargetRepository.save(couponTarget);
+
+        return CouponTargetResponseDto.fromEntity(couponTarget);
     }
 
     @Transactional(readOnly = true)
