@@ -44,7 +44,7 @@ class SecureKeyManagerServiceTest {
         // 준비: KeyResponseDto Mock 설정
         KeyResponseDto responseDto = new KeyResponseDto();
         KeyResponseDto.Body body = new KeyResponseDto.Body();
-        body.setSecret("jdbc:mysql://133.186.241.167:3306/project_be8_plzbuybook_bookstore");
+        body.setSecret("jdbc:mysql://220.67.216.14:13306/project_be8_plzbuybook_bookstore");
         responseDto.setBody(body);
 
         ResponseEntity<KeyResponseDto> responseEntity = new ResponseEntity<>(responseDto, HttpStatus.OK);
@@ -62,7 +62,7 @@ class SecureKeyManagerServiceTest {
 
         // 검증
         assertNotNull(secret);
-        assertEquals("jdbc:mysql://133.186.241.167:3306/project_be8_plzbuybook_bookstore", secret);
+        assertEquals("jdbc:mysql://220.67.216.14:13306/project_be8_plzbuybook_bookstore", secret);
     }
 
     @Test
