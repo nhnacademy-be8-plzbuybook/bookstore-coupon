@@ -3,10 +3,12 @@ package com.nhnacademy.boostorecoupon.service.impl;
 import com.nhnacademy.boostorecoupon.dto.calculation.CouponCalculationRequestDto;
 import com.nhnacademy.boostorecoupon.dto.calculation.CouponCalculationResponseDto;
 import com.nhnacademy.boostorecoupon.dto.calculation.ValidationCouponCalculation;
+import com.nhnacademy.boostorecoupon.dto.membercoupon.MemberCouponUseRequestDto;
 import com.nhnacademy.boostorecoupon.entity.CouponPolicy;
 import com.nhnacademy.boostorecoupon.error.CouponCalculationExcption;
 import com.nhnacademy.boostorecoupon.service.CouponCalculationService;
 import com.nhnacademy.boostorecoupon.service.CouponService;
+import com.nhnacademy.boostorecoupon.service.MemberCouponService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -21,7 +23,7 @@ import java.math.RoundingMode;
 @RequiredArgsConstructor
 @Service
 public class CouponCalculationServiceImpl implements CouponCalculationService {
-//    private final MemberCouponService memberCouponService;
+    private final MemberCouponService memberCouponService;
     private final CouponService couponService;
 
     public CouponCalculationResponseDto applyOrderProductCoupon(Long couponId, CouponCalculationRequestDto couponCalculationRequestDto) {
@@ -65,8 +67,9 @@ public class CouponCalculationServiceImpl implements CouponCalculationService {
                 calculationPrice);
 
         // 쿠폰 사용으로 인한 상태 변경
-//        MemberCouponUseRequestDto memberCouponUseRequestDto = new MemberCouponUseRequestDto(mcMemberId, couponId);
-//        memberCouponService.useMemberCoupon(memberCouponUseRequestDto);
+        Long mcMemberId = couponCalculationRequestDto.memberId();
+        MemberCouponUseRequestDto memberCouponUseRequestDto = new MemberCouponUseRequestDto(mcMemberId, couponId);
+        memberCouponService.useMemberCoupon(memberCouponUseRequestDto);
 
         return couponCalculationResponseDto;
     }
