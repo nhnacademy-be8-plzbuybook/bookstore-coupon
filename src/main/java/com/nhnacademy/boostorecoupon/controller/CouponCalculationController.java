@@ -19,25 +19,20 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 public class CouponCalculationController {
     private final CouponCalculationService couponCalculationService;
-
     private final MemberService memberService;
 
     /**
      * 주문금액 할인계산
      * POST /api/member-coupons/member/{coupon-id}/calculate
      *
-     * @param email
      * @param couponId
-     * @param calculationRequestDto : BigDecimal price
+     * @param calculationRequestDto
      * @return
      */
     @PostMapping("/member/{coupon-id}/calculate")
-    public ResponseEntity<CouponCalculationResponseDto> applyOrderProductCoupon(@RequestHeader("X-USER-ID") String email,
-                                                                                @PathVariable("coupon-id") Long couponId,
+    public ResponseEntity<CouponCalculationResponseDto> applyOrderProductCoupon(@PathVariable("coupon-id") Long couponId,
                                                                                 @RequestBody @Valid CouponCalculationRequestDto calculationRequestDto) {
-        Long mcMemberId = memberService.getMemberIdByEmail(email); // 회원 고유 ID
-        log.info("회원 ID: {}",mcMemberId.toString());
-        CouponCalculationResponseDto couponCalculationResponseDto = couponCalculationService.applyOrderProductCoupon(mcMemberId, couponId, calculationRequestDto);
+        CouponCalculationResponseDto couponCalculationResponseDto = couponCalculationService.applyOrderProductCoupon(couponId, calculationRequestDto);
         return ResponseEntity.status(HttpStatus.OK).body(couponCalculationResponseDto);
     }
 

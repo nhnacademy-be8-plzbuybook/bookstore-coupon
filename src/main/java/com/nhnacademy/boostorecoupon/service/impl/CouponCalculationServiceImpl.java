@@ -25,7 +25,7 @@ public class CouponCalculationServiceImpl implements CouponCalculationService {
     private final MemberCouponService memberCouponService;
     private final CouponService couponService;
 
-    public CouponCalculationResponseDto applyOrderProductCoupon(Long mcMemberId, Long couponId, CouponCalculationRequestDto couponCalculationRequestDto) {
+    public CouponCalculationResponseDto applyOrderProductCoupon(Long couponId, CouponCalculationRequestDto couponCalculationRequestDto) {
         // 주문금액
         BigDecimal price = couponCalculationRequestDto.price();
 
