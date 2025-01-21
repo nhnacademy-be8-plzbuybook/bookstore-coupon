@@ -9,7 +9,7 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.nhnacademy</groupId>
-    <artifactId>boostore-coupon</artifactId>
+    <artifactId>bookstore-coupon</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>bookstore-coupon</name>
     <description>bookstore-coupon</description>
