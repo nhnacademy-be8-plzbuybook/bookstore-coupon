@@ -25,9 +25,9 @@ public class CouponCalculationController {
      * 주문금액 할인계산
      * POST /api/member-coupons/member/{coupon-id}/calculate
      *
-     * @param couponId
-     * @param calculationRequestDto
-     * @return
+     * @param couponId : 쿠폰 ID
+     * @param calculationRequestDto : BigDecimal price, Long memberId
+     * @return CouponCalculationResponseDto : BigDecimal discountAmount, BigDecimal originalPrice, BigDecimal calculationPrice
      */
     @PostMapping("/member/{coupon-id}/calculate")
     public ResponseEntity<CouponCalculationResponseDto> applyOrderProductCoupon(@PathVariable("coupon-id") Long couponId,
@@ -36,6 +36,12 @@ public class CouponCalculationController {
         return ResponseEntity.status(HttpStatus.OK).body(couponCalculationResponseDto);
     }
 
+    /**
+     * 할인쿠폰 계산검증
+     * @param couponId : 쿠폰 ID
+     * @param calculationRequestDto : BigDecimal price, Long memberId
+     * @return CouponCalculationResponseDto : BigDecimal discountAmount, BigDecimal originalPrice, BigDecimal calculationPrice
+     */
     @PostMapping("/member/{coupon-id}/validation")
     public ResponseEntity<ValidationCouponCalculation> validateCouponCalculation(@PathVariable("coupon-id") Long couponId, @RequestBody @Valid CouponCalculationRequestDto calculationRequestDto) {
         ValidationCouponCalculation validationCouponCalculation = couponCalculationService.validateCouponCalculation(couponId, calculationRequestDto);
