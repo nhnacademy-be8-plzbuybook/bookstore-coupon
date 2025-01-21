@@ -4,6 +4,7 @@ import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.AppenderBase;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.nhnacademy.bookstorecoupon.error.LogCrashAppenderException;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpEntity;
@@ -31,7 +32,7 @@ public class LogCrashAppender extends AppenderBase<ILoggingEvent> {
             HttpEntity<String> body = new HttpEntity<>(str, headers);
             restTemplate.postForEntity(url, body, String.class);
         } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
+            throw new LogCrashAppenderException("LogCrashAppenderException 오류" + e.getMessage());
         }
     }
 }
