@@ -96,12 +96,6 @@ public class CouponCalculationServiceImpl implements CouponCalculationService {
             throw new CouponCalculationExcption("사용 불가능한 쿠폰입니다");
         }
 
-        // 쿠폰 할인의 최소금액이 합계보다 작은 경우 예외 처리
-        BigDecimal minimumAmount = couponPolicy.getMinimumAmount();
-        if (minimumAmount.compareTo(price) > 0) {
-            throw new CouponCalculationExcption("주문 금액이 쿠폰을 적용할 수 있는 최소 금액보다 적습니다");
-        }
-
         // 최대 할인 금액
         BigDecimal discountLimit = couponPolicy.getDiscountLimit();
 
