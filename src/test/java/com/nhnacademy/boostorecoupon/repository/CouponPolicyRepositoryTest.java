@@ -1,7 +1,9 @@
 package com.nhnacademy.boostorecoupon.repository;
 
+import com.nhnacademy.boostorecoupon.entity.Coupon;
 import com.nhnacademy.boostorecoupon.entity.CouponPolicy;
 import com.nhnacademy.boostorecoupon.enums.SaleType;
+import com.nhnacademy.boostorecoupon.enums.Status;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -23,6 +25,11 @@ class CouponPolicyRepositoryTest {
     @Autowired
     private CouponPolicyRepository couponPolicyRepository;
 
+    @Autowired
+    private CouponRepository couponRepository;
+
+    private Coupon coupon;
+
     @BeforeEach
     void setUp() {
         LocalDateTime now = LocalDateTime.now();
@@ -39,6 +46,7 @@ class CouponPolicyRepositoryTest {
                 .endDate(now.plusDays(10))
                 .couponActive(true)
                 .build();
+        couponPolicyRepository.save(policy1);
 
         CouponPolicy policy2 = CouponPolicy.builder()
                 .name("test2")
@@ -49,9 +57,10 @@ class CouponPolicyRepositoryTest {
                 .isStackable(false)
                 .couponScope("CATEGORY")
                 .startDate(now.minusDays(2))
-                .endDate(now.plusDays(3))
+                .endDate(now.minusDays(1))
                 .couponActive(true)
                 .build();
+        couponPolicyRepository.save(policy2);
 
         CouponPolicy policy3 = CouponPolicy.builder()
                 .name("test3")
@@ -62,18 +71,24 @@ class CouponPolicyRepositoryTest {
                 .isStackable(false)
                 .couponScope("CATEGORY")
                 .startDate(now.minusDays(2))
-                .endDate(now.plusDays(3))
+                .endDate(now.plusDays(1))
                 .couponActive(false)
                 .build();
-
-        couponPolicyRepository.save(policy1);
-        couponPolicyRepository.save(policy2);
         couponPolicyRepository.save(policy3);
+
+        coupon = new Coupon(
+                Status.UNUSED,
+                LocalDateTime.now(),
+                LocalDateTime.now().plusDays(10),
+                policy1
+        );
+        couponRepository.save(coupon);
+
     }
 
     @DisplayName("CouponActive 가 true 인 쿠폰정책 조회")
     @Test
-    void findByCouponActiveOrderByIdAsc() {
+    void findByCouponActiveOrderByIdAsc_WhenCouponActiveTrue() {
         boolean active = true;
         PageRequest pageRequest = PageRequest.of(0, 10);
 
@@ -81,6 +96,30 @@ class CouponPolicyRepositoryTest {
 
         assertEquals("test1", results.getContent().get(0).getName());
         assertEquals("test2", results.getContent().get(1).getName());
+    }
+
+    @DisplayName("CouponActive 가 false 인 쿠폰정책 조회")
+    @Test
+    void findByCouponActiveOrderByIdAsc_WhenCouponActiveIsFalse() {
+        boolean active = false;
+        PageRequest pageRequest = PageRequest.of(0, 10);
+
+        Page<CouponPolicy> results = couponPolicyRepository.findByCouponActiveOrderByIdAsc(active, pageRequest);
+
+        assertEquals("test3", results.getContent().getFirst().getName());
+    }
+
+    @DisplayName("만료된 쿠폰정책 조회")
+    @Test
+    void findExpiredCouponPolicies() {
+        boolean active = true;
+        LocalDateTime now = LocalDateTime.now();
+        PageRequest pageRequest = PageRequest.of(0, 10);
+
+        Page<CouponPolicy> results = couponPolicyRepository.findExpiredCouponPolicies(active, now, pageRequest);
+
+        assertEquals(1, results.getTotalElements());
+        assertEquals("test2", results.getContent().getFirst().getName());
     }
 
     @DisplayName("이름으로 쿠폰정책 조회")
@@ -93,4 +132,12 @@ class CouponPolicyRepositoryTest {
         assertEquals("test1", result.get().getName());
     }
 
+    @DisplayName("쿠폰 ID 로 쿠폰정책 조회")
+    @Test
+    void findCouponPolicyByCouponId() {
+        Optional<CouponPolicy> result = couponPolicyRepository.findCouponPolicyByCouponId(coupon.getId());
+
+        assertTrue(result.isPresent());
+        assertEquals("test1", result.get().getName());
+    }
 }

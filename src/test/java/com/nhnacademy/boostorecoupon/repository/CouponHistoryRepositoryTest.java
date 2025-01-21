@@ -20,6 +20,7 @@ import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+
 @DataJpaTest
 class CouponHistoryRepositoryTest {
 
@@ -80,7 +81,6 @@ class CouponHistoryRepositoryTest {
         couponHistoryRepository.save(history1);
         couponHistoryRepository.save(history2);
     }
-
 
     @DisplayName("쿠폰 ID 로 쿠폰변경이력 리스트 조회")
     @Test

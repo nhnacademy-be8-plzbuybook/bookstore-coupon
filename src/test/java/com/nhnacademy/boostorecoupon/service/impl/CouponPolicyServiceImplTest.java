@@ -7,9 +7,7 @@ import com.nhnacademy.boostorecoupon.enums.SaleType;
 import com.nhnacademy.boostorecoupon.error.NotFoundCouponPolicyException;
 import com.nhnacademy.boostorecoupon.repository.CouponPolicyRepository;
 import com.nhnacademy.boostorecoupon.repository.CouponTargetRepository;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -22,6 +20,7 @@ import org.springframework.data.domain.Pageable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -92,6 +91,34 @@ class CouponPolicyServiceImplTest {
         verify(couponPolicyRepository, times(1)).save(any(CouponPolicy.class));
     }
 
+    @DisplayName("모든 쿠폰정책 조회")
+    @Test
+    void findAllCouponPolicies() {
+        Page<CouponPolicy> couponPolicies = new PageImpl<>(Collections.singletonList(mockCouponPolicy));
+        Pageable pageable = PageRequest.of(0, 10);
+        when(couponPolicyRepository.findAll(pageable)).thenReturn(couponPolicies);
+
+        Page<CouponPolicyResponseDto> result = couponPolicyService.findAllCouponPolicies(pageable);
+
+        assertEquals(1, result.getTotalElements());
+        assertEquals(mockCouponPolicy.getName(), result.getContent().getFirst().name());
+        verify(couponPolicyRepository, times(1)).findAll(pageable);
+    }
+
+    @DisplayName("모든 쿠폰정책 조회할때 쿠폰정책을 찾지 못한경우")
+    @Test
+    void findAllCouponPolicies_NotFoundCouponPolicyException() {
+        Pageable pageable = PageRequest.of(0, 10);
+        when(couponPolicyRepository.findAll(pageable)).thenReturn(Page.empty());
+
+        NotFoundCouponPolicyException exception = assertThrows(
+                NotFoundCouponPolicyException.class,
+                () -> couponPolicyService.findAllCouponPolicies(pageable)
+        );
+
+        assertEquals("쿠폰정책을 찾을 수 없습니다", exception.getMessage());
+    }
+
     @DisplayName("이름으로 쿠폰정책 찾기")
     @Test
     void findByName() {
@@ -142,7 +169,32 @@ class CouponPolicyServiceImplTest {
         NotFoundCouponPolicyException exception = assertThrows(NotFoundCouponPolicyException.class,
                 () -> couponPolicyService.findById(couponPolicyIdRequestDto));
 
-        assertEquals("ID 에 해당하는 CouponPolicy 를 찾을 수 없습니다: 1", exception.getMessage());
+        assertEquals("쿠폰정책 ID 에 해당하는 CouponPolicy 를 찾을 수 없습니다: 1", exception.getMessage());
+    }
+
+    @DisplayName("쿠폰 ID로 쿠폰정책 찾기")
+    @Test
+    void findCouponPolicyById_Success() {
+        Long couponId = 1L;
+        when(couponPolicyRepository.findCouponPolicyByCouponId(couponId)).thenReturn(Optional.of(mockCouponPolicy));
+
+        CouponPolicyResponseDto result = couponPolicyService.findCouponPolicyById(couponId);
+
+        assertEquals("test", result.name());
+        verify(couponPolicyRepository, times(1)).findCouponPolicyByCouponId(couponId);
+    }
+
+    @DisplayName("쿠폰 ID로 쿠폰정책 찾기 실패")
+    @Test
+    void findCouponPolicyById_NotFound() {
+        Long couponId = 1L;
+        when(couponPolicyRepository.findCouponPolicyByCouponId(couponId)).thenReturn(Optional.empty());
+
+        NotFoundCouponPolicyException exception = assertThrows(NotFoundCouponPolicyException.class,
+                () -> couponPolicyService.findCouponPolicyById(couponId));
+
+        assertEquals("쿠폰 ID 에 해당하는 CouponPolicy 를 찾을 수 없습니다: " + couponId, exception.getMessage());
+        verify(couponPolicyRepository, times(1)).findCouponPolicyByCouponId(couponId);
     }
 
     @DisplayName("활성화된 쿠폰정책 찾기")
@@ -184,7 +236,22 @@ class CouponPolicyServiceImplTest {
         NotFoundCouponPolicyException exception = assertThrows(NotFoundCouponPolicyException.class,
                 () -> couponPolicyService.addTargetToPolicy(couponTargetAddRequestDto));
 
-        assertEquals("ID 에 해당하는 CouponPolicy 를 찾을 수 없습니다: 1", exception.getMessage());
+        assertEquals("쿠폰정책 ID 에 해당하는 CouponPolicy 를 찾을 수 없습니다: 1", exception.getMessage());
+    }
+
+    @DisplayName("만료된 쿠폰정책 조회")
+    @Test
+    void findExpiredCouponPolicies() {
+        boolean couponActive = true;
+        Page<CouponPolicy> expiredPolicies = new PageImpl<>(Collections.singletonList(mockCouponPolicy));
+
+        when(couponPolicyRepository.findExpiredCouponPolicies(eq(couponActive), any(LocalDateTime.class), any(Pageable.class))).thenReturn(expiredPolicies);
+
+        List<Long> result = couponPolicyService.findExpiredCouponPolicies();
+
+        assertEquals(1, result.size());
+        assertEquals(mockCouponPolicy.getId(), result.getFirst());
+        verify(couponPolicyRepository, atLeastOnce()).findExpiredCouponPolicies(eq(couponActive), any(LocalDateTime.class), any(Pageable.class));
     }
 
 }

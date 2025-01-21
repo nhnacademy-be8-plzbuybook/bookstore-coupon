@@ -5,9 +5,10 @@ import lombok.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-@Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Getter
+@Setter
 public class MemberCouponGetResponseDto {
     private Long id; // 쿠폰 식별 ID
     private String code; // 쿠폰 코드

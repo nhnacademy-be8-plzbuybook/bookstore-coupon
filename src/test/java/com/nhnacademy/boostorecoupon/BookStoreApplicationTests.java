@@ -1,10 +1,10 @@
-//package com.nhnacademy.boostorenginx;
+//package com.nhnacademy.bookstorecoupon;
 //
 //import org.junit.jupiter.api.Test;
 //import org.springframework.boot.test.context.SpringBootTest;
 //
 //@SpringBootTest
-//class BoostoreNginxApplicationTests {
+//class BookStoreApplicationTests {
 //
 //    @Test
 //    void contextLoads() {

@@ -3,6 +3,7 @@ package com.nhnacademy.boostorecoupon.service.impl;
 import com.nhnacademy.boostorecoupon.dto.calculation.CouponCalculationRequestDto;
 import com.nhnacademy.boostorecoupon.dto.calculation.CouponCalculationResponseDto;
 import com.nhnacademy.boostorecoupon.dto.calculation.ValidationCouponCalculation;
+import com.nhnacademy.boostorecoupon.dto.membercoupon.MemberCouponUseRequestDto;
 import com.nhnacademy.boostorecoupon.entity.CouponPolicy;
 import com.nhnacademy.boostorecoupon.error.CouponCalculationExcption;
 import com.nhnacademy.boostorecoupon.service.CouponCalculationService;
@@ -66,8 +67,9 @@ public class CouponCalculationServiceImpl implements CouponCalculationService {
                 calculationPrice);
 
         // 쿠폰 사용으로 인한 상태 변경
-//        MemberCouponUseRequestDto memberCouponUseRequestDto = new MemberCouponUseRequestDto(mcMemberId, couponId);
-//        memberCouponService.useMemberCoupon(memberCouponUseRequestDto);
+        Long mcMemberId = couponCalculationRequestDto.memberId();
+        MemberCouponUseRequestDto memberCouponUseRequestDto = new MemberCouponUseRequestDto(mcMemberId, couponId);
+        memberCouponService.useMemberCoupon(memberCouponUseRequestDto);
 
         return couponCalculationResponseDto;
     }

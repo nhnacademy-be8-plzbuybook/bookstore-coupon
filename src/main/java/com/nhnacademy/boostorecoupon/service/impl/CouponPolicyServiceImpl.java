@@ -1,6 +1,7 @@
 package com.nhnacademy.boostorecoupon.service.impl;
 
 import com.nhnacademy.boostorecoupon.dto.couponpolicy.*;
+import com.nhnacademy.boostorecoupon.dto.coupontarget.CouponTargetResponseDto;
 import com.nhnacademy.boostorecoupon.entity.CouponPolicy;
 import com.nhnacademy.boostorecoupon.entity.CouponTarget;
 import com.nhnacademy.boostorecoupon.error.NotFoundCouponPolicyException;
@@ -17,6 +18,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -34,32 +37,17 @@ public class CouponPolicyServiceImpl implements CouponPolicyService {
         return CouponPolicyResponseDto.fromCouponPolicy(couponPolicy);
     }
 
-    @Override
-    public Page<CouponPolicy> findAllCouponPolicies(Pageable pageable) {
-        return null;
-    }
-
     @Transactional(readOnly = true)
-    public void findExpiredCouponPolicies() {
-        boolean couponActive = true;
-        LocalDateTime now = LocalDateTime.now();
-        int page = 0;
-        int pageSize = 100;
+    @Override
+    public Page<CouponPolicyResponseDto> findAllCouponPolicies(Pageable pageable) {
+        Page<CouponPolicy> couponPolicies = couponPolicyRepository.findAll(pageable);
 
-        Pageable pageable = PageRequest.of(page, pageSize);
-        Page<CouponPolicy> expiredPolicies;
+        if (couponPolicies.isEmpty()) {
+            throw new NotFoundCouponPolicyException("쿠폰정책을 찾을 수 없습니다");
+        }
 
-        do {
-            expiredPolicies = couponPolicyRepository.findExpiredCouponPolicies(couponActive, now, pageable);
-
-            expiredPolicies.forEach(policy -> {
-                log.info("조회된 쿠폰정책 ID: {}", policy.getId());
-            });
-
-            pageable = pageable.next();
-        } while (!expiredPolicies.isLast());
+        return couponPolicies.map(CouponPolicyResponseDto::fromCouponPolicy);
     }
-
 
     @Transactional(readOnly = true)
     @Override
@@ -75,7 +63,7 @@ public class CouponPolicyServiceImpl implements CouponPolicyService {
         Long couponPolicyId = couponPolicyIdRequestDto.id();
 
         CouponPolicy couponPolicy = couponPolicyRepository.findById(couponPolicyId).orElseThrow(
-                () -> new NotFoundCouponPolicyException("ID 에 해당하는 CouponPolicy 를 찾을 수 없습니다: " + couponPolicyId)
+                () -> new NotFoundCouponPolicyException("쿠폰정책 ID 에 해당하는 CouponPolicy 를 찾을 수 없습니다: " + couponPolicyId)
         );
 
         return CouponPolicyResponseDto.fromCouponPolicy(couponPolicy);
@@ -93,14 +81,24 @@ public class CouponPolicyServiceImpl implements CouponPolicyService {
         return CouponPolicyResponseDto.fromCouponPolicy(couponPolicy);
     }
 
+    @Transactional(readOnly = true)
+    @Override
+    public CouponPolicyResponseDto findCouponPolicyById(Long couponId) {
+        CouponPolicy couponPolicy = couponPolicyRepository.findCouponPolicyByCouponId(couponId).orElseThrow(
+                () -> new NotFoundCouponPolicyException("쿠폰 ID 에 해당하는 CouponPolicy 를 찾을 수 없습니다: " + couponId)
+        );
+
+        return CouponPolicyResponseDto.fromCouponPolicy(couponPolicy);
+    }
+
     @Transactional
     @Override
-    public void addTargetToPolicy(CouponTargetAddRequestDto ctTargetAddRequestDto) {
+    public CouponTargetResponseDto addTargetToPolicy(CouponTargetAddRequestDto ctTargetAddRequestDto) {
         Long policyId = ctTargetAddRequestDto.policyId();
         Long ctTargetId = ctTargetAddRequestDto.ctTargetId();
 
         CouponPolicy couponPolicy = couponPolicyRepository.findById(policyId).orElseThrow(
-                () -> new NotFoundCouponPolicyException("ID 에 해당하는 CouponPolicy 를 찾을 수 없습니다: " + policyId)
+                () -> new NotFoundCouponPolicyException("쿠폰정책 ID 에 해당하는 CouponPolicy 를 찾을 수 없습니다: " + policyId)
         );
 
         CouponTarget couponTarget = new CouponTarget();
@@ -108,15 +106,35 @@ public class CouponPolicyServiceImpl implements CouponPolicyService {
         couponPolicy.addCouponTarget(couponTarget);
 
         couponTargetRepository.save(couponTarget);
+
+        return CouponTargetResponseDto.fromEntity(couponTarget);
     }
 
-    @Transactional
-    @Override
-    public CouponPolicyResponseDto findCouponPolicyById(Long couponId) {
-        CouponPolicy couponPolicy = couponPolicyRepository.findCouponPolicyByCouponId(couponId).orElseThrow(
-                () -> new NotFoundCouponPolicyException("ID 에 해당하는 CouponPolicy 를 찾을 수 없습니다: " + couponId)
-        );
+    @Transactional(readOnly = true)
+    public List<Long> findExpiredCouponPolicies() {
+        boolean couponActive = true;
+        LocalDateTime now = LocalDateTime.now();
+        int page = 0;
+        int pageSize = 100;
+        List<Long> ids = new ArrayList<>();
 
-        return CouponPolicyResponseDto.fromCouponPolicy(couponPolicy);
+        while (true) {
+            Pageable pageable = PageRequest.of(page, pageSize);
+            Page<CouponPolicy> expiredPolicies = couponPolicyRepository.findExpiredCouponPolicies(couponActive, now, pageable);
+
+            expiredPolicies.forEach(policy -> {
+                log.info("조회된 쿠폰정책 ID: {}", policy.getId());
+                ids.add(policy.getId());
+            });
+
+            if (expiredPolicies.isLast() || expiredPolicies.isEmpty()) {
+                break;
+            }
+
+            page++;
+        }
+
+        return ids;
     }
+
 }

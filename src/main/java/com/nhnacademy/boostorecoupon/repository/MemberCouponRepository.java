@@ -20,5 +20,4 @@ public interface MemberCouponRepository extends JpaRepository<MemberCoupon, Long
 
     boolean existsByMcMemberIdAndId(Long mcMemberId, Long memberCouponId); // 회원 ID 와 회원쿠폰 ID 로 회원쿠폰 존재여부 확인
 
-    Page<MemberCoupon> findAll(Pageable pageable);
 }

@@ -2,10 +2,7 @@ package com.nhnacademy.boostorecoupon.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nhnacademy.boostorecoupon.dto.coupontarget.CouponTargetGetResponseDto;
-import com.nhnacademy.boostorecoupon.dto.coupontarget.CouponTargetResponseDto;
-import com.nhnacademy.boostorecoupon.dto.coupontarget.CouponTargetSaveRequestDto;
 import com.nhnacademy.boostorecoupon.dto.coupontarget.CouponTargetSearchRequestDto;
-import com.nhnacademy.boostorecoupon.error.CouponTargetException;
 import com.nhnacademy.boostorecoupon.service.CouponTargetService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -22,11 +19,10 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
 
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-
 
 @WebMvcTest(CouponTargetController.class)
 class CouponTargetControllerTest {
@@ -39,47 +35,6 @@ class CouponTargetControllerTest {
 
     @Autowired
     private ObjectMapper objectMapper;
-
-    private CouponTargetSaveRequestDto saveRequestDto;
-    private CouponTargetResponseDto targetResponseDto;
-
-    @DisplayName("쿠폰 대상 생성")
-    @Test
-    void createCouponTarget() throws Exception {
-        saveRequestDto = new CouponTargetSaveRequestDto(1L, 100L);
-        targetResponseDto = new CouponTargetResponseDto(1L, 1L, 100L);
-
-        when(couponTargetService.createCouponTarget(any(CouponTargetSaveRequestDto.class)))
-                .thenReturn(targetResponseDto);
-
-        mockMvc.perform(post("/api/coupon-targets")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(saveRequestDto)))
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.couponTargetId").value(targetResponseDto.couponTargetId()))
-                .andExpect(jsonPath("$.couponPolicyId").value(targetResponseDto.couponPolicyId()))
-                .andExpect(jsonPath("$.ctTargetId").value(targetResponseDto.ctTargetId()));
-
-        Mockito.verify(couponTargetService, Mockito.times(1))
-                .createCouponTarget(any(CouponTargetSaveRequestDto.class));
-    }
-
-    @DisplayName("쿠폰 대상 생성 - 서비스계층에서 예외가 발생할 경우")
-    @Test
-    void createCouponTarget_ServiceException() throws Exception {
-        saveRequestDto = new CouponTargetSaveRequestDto(1L, 100L);
-
-        Mockito.doThrow(new CouponTargetException("이미 등록된 쿠폰 대상입니다"))
-                .when(couponTargetService).createCouponTarget(any(CouponTargetSaveRequestDto.class));
-
-        mockMvc.perform(post("/api/coupon-targets")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(saveRequestDto)))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.status").value(400))
-                .andExpect(jsonPath("$.error").value("Bad Request"))
-                .andExpect(jsonPath("$.message").value("이미 등록된 쿠폰 대상입니다"));
-    }
 
     @DisplayName("특정 쿠폰정책에 속하는 쿠폰대상 목록 조회")
     @Test

@@ -153,4 +153,3 @@ class SecureKeyManagerServiceTest {
         assertTrue(exception.getMessage().contains("Keystore file not found."));
     }
 }
-

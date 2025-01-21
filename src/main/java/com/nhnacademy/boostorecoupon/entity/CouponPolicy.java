@@ -54,10 +54,10 @@ public class CouponPolicy {
     private boolean couponActive; // 쿠폰정책활성화 여부
 
     @OneToMany(mappedBy = "couponPolicy", cascade = CascadeType.ALL)
-    private List<CouponTarget> couponTargetList = new ArrayList<>(); // 쿠폰대상 (1:N)
+    private final List<CouponTarget> couponTargetList = new ArrayList<>(); // 쿠폰대상 (1:N)
 
     @OneToMany(mappedBy = "couponPolicy")
-    private List<Coupon> couponList = new ArrayList<>(); // 쿠폰 (1:N)
+    private final List<Coupon> couponList = new ArrayList<>(); // 쿠폰 (1:N)
 
     @Builder
     public CouponPolicy(String name, SaleType saleType, BigDecimal minimumAmount, BigDecimal discountLimit, Integer discountRatio, boolean isStackable, String couponScope, LocalDateTime startDate, LocalDateTime endDate, boolean couponActive) {

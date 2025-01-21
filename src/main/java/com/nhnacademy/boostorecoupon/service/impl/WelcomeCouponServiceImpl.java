@@ -4,14 +4,11 @@ import com.nhnacademy.boostorecoupon.dto.coupon.CouponCreateRequestDto;
 import com.nhnacademy.boostorecoupon.dto.coupon.CouponResponseDto;
 import com.nhnacademy.boostorecoupon.dto.couponpolicy.CouponPolicyResponseDto;
 import com.nhnacademy.boostorecoupon.dto.couponpolicy.CouponPolicySaveRequestDto;
-import com.nhnacademy.boostorecoupon.dto.coupontarget.CouponTargetSaveRequestDto;
+import com.nhnacademy.boostorecoupon.dto.couponpolicy.CouponTargetAddRequestDto;
 import com.nhnacademy.boostorecoupon.dto.membercoupon.MemberCouponCreateRequestDto;
 import com.nhnacademy.boostorecoupon.dto.welcome.WelcomeCouponRequestDto;
 import com.nhnacademy.boostorecoupon.enums.SaleType;
-import com.nhnacademy.boostorecoupon.service.CouponPolicyService;
-import com.nhnacademy.boostorecoupon.service.CouponService;
-import com.nhnacademy.boostorecoupon.service.CouponTargetService;
-import com.nhnacademy.boostorecoupon.service.MemberCouponService;
+import com.nhnacademy.boostorecoupon.service.*;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,9 +21,8 @@ import java.time.YearMonth;
 @Slf4j
 @RequiredArgsConstructor
 @Service
-public class WelcomeCouponServiceImpl {
+public class WelcomeCouponServiceImpl implements WelcomeCouponService {
     private final CouponPolicyService couponPolicyService;
-    private final CouponTargetService couponTargetService;
     private final CouponService couponService;
     private final MemberCouponService memberCouponService;
 
@@ -82,9 +78,7 @@ public class WelcomeCouponServiceImpl {
 
     // Welcome 쿠폰대상 생성
     private void createWelcomeCouponTarget(Long couponPolicyId, Long memberId) {
-        couponTargetService.createCouponTarget(
-                new CouponTargetSaveRequestDto(couponPolicyId, memberId)
-        );
+        couponPolicyService.addTargetToPolicy(new CouponTargetAddRequestDto(couponPolicyId, memberId));
     }
 
     // 유효기간 월 계산

@@ -19,8 +19,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
-
 @RequiredArgsConstructor
 @Service
 public class MemberCouponServiceImpl implements MemberCouponService {
@@ -123,8 +121,4 @@ public class MemberCouponServiceImpl implements MemberCouponService {
         return memberCoupons.map(MemberCouponResponseDto::fromEntity);
     }
 
-    @Transactional
-    public Optional<MemberCoupon> findByMcMemberIdAndCoupon_Id(Long mcMemberId, Long couponId) {
-        return memberCouponRepository.findByMcMemberIdAndCoupon_Id(mcMemberId, couponId);
-    }
 }

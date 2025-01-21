@@ -23,6 +23,10 @@ public class CouponHistoryController {
     /**
      * 쿠폰 ID에 해당하는 쿠폰 이력 목록 조회
      * GET /api/coupon-histories/{coupon-id}
+     * @param couponId : 쿠폰 ID
+     * @param page : 페이지 번호
+     * @param pageSize : 페이지 크기
+     * @return : Page<CouponHistoryResponseDto> 쿠폰이력 ID, 쿠폰이력 상태, 변경일, 사유, 쿠폰 ID
      */
     @GetMapping("/{coupon-id}")
     public ResponseEntity<Page<CouponHistoryResponseDto>> getHistoryByCouponId(@PathVariable("coupon-id") Long couponId,
@@ -38,6 +42,10 @@ public class CouponHistoryController {
     /**
      * 특정 상태의 쿠폰 이력 목록 조회
      * GET /api/coupon-histories/status/{status}
+     * @param status : 쿠폰이력 상태
+     * @param page : 페이지 번호
+     * @param pageSize : 페이지 크기
+     * @return : Page<CouponHistoryResponseDto> 쿠폰이력 ID, 쿠폰이력 상태, 변경일, 사유, 쿠폰 ID
      */
     @GetMapping("/status/{status}")
     public ResponseEntity<Page<CouponHistoryResponseDto>> getHistoryByStatus(@PathVariable String status,
@@ -53,6 +61,11 @@ public class CouponHistoryController {
     /**
      * 특정 기간의 쿠폰 이력 목록 조회
      * GET /api/coupon-histories/period
+     * @param startDate : 시작일
+     * @param endDate : 종료일
+     * @param page : 페이지 번호
+     * @param pageSize : 페이지 크기
+     * @return : Page<CouponHistoryResponseDto> 쿠폰이력 ID, 쿠폰이력 상태, 변경일, 사유, 쿠폰 ID
      */
     @GetMapping("/period")
     public ResponseEntity<Page<CouponHistoryResponseDto>> getHistoryDate(@RequestParam("start-date") String startDate,
