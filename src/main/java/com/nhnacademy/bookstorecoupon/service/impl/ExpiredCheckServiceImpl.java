@@ -52,7 +52,7 @@ public class ExpiredCheckServiceImpl implements ExpiredCheckService {
 
             coupons.forEach(coupon -> {
                 coupon.changeStatus(Status.EXPIRED, now, "EXPIRED");
-                log.info("쿠폰 ID: {} 상태가 EXPIRED로 변경되었습니다", coupon.getId());
+                log.info("쿠폰 ID: {} 상태가 EXPIRED 로 변경되었습니다", coupon.getId());
             });
 
             if (coupons.isLast() || coupons.isEmpty()) {
