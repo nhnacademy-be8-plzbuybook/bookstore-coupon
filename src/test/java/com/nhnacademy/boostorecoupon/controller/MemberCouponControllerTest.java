@@ -25,7 +25,7 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest(controllers = MemberCouponController.class)
+@WebMvcTest(MemberCouponController.class)
 class MemberCouponControllerTest {
 
     @MockBean

@@ -190,57 +190,57 @@ class MemberCouponServiceImplTest {
                 .findByMcMemberIdAndCoupon_StatusOrderByIdAsc(memberId, Status.UNUSED, pageable);
     }
 
-    @Disabled
-    @DisplayName("회원쿠폰 사용")
-    @Test
-    void useMemberCoupon() {
-        Long memberId = 1L;
-        Long couponId = 100L;
-        MemberCouponUseRequestDto requestDto = new MemberCouponUseRequestDto(memberId, couponId);
+//    @Disabled
+//    @DisplayName("회원쿠폰 사용")
+//    @Test
+//    void useMemberCoupon() {
+//        Long memberId = 1L;
+//        Long couponId = 100L;
+//        MemberCouponUseRequestDto requestDto = new MemberCouponUseRequestDto(memberId, couponId);
+//
+//        // Mock 설정
+//        when(memberCouponRepository.findByMcMemberIdAndCoupon_Id(memberId, couponId)).thenReturn(Optional.of(mockMemberCoupon));
+//        when(mockMemberCoupon.getCoupon()).thenReturn(mockCoupon);
+//        when(mockCoupon.getStatus()).thenReturn(Status.UNUSED);
+//
+//        doNothing().when(couponService).useCoupon(couponId);
+//        when(memberCouponRepository.save(any(MemberCoupon.class))).thenReturn(mockMemberCoupon);
+//
+//        // 테스트 실행
+//        assertDoesNotThrow(() -> memberCouponService.useMemberCoupon(requestDto));
+//
+//        // 검증
+//        verify(memberCouponRepository, times(1)).findByMcMemberIdAndCoupon_Id(memberId, couponId);
+//        verify(mockMemberCoupon, times(1)).getCoupon();
+//        verify(mockCoupon, times(1)).getStatus();
+//        verify(couponService, times(1)).useCoupon(couponId);
+//        verify(memberCouponRepository, times(1)).save(mockMemberCoupon);
+//    }
 
-        // Mock 설정
-        when(memberCouponRepository.findByMcMemberIdAndCoupon_Id(memberId, couponId)).thenReturn(Optional.of(mockMemberCoupon));
-        when(mockMemberCoupon.getCoupon()).thenReturn(mockCoupon);
-        when(mockCoupon.getStatus()).thenReturn(Status.UNUSED);
-
-        doNothing().when(couponService).useCoupon(couponId);
-        when(memberCouponRepository.save(any(MemberCoupon.class))).thenReturn(mockMemberCoupon);
-
-        // 테스트 실행
-        assertDoesNotThrow(() -> memberCouponService.useMemberCoupon(requestDto));
-
-        // 검증
-        verify(memberCouponRepository, times(1)).findByMcMemberIdAndCoupon_Id(memberId, couponId);
-        verify(mockMemberCoupon, times(1)).getCoupon();
-        verify(mockCoupon, times(1)).getStatus();
-        verify(couponService, times(1)).useCoupon(couponId);
-        verify(memberCouponRepository, times(1)).save(mockMemberCoupon);
-    }
-
-    @Disabled
-    @DisplayName("회원쿠폰 사용할때 쿠폰이 사용불가능한 상태인 경우")
-    @Test
-    void useMemberCoupon_InvalidCouponStatus() {
-        Long memberId = 1L;
-        Long couponId = 100L;
-        MemberCouponUseRequestDto requestDto = new MemberCouponUseRequestDto(memberId, couponId);
-
-        // Mock 설정
-        when(memberCouponRepository.findByMcMemberIdAndCoupon_Id(memberId, couponId)).thenReturn(Optional.of(mockMemberCoupon));
-        when(mockMemberCoupon.getCoupon()).thenReturn(mockCoupon);
-        when(mockCoupon.getStatus()).thenReturn(Status.EXPIRED); // 사용 불가능한 상태
-
-        // 테스트 실행 및 예외 검증
-        CouponException exception = assertThrows(CouponException.class,
-                () -> memberCouponService.useMemberCoupon(requestDto));
-
-        assertEquals("쿠폰이 사용불가능한 상태입니다: EXPIRED", exception.getMessage());
-        verify(memberCouponRepository, times(1)).findByMcMemberIdAndCoupon_Id(memberId, couponId);
-        verify(mockMemberCoupon, times(1)).getCoupon();
-        verify(mockCoupon, times(1)).getStatus();
-        verify(couponService, never()).useCoupon(anyLong());
-        verify(memberCouponRepository, never()).save(any(MemberCoupon.class));
-    }
+//    @Disabled
+//    @DisplayName("회원쿠폰 사용할때 쿠폰이 사용불가능한 상태인 경우")
+//    @Test
+//    void useMemberCoupon_InvalidCouponStatus() {
+//        Long memberId = 1L;
+//        Long couponId = 100L;
+//        MemberCouponUseRequestDto requestDto = new MemberCouponUseRequestDto(memberId, couponId);
+//
+//        // Mock 설정
+//        when(memberCouponRepository.findByMcMemberIdAndCoupon_Id(memberId, couponId)).thenReturn(Optional.of(mockMemberCoupon));
+//        when(mockMemberCoupon.getCoupon()).thenReturn(mockCoupon);
+//        when(mockCoupon.getStatus()).thenReturn(Status.EXPIRED); // 사용 불가능한 상태
+//
+//        // 테스트 실행 및 예외 검증
+//        CouponException exception = assertThrows(CouponException.class,
+//                () -> memberCouponService.useMemberCoupon(requestDto));
+//
+//        assertEquals("쿠폰이 사용불가능한 상태입니다: EXPIRED", exception.getMessage());
+//        verify(memberCouponRepository, times(1)).findByMcMemberIdAndCoupon_Id(memberId, couponId);
+//        verify(mockMemberCoupon, times(1)).getCoupon();
+//        verify(mockCoupon, times(1)).getStatus();
+//        verify(couponService, never()).useCoupon(anyLong());
+//        verify(memberCouponRepository, never()).save(any(MemberCoupon.class));
+//    }
 
     @DisplayName("회원쿠폰 사용할때 회원쿠폰이 존재하지 않는 경우")
     @Test
