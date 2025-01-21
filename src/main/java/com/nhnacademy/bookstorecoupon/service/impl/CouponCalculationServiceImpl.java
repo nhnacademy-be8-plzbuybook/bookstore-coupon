@@ -62,17 +62,10 @@ public class CouponCalculationServiceImpl implements CouponCalculationService {
 
         log.debug("계산 전 가격: {}, 할인 금액: {}, 계산 후 가격: {}", price, discountAmount, calculationPrice);
 
-        CouponCalculationResponseDto couponCalculationResponseDto = new CouponCalculationResponseDto(
+        return new CouponCalculationResponseDto(
                 discountAmount,
                 price,
                 calculationPrice);
-
-        // 쿠폰 사용으로 인한 상태 변경
-        Long mcMemberId = couponCalculationRequestDto.memberId();
-        MemberCouponUseRequestDto memberCouponUseRequestDto = new MemberCouponUseRequestDto(mcMemberId, couponId);
-        memberCouponService.useMemberCoupon(memberCouponUseRequestDto);
-
-        return couponCalculationResponseDto;
     }
 
     // 할인 금액 계산 (할인 금액이 최대할인금액 높을경우 최대 할인금액 반환)
