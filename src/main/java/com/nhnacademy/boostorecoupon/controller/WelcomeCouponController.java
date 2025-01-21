@@ -1,7 +1,7 @@
 package com.nhnacademy.boostorecoupon.controller;
 
 import com.nhnacademy.boostorecoupon.dto.welcome.WelcomeCouponRequestDto;
-import com.nhnacademy.boostorecoupon.service.impl.WelcomeCouponServiceImpl;
+import com.nhnacademy.boostorecoupon.service.WelcomeCouponService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -16,11 +16,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/coupons/welcome")
 @RestController
 public class WelcomeCouponController {
-    private final WelcomeCouponServiceImpl welcomeCouponServiceImpl;
+    private final WelcomeCouponService welcomeCouponService;
 
     @PostMapping
     public ResponseEntity<String> issueWelcomeCoupon(@RequestBody @Valid WelcomeCouponRequestDto requestDto) {
-        welcomeCouponServiceImpl.issueWelcomeCoupon(requestDto);
+        welcomeCouponService.issueWelcomeCoupon(requestDto);
         return ResponseEntity.status(HttpStatus.CREATED).body("웰컴 쿠폰이 성공적으로 발급되었습니다");
     }
 }

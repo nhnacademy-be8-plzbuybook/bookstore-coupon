@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nhnacademy.boostorecoupon.dto.membercoupon.*;
 import com.nhnacademy.boostorecoupon.enums.Status;
 import com.nhnacademy.boostorecoupon.service.MemberCouponService;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +25,6 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@Disabled
 @WebMvcTest(controllers = MemberCouponController.class)
 class MemberCouponControllerTest {
 
@@ -92,7 +90,7 @@ class MemberCouponControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(requestDto)))
                 .andExpect(status().isOk())
-                .andExpect(content().string("쿠폰이 성공적으로 사용되었습니다."));
+                .andExpect(content().string("쿠폰이 성공적으로 사용되었습니다"));
 
         verify(memberCouponService, times(1)).useMemberCoupon(any(MemberCouponUseRequestDto.class));
     }
@@ -235,5 +233,57 @@ class MemberCouponControllerTest {
                 .andExpect(jsonPath("$.content[0].couponScope").value("BOOK"));
 
         verify(memberCouponService, times(1)).getUnusedMemberCouponsByMemberId(any(MemberCouponFindByMemberIdRequestDto.class));
+    }
+
+    @DisplayName("회원쿠폰 전체 목록 조회")
+    @Test
+    void getAllMemberCoupons() throws Exception {
+        int page = 0;
+        int pageSize = 10;
+
+        MemberCouponResponseDto mockCoupon = new MemberCouponResponseDto(
+                1L,
+                1L,
+                new MemberCouponResponseDto.CouponResponseDto(
+                        100L,
+                        "COUPON123",
+                        Status.UNUSED,
+                        LocalDateTime.now().minusDays(1),
+                        LocalDateTime.now().plusDays(10),
+                        1L,
+                        "테스트 쿠폰",
+                        "AMOUNT",
+                        BigDecimal.valueOf(10000),
+                        BigDecimal.valueOf(5000),
+                        0,
+                        true,
+                        "BOOK",
+                        true
+                )
+        );
+
+        Page<MemberCouponResponseDto> mockPage = new PageImpl<>(
+                List.of(mockCoupon),
+                PageRequest.of(page, pageSize),
+                1
+        );
+
+        when(memberCouponService.getAllMemberCoupons(any(Pageable.class))).thenReturn(mockPage);
+
+        mockMvc.perform(get("/api/member-coupons")
+                        .param("page", String.valueOf(page))
+                        .param("pageSize", String.valueOf(pageSize))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content[0].memberId").value(1L))
+                .andExpect(jsonPath("$.content[0].coupon.couponId").value(100L))
+                .andExpect(jsonPath("$.content[0].coupon.code").value("COUPON123"))
+                .andExpect(jsonPath("$.content[0].coupon.name").value("테스트 쿠폰"))
+                .andExpect(jsonPath("$.content[0].coupon.status").value("UNUSED"))
+                .andExpect(jsonPath("$.content[0].coupon.minimumAmount").value(10000))
+                .andExpect(jsonPath("$.content[0].coupon.discountLimit").value(5000))
+                .andExpect(jsonPath("$.content[0].coupon.couponScope").value("BOOK"));
+
+        verify(memberCouponService, times(1)).getAllMemberCoupons(any(Pageable.class));
     }
 }

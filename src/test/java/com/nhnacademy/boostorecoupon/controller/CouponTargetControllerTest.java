@@ -2,11 +2,8 @@ package com.nhnacademy.boostorecoupon.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nhnacademy.boostorecoupon.dto.coupontarget.CouponTargetGetResponseDto;
-import com.nhnacademy.boostorecoupon.dto.coupontarget.CouponTargetResponseDto;
-import com.nhnacademy.boostorecoupon.dto.coupontarget.CouponTargetSaveRequestDto;
 import com.nhnacademy.boostorecoupon.dto.coupontarget.CouponTargetSearchRequestDto;
 import com.nhnacademy.boostorecoupon.service.CouponTargetService;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -22,12 +19,11 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
 
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@Disabled
 @WebMvcTest(CouponTargetController.class)
 class CouponTargetControllerTest {
 
@@ -39,9 +35,6 @@ class CouponTargetControllerTest {
 
     @Autowired
     private ObjectMapper objectMapper;
-
-    private CouponTargetSaveRequestDto saveRequestDto;
-    private CouponTargetResponseDto targetResponseDto;
 
     @DisplayName("특정 쿠폰정책에 속하는 쿠폰대상 목록 조회")
     @Test
