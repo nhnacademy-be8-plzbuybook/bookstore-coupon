@@ -36,7 +36,7 @@ public class GlobalExceptionHandler {
 
     //skm 예외
     @ExceptionHandler(KeyMangerException.class)
-    public ResponseEntity<ErrorResponseDto> KeyManagerException(KeyMangerException e) {
+    public ResponseEntity<ErrorResponseDto> keyManagerException(KeyMangerException e) {
         ErrorResponseDto errorResponseDto = new ErrorResponseDto(
                 HttpStatus.INTERNAL_SERVER_ERROR.value(),
                 HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(),
