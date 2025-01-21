@@ -2,7 +2,7 @@ package com.nhnacademy.bookstorecoupon.service.impl;
 
 import com.nhnacademy.bookstorecoupon.dto.calculation.CouponCalculationRequestDto;
 import com.nhnacademy.bookstorecoupon.dto.calculation.CouponCalculationResponseDto;
-import com.nhnacademy.bookstorecoupon.dto.calculation.ValidationCouponCalculation;
+import com.nhnacademy.bookstorecoupon.dto.calculation.ValidationCouponCalculationResponseDto;
 import com.nhnacademy.bookstorecoupon.dto.calculation.ValidationCouponCalculationRequestDto;
 import com.nhnacademy.bookstorecoupon.dto.membercoupon.MemberCouponUseRequestDto;
 import com.nhnacademy.bookstorecoupon.entity.CouponPolicy;
@@ -87,7 +87,7 @@ public class CouponCalculationServiceImpl implements CouponCalculationService {
     }
 
     // 계산 검증용 함수
-    public ValidationCouponCalculation validateCouponCalculation(Long couponId, ValidationCouponCalculationRequestDto validationCouponCalculationRequestDto){
+    public ValidationCouponCalculationResponseDto validateCouponCalculation(Long couponId, ValidationCouponCalculationRequestDto validationCouponCalculationRequestDto){
         // 주문금액
         BigDecimal price = validationCouponCalculationRequestDto.price();
 
@@ -114,6 +114,6 @@ public class CouponCalculationServiceImpl implements CouponCalculationService {
             calculationPrice = BigDecimal.ZERO; // 음수 방지
         }
 
-        return new ValidationCouponCalculation(calculationPrice);
+        return new ValidationCouponCalculationResponseDto(calculationPrice);
     }
 }

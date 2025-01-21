@@ -2,7 +2,7 @@ package com.nhnacademy.bookstorecoupon.controller;
 
 import com.nhnacademy.bookstorecoupon.dto.calculation.CouponCalculationRequestDto;
 import com.nhnacademy.bookstorecoupon.dto.calculation.CouponCalculationResponseDto;
-import com.nhnacademy.bookstorecoupon.dto.calculation.ValidationCouponCalculation;
+import com.nhnacademy.bookstorecoupon.dto.calculation.ValidationCouponCalculationResponseDto;
 import com.nhnacademy.bookstorecoupon.dto.calculation.ValidationCouponCalculationRequestDto;
 import com.nhnacademy.bookstorecoupon.service.CouponCalculationService;
 import com.nhnacademy.bookstorecoupon.shoppingmall.service.MemberService;
@@ -44,9 +44,9 @@ public class CouponCalculationController {
      * @return CouponCalculationResponseDto : BigDecimal discountAmount, BigDecimal originalPrice, BigDecimal calculationPrice
      */
     @PostMapping("/member/{coupon-id}/validation")
-    public ResponseEntity<ValidationCouponCalculation> validateCouponCalculation(@PathVariable("coupon-id") Long couponId, @RequestBody @Valid ValidationCouponCalculationRequestDto validationCouponCalculationRequestDto) {
-        ValidationCouponCalculation validationCouponCalculation = couponCalculationService.validateCouponCalculation(couponId, validationCouponCalculationRequestDto);
+    public ResponseEntity<ValidationCouponCalculationResponseDto> validateCouponCalculation(@PathVariable("coupon-id") Long couponId, @RequestBody @Valid ValidationCouponCalculationRequestDto validationCouponCalculationRequestDto) {
+        ValidationCouponCalculationResponseDto validationCouponCalculationResponseDto = couponCalculationService.validateCouponCalculation(couponId, validationCouponCalculationRequestDto);
 
-        return ResponseEntity.status(HttpStatus.OK).body(validationCouponCalculation);
+        return ResponseEntity.status(HttpStatus.OK).body(validationCouponCalculationResponseDto);
     }
 }
