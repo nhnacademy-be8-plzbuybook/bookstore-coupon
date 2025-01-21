@@ -41,7 +41,7 @@ public class CouponCalculationController {
      * 할인쿠폰 계산검증
      * @param couponId : 쿠폰 ID
      * @param validationCouponCalculationRequestDto : BigDecimal price
-     * @return CouponCalculationResponseDto : BigDecimal discountAmount, BigDecimal originalPrice, BigDecimal calculationPrice
+     * @return ValidationCouponCalculationResponseDto : BigDecimal price
      */
     @PostMapping("/member/{coupon-id}/validation")
     public ResponseEntity<ValidationCouponCalculationResponseDto> validateCouponCalculation(@PathVariable("coupon-id") Long couponId, @RequestBody @Valid ValidationCouponCalculationRequestDto validationCouponCalculationRequestDto) {
