@@ -1,23 +1,25 @@
 package com.nhnacademy.boostorecoupon.checker;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
 import javax.sql.DataSource;
 
+@Slf4j
 @Component
+@RequiredArgsConstructor
 public class DatabaseConnectionChecker implements CommandLineRunner {
 
-    @Autowired
-    private DataSource dataSource;
+    private final DataSource dataSource;
 
     @Override
     public void run(String... args) throws Exception {
         try {
-            System.out.println("Connected to database: " + dataSource.getConnection().getMetaData().getURL());
+            log.info("Connected to database: {}", dataSource.getConnection().getMetaData().getURL());
         } catch (Exception e) {
-            System.out.println("Failed to connect to database: " + e.getMessage());
+            log.info("Failed to connect to database: {}", e.getMessage());
         }
     }
 }
