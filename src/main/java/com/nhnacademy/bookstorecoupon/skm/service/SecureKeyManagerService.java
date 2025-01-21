@@ -43,7 +43,7 @@ public class SecureKeyManagerService {
             // keystore 설정 (PKCS12)
             KeyStore clientStore = KeyStore.getInstance("PKCS12");
 
-            // keystrore 읽기
+            // keystore 읽기
             InputStream keyStoreInputStream = new ClassPathResource(skmProperties.getKeystoreFile()).getInputStream();
             clientStore.load(keyStoreInputStream, skmProperties.getPassword().toCharArray());
 
@@ -96,7 +96,7 @@ public class SecureKeyManagerService {
             if (response.getBody() != null && response.getBody().getBody() != null) {
                 return response.getBody().getBody().getSecret(); // 복호화된 값 반환
             } else {
-                throw new RuntimeException("Invalid response from Key Manager: " + response.getBody());
+                throw new KeyMangerException("Invalid response from Key Manager: " + response.getBody());
             }
 
         } catch (KeyStoreException | IOException | CertificateException |

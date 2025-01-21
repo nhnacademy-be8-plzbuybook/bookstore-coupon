@@ -14,7 +14,7 @@ public class SKMProperties {
     private String appKey;
     private String keystoreFile;
     private String password;
-    private Database Database;
+    private Database database;
 
     @Getter
     @Setter
