@@ -49,11 +49,8 @@ class CouponServiceImplTest {
     @InjectMocks
     private CouponServiceImpl couponService;
 
-    @Mock
     private CouponHistory mockHistory;
-    @Mock
     private CouponPolicy mockPolicy;
-    @Mock
     private Coupon mockCoupon;
 
     private final LocalDateTime now = LocalDateTime.now();
@@ -243,22 +240,19 @@ class CouponServiceImplTest {
     @Test
     void useCoupon() {
         Long couponId = 100L;
-        LocalDateTime fixedTime = LocalDateTime.of(2024, 12, 26, 13, 43, 54);
 
-        mockCoupon = mock(Coupon.class);
-        mockHistory = new CouponHistory(Status.UNUSED, fixedTime, "USED", mockCoupon);
+        Coupon coupon = mock(Coupon.class);
+        CouponHistory mockHistory = new CouponHistory(Status.UNUSED, now, "USED", coupon);
 
-        when(couponRepository.findById(couponId)).thenReturn(Optional.of(mockCoupon));
-        when(mockCoupon.getStatus()).thenReturn(Status.UNUSED);
-        when(mockCoupon.changeStatus(eq(Status.USED), any(LocalDateTime.class), eq("USED")))
-                .thenReturn(mockHistory);
+        when(couponRepository.findById(couponId)).thenReturn(Optional.of(coupon));
+        when(coupon.changeStatus(eq(Status.USED), any(LocalDateTime.class), eq("USED"))).thenReturn(mockHistory);
 
         couponService.useCoupon(couponId);
 
         verify(couponRepository, times(1)).findById(couponId);
-        verify(mockCoupon, times(1)).getStatus();
-        verify(mockCoupon, times(1)).changeStatus(eq(Status.USED), any(LocalDateTime.class), eq("USED"));
-        verify(couponRepository, times(1)).save(mockCoupon);
+        verify(coupon, times(1)).setStatus(Status.USED);
+        verify(coupon, times(1)).changeStatus(eq(Status.USED), any(LocalDateTime.class), eq("USED"));
+        verify(couponRepository, times(1)).save(coupon);
         verify(couponHistoryRepository, times(1)).save(mockHistory);
     }
 
@@ -276,27 +270,6 @@ class CouponServiceImplTest {
         assertEquals("해당 ID 의 쿠폰을 찾을 수 없습니다" + couponId, exception.getMessage());
 
         verify(couponRepository, times(1)).findById(couponId);
-        verifyNoInteractions(couponHistoryRepository);
-    }
-
-
-    @DisplayName("쿠폰을 사용할때 쿠폰의 상태가 UNUSED 가 아닌 경우")
-    @Test
-    void useCoupon_ThrowsCouponException_WhenStatusIsNotUnused() {
-        Long couponId = 1L;
-
-        mockCoupon = mock(Coupon.class);
-
-        when(couponRepository.findById(couponId)).thenReturn(Optional.of(mockCoupon));
-        when(mockCoupon.getStatus()).thenReturn(Status.EXPIRED);
-
-        CouponException exception = assertThrows(CouponException.class,
-                () -> couponService.useCoupon(couponId));
-
-        assertEquals("현재 쿠폰을 사용할 수 없는 상태입니다: " + Status.EXPIRED, exception.getMessage());
-        verify(couponRepository, times(1)).findById(couponId);
-        verify(mockCoupon, times(1)).getStatus();
-        verifyNoMoreInteractions(mockCoupon);
         verifyNoInteractions(couponHistoryRepository);
     }
 
@@ -396,5 +369,39 @@ class CouponServiceImplTest {
 
         assertFalse(exists);
         verify(couponRepository, times(1)).existsById(couponId);
+    }
+
+    @DisplayName("쿠폰 사용 취소")
+    @Test
+    void cancelCoupon() {
+        Long couponId = 1L;
+
+        mockCoupon = mock(Coupon.class);
+
+        when(couponRepository.findById(couponId)).thenReturn(Optional.of(mockCoupon));
+        when(mockCoupon.changeStatus(eq(Status.CANCEL), any(LocalDateTime.class), eq("CANCEL"))).thenReturn(mockHistory);
+
+        couponService.cancelCoupon(couponId);
+
+        verify(mockCoupon, times(1)).setStatus(Status.UNUSED);
+        verify(mockCoupon, times(1)).changeStatus(eq(Status.CANCEL), any(LocalDateTime.class), eq("CANCEL"));
+        verify(couponRepository, times(1)).save(mockCoupon);
+        verify(couponHistoryRepository, times(1)).save(mockHistory);
+    }
+
+    @DisplayName("쿠폰 사용 취소할때 쿠폰이 존재하지않는 경우")
+    @Test
+    void cancelCoupon_NotFoundCouponException() {
+        Long couponId = 3L;
+
+        when(couponRepository.findById(couponId)).thenReturn(Optional.empty());
+
+        NotFoundCouponException exception = assertThrows(NotFoundCouponException.class, () -> {
+            couponService.cancelCoupon(couponId);
+        });
+
+        assertEquals("해당 ID 의 쿠폰을 찾을 수 없습니다3", exception.getMessage());
+        verify(couponRepository, never()).save(any());
+        verify(couponHistoryRepository, never()).save(any());
     }
 }

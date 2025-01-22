@@ -4,6 +4,7 @@ import com.nhnacademy.bookstorecoupon.enums.Status;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -23,6 +24,7 @@ public class Coupon {
     @Column(unique = true, nullable = false)
     private String code; // 쿠폰코드
 
+    @Setter
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Status status; // 쿠폰상태

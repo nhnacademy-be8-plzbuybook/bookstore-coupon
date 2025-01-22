@@ -99,10 +99,10 @@ public class CouponController {
     }
 
     /**
-     * 쿠폰 사용으로 인한 상태변경 ( UNUSED - USED)
+     * 쿠폰 사용으로 인한 상태변경 (UNUSED -> USED)
      * PATCH /api/coupons/{coupon-id}/use
      * @param couponId : 쿠폰 ID
-     * @return : String 쿠폰 상태가 변경되었습니다
+     * @return : String "쿠폰 상태가 변경되었습니다"
      */
     @PatchMapping("/{coupon-id}/use")
     public ResponseEntity<String> useCoupon(@PathVariable("coupon-id") @Min(0) Long couponId) {
@@ -111,5 +111,16 @@ public class CouponController {
         return ResponseEntity.status(HttpStatus.OK).body("쿠폰 상태가 변경되었습니다");
     }
 
+    /**
+     * 쿠폰 사용취소
+     * PATCH /api/coupons/{coupon-id}/use
+     * @param couponId : 쿠폰 ID
+     * @return : String "쿠폰 사용이 취소되었습니다"
+     */
+    @PatchMapping("/{coupon-id}/cancel")
+    public ResponseEntity<String> cancelCoupon(@PathVariable("coupon-id") @Min(0) Long couponId) {
+        couponService.cancelCoupon(couponId);
 
+        return ResponseEntity.status(HttpStatus.OK).body("쿠폰 사용이 취소되었습니다");
+    }
 }
