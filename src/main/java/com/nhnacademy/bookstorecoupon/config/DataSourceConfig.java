@@ -1,10 +1,10 @@
 package com.nhnacademy.bookstorecoupon.config;
 
 
-import com.nhnacademy.bookstorecoupon.skm.properties.SKMProperties;
-import com.nhnacademy.bookstorecoupon.skm.service.SecureKeyManagerService;
+
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.dbcp2.BasicDataSource;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -14,26 +14,23 @@ import javax.sql.DataSource;
 @RequiredArgsConstructor
 public class DataSourceConfig {
 
-    private final SKMProperties skmProperties;
-    private final SecureKeyManagerService secureKeyManagerService;
+    @Value("${spring.datasource.url}")
+    private String url;
+
+    @Value("${spring.datasource.username}")
+    private String username;
+
+    @Value("${spring.datasource.password}")
+    private String password;
 
     @Bean
     public DataSource dataSource(){
-        //암호 id로 된 걸 가져온다
-        String encryptedUrlKey = skmProperties.getDatabase().getUrl();
-        String encryptedUsernameKey = skmProperties.getDatabase().getUsername();
-        String encryptedPasswordKey = skmProperties.getDatabase().getPassword();
-
-        //복호화 한다
-        String decryptedUrl = secureKeyManagerService.fetchSecret(encryptedUrlKey);
-        String decryptedUserName = secureKeyManagerService.fetchSecret(encryptedUsernameKey);
-        String decryptedPassword = secureKeyManagerService.fetchSecret(encryptedPasswordKey);
 
         //복호화 된걸 db환경으로 설정
         BasicDataSource dataSource = new BasicDataSource();
-        dataSource.setUrl(decryptedUrl);
-        dataSource.setUsername(decryptedUserName);
-        dataSource.setPassword(decryptedPassword);
+        dataSource.setUrl(url);
+        dataSource.setUsername(username);
+        dataSource.setPassword(password);
         dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
 
         return dataSource;

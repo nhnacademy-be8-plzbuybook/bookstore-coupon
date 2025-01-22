@@ -3,7 +3,6 @@ package com.nhnacademy.bookstorecoupon.config;
 
 import com.nhnacademy.bookstorecoupon.dto.error.ErrorResponseDto;
 import com.nhnacademy.bookstorecoupon.error.*;
-import com.nhnacademy.bookstorecoupon.skm.exception.KeyMangerException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -34,14 +33,4 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponseDto);
     }
 
-    //skm 예외
-    @ExceptionHandler(KeyMangerException.class)
-    public ResponseEntity<ErrorResponseDto> keyManagerException(KeyMangerException e) {
-        ErrorResponseDto errorResponseDto = new ErrorResponseDto(
-                HttpStatus.INTERNAL_SERVER_ERROR.value(),
-                HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(),
-                e.getMessage()
-        );
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponseDto);
-    }
 }
