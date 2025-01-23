@@ -30,4 +30,5 @@ public interface CouponService {
 
     boolean existsById(Long couponId); // 쿠폰 ID 에 해당하는 쿠폰정책이 존재 여부 판별
 
+    void cancelCoupon(Long couponId); // 쿠폰 사용 취소
 }

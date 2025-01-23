@@ -53,4 +53,10 @@ Content-Type: application/json
 ### 모든 쿠폰 조회
 GET http://localhost:8083/api/coupons?page=0&pageSize=10
 
-### 쿠폰 상태변경 (USED -> UNUSED)
+### 쿠폰사용
+PATCH http://localhost:8083/api/coupons/259/use
+Content-Type: application/json
+
+### 쿠폰사용취소
+PATCH http://localhost:8083/api/coupons/259/cancel
+Content-Type: application/json

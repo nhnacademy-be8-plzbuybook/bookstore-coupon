@@ -123,13 +123,11 @@ public class CouponServiceImpl implements CouponService {
                 () -> new NotFoundCouponException("해당 ID 의 쿠폰을 찾을 수 없습니다" + couponId)
         );
         LocalDateTime useTime = LocalDateTime.now();
-        Status status = coupon.getStatus();
-
-        if (!status.equals(Status.UNUSED)) {
-            throw new CouponException("현재 쿠폰을 사용할 수 없는 상태입니다: " + status);
-        }
 
         CouponHistory history = coupon.changeStatus(Status.USED, useTime, "USED");
+
+        coupon.setStatus(Status.USED);
+
         couponRepository.save(coupon);
         couponHistoryRepository.save(history);
     }
@@ -159,4 +157,18 @@ public class CouponServiceImpl implements CouponService {
         return couponRepository.existsById(couponId);
     }
 
+    @Transactional
+    @Override
+    public void cancelCoupon(Long couponId) {
+        Coupon coupon = couponRepository.findById(couponId).orElseThrow(
+                () -> new NotFoundCouponException("해당 ID 의 쿠폰을 찾을 수 없습니다" + couponId)
+        );
+        LocalDateTime cancelTime = LocalDateTime.now();
+
+        coupon.setStatus(Status.UNUSED);
+
+        CouponHistory history = coupon.changeStatus(Status.CANCEL, cancelTime, "CANCEL");
+        couponRepository.save(coupon);
+        couponHistoryRepository.save(history);
+    }
 }

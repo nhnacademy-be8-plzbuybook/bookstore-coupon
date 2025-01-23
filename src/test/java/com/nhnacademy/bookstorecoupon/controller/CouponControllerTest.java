@@ -149,4 +149,17 @@ class CouponControllerTest {
 
         Mockito.verify(couponService, Mockito.times(1)).useCoupon(1L);
     }
+
+    @DisplayName("쿠폰사용 취소")
+    @Test
+    void cancelUseCoupon() throws Exception {
+        Mockito.doNothing().when(couponService).cancelCoupon(1L);
+
+        mockMvc.perform(patch("/api/coupons/{coupon-id}/cancel", 1L)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().string("쿠폰 사용이 취소되었습니다"));
+
+        Mockito.verify(couponService, Mockito.times(1)).cancelCoupon(1L);
+    }
 }
