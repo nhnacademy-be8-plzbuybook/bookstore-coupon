@@ -9,7 +9,7 @@ spring:
     name: coupon
 
   datasource:
-    url: jdbc:mysql://220.67.216.14:13306/project_be8_plzbuybook_bookstore
+    url: jdbc:mysql://10.116.64.14:13306/project_be8_plzbuybook_bookstore
     username: project_be8_plzbuybook
     password: "MOW6c#y4TVxi1P5b"
     driver-class-name: com.mysql.cj.jdbc.Driver

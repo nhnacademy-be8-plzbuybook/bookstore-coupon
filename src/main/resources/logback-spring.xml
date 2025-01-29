@@ -15,10 +15,9 @@
     <!-- 파일 출력 Appender -->
     <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <!-- 로그 파일 저장 경로 -->
-        <file>${LOG_PATH:-./logs}/application.log</file>
+        <file>./logs/coupon.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <maxFileSize>10MB</maxFileSize>
-            <fileNamePattern>${LOG_PATH:-./logs}/application-%d{yyyy-MM-dd}.log</fileNamePattern>
+            <fileNamePattern>./logs/application-%d{yyyy-MM-dd}.log</fileNamePattern>
             <maxHistory>10</maxHistory>
         </rollingPolicy>
         <encoder>
@@ -35,7 +34,6 @@
         </root>
     </springProfile>
 
-    <!-- 운영환경(Prod) 프로필 설정 -->
     <springProfile name="prod">
         <!-- 로그 레벨 ERROR -->
         <root level="ERROR">
@@ -45,9 +43,10 @@
 
     <springProfile name="nhn">
         <!-- 로그 레벨 DEBUG -->
-        <root level="DEBUG">
+        <root level="ERROR">
             <appender-ref ref="STDOUT"/>
             <appender-ref ref="FILE"/>
         </root>
     </springProfile>
 </configuration>
+
